@@ -73,7 +73,7 @@
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(216, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "FileAES 2.0.0 (Beta 1)";
+            this.titleLabel.Text = "FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
@@ -88,6 +88,7 @@
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(23, 23);
             this.quitButton.TabIndex = 1;
+            this.quitButton.TabStop = false;
             this.quitButton.Text = "✖";
             this.quitButton.UseVisualStyleBackColor = false;
             this.quitButton.Click += new System.EventHandler(this.quitButton_Click);

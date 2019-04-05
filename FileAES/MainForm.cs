@@ -15,6 +15,8 @@ namespace FAES_GUI
     {
         private bool _closeAfterOperation = false;
 
+        private DevForm _devForm = new DevForm();
+
         public MainForm(FAES_File faesFile = null)
         {
             InitializeComponent();
@@ -154,6 +156,11 @@ namespace FAES_GUI
         private void settingsMenuButton_Click(object sender, EventArgs e)
         {
             autoSelectMenuButton_Click(sender, e);
+        }
+
+        private void CopyrightLabel_Click(object sender, EventArgs e)
+        {
+            _devForm.Visible = !_devForm.Visible;
         }
     }
 }

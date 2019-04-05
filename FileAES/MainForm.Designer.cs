@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.titleBar = new System.Windows.Forms.Panel();
-            this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.sidePanel = new System.Windows.Forms.Panel();
@@ -45,9 +44,10 @@
             this.openFileDialogAutoSelect = new System.Windows.Forms.OpenFileDialog();
             this.decryptPanel = new FAES_GUI.MenuPanels.decryptPanel();
             this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
+            this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleBar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.sidePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // titleBar
@@ -62,18 +62,6 @@
             this.titleBar.TabIndex = 0;
             this.titleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.titleBar_Paint);
             this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
-            // 
-            // titleBarLogo
-            // 
-            this.titleBarLogo.Image = global::FAES_GUI.Properties.Resources.Icon;
-            this.titleBarLogo.InitialImage = global::FAES_GUI.Properties.Resources.Icon;
-            this.titleBarLogo.Location = new System.Drawing.Point(4, 3);
-            this.titleBarLogo.Name = "titleBarLogo";
-            this.titleBarLogo.Size = new System.Drawing.Size(20, 20);
-            this.titleBarLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.titleBarLogo.TabIndex = 2;
-            this.titleBarLogo.TabStop = false;
-            this.titleBarLogo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
             // titleLabel
             // 
@@ -99,6 +87,7 @@
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(23, 23);
             this.quitButton.TabIndex = 1;
+            this.quitButton.TabStop = false;
             this.quitButton.Text = "✖";
             this.quitButton.UseVisualStyleBackColor = false;
             this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
@@ -176,6 +165,7 @@
             this.copyrightLabel.TabIndex = 2;
             this.copyrightLabel.Text = "© - 2018 | mullak99";
             this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.copyrightLabel.Click += new System.EventHandler(this.CopyrightLabel_Click);
             // 
             // slowToolTip
             // 
@@ -219,6 +209,18 @@
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 5;
             // 
+            // titleBarLogo
+            // 
+            this.titleBarLogo.Image = global::FAES_GUI.Properties.Resources.Icon;
+            this.titleBarLogo.InitialImage = global::FAES_GUI.Properties.Resources.Icon;
+            this.titleBarLogo.Location = new System.Drawing.Point(4, 3);
+            this.titleBarLogo.Name = "titleBarLogo";
+            this.titleBarLogo.Size = new System.Drawing.Size(20, 20);
+            this.titleBarLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.titleBarLogo.TabIndex = 2;
+            this.titleBarLogo.TabStop = false;
+            this.titleBarLogo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -236,8 +238,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FileAES";
             this.titleBar.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
             this.sidePanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
             this.ResumeLayout(false);
 
         }

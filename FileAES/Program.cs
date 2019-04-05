@@ -3,16 +3,14 @@ using FAES.Packaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "Beta 2";
+        private const string betaAppendTag = "Dev";
 
         private static bool _verbose = false;
         private static bool _debugMenu = false;

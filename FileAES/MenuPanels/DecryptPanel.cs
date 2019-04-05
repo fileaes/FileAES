@@ -16,6 +16,8 @@ namespace FAES_GUI.MenuPanels
         public decryptPanel()
         {
             Initialise();
+
+            FileAES_Utilities.SetVerboseLogging(true);
         }
 
         public decryptPanel(FAES_File faesFile)
@@ -124,7 +126,7 @@ namespace FAES_GUI.MenuPanels
             }
             catch (Exception e)
             {
-                setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e), 3);
+                setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
             }
         }
 
