@@ -1,6 +1,8 @@
 ﻿using FAES;
 using System;
 using System.ComponentModel;
+using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI.MenuPanels
@@ -12,6 +14,7 @@ namespace FAES_GUI.MenuPanels
         private bool _inProgress = false;
         private bool _decryptSuccessful;
         private bool _closeAfterOp = false;
+        private decimal _progress = 0;
 
         public decryptPanel()
         {
@@ -43,6 +46,10 @@ namespace FAES_GUI.MenuPanels
 
         public void ResetFile()
         {
+            decryptionTimer.Stop();
+            progressBar.ProgressColor = Color.Lime;
+            progressBar.Value = progressBar.Minimum;
+
             Locked(true);
             _fileToDecrypt = null;
             fileInfoLabel.Text = "No File Selected!";
@@ -119,7 +126,17 @@ namespace FAES_GUI.MenuPanels
                 while (!backgroundDecrypt.CancellationPending)
                 {
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, passTextbox.Text);
-                    _decryptSuccessful = decrypt.decryptFile();
+                    
+                    Thread dThread = new Thread(() =>
+                    {
+                        _decryptSuccessful = decrypt.decryptFile();
+                    });
+                    dThread.Start();
+
+                    while (dThread.ThreadState == ThreadState.Running)
+                    {
+                        _progress = decrypt.GetDecryptionPercentComplete();
+                    }
 
                     backgroundDecrypt.CancelAsync();
                 }
@@ -148,21 +165,41 @@ namespace FAES_GUI.MenuPanels
             }
             else
             {
+                decryptionTimer.Stop();
+                progressBar.ProgressColor = Color.Red;
+                progressBar.Value = progressBar.Maximum;
+
                 setNoteLabel("Password Incorrect!", 3);
                 passTextbox.Focus();
             }
+        }
+
+        private void decryptionTimer_Tick(object sender, EventArgs e)
+        {
+            if (_progress < 100)
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            else
+                progressBar.Value = 100;
         }
 
         private void decryptButton_Click(object sender, EventArgs e)
         {
             if (_fileToDecrypt.isFileDecryptable() && !_inProgress && passTextbox.Text.Length > 3)
             {
+                progressBar.ProgressColor = Color.Lime;
+                progressBar.Value = progressBar.Minimum;
+                decryptionTimer.Start();
+
                 backgroundDecrypt.RunWorkerAsync();
                 Locked(true);
             }
             else if (_inProgress) setNoteLabel("Decryption already in progress.", 1);
             else
             {
+                decryptionTimer.Stop();
+                progressBar.ProgressColor = Color.Red;
+                progressBar.Value = progressBar.Maximum;
+
                 setNoteLabel("Decryption Failed. Try again later.", 1);
                 decryptButton.Focus();
             }

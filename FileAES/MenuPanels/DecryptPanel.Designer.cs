@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.fileInfoPanel = new System.Windows.Forms.Panel();
             this.fileInfoLabel = new System.Windows.Forms.Label();
             this.selectDecryptButton = new System.Windows.Forms.Button();
@@ -40,6 +41,8 @@
             this.statusInformation = new System.Windows.Forms.Label();
             this.backgroundDecrypt = new System.ComponentModel.BackgroundWorker();
             this.openFileToDecrypt = new System.Windows.Forms.OpenFileDialog();
+            this.decryptionTimer = new System.Windows.Forms.Timer(this.components);
+            this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
             this.fileInfoPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,7 +112,7 @@
             // 
             this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passHintLabel.ForeColor = System.Drawing.Color.White;
-            this.passHintLabel.Location = new System.Drawing.Point(7, 135);
+            this.passHintLabel.Location = new System.Drawing.Point(7, 130);
             this.passHintLabel.Name = "passHintLabel";
             this.passHintLabel.Size = new System.Drawing.Size(124, 50);
             this.passHintLabel.TabIndex = 10;
@@ -121,7 +124,7 @@
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
             this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passHintTextbox.Location = new System.Drawing.Point(137, 136);
+            this.passHintTextbox.Location = new System.Drawing.Point(137, 131);
             this.passHintTextbox.MaxLength = 64;
             this.passHintTextbox.Multiline = true;
             this.passHintTextbox.Name = "passHintTextbox";
@@ -150,9 +153,9 @@
             // 
             this.encryptedFileMetaData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.encryptedFileMetaData.ForeColor = System.Drawing.Color.White;
-            this.encryptedFileMetaData.Location = new System.Drawing.Point(3, 197);
+            this.encryptedFileMetaData.Location = new System.Drawing.Point(3, 183);
             this.encryptedFileMetaData.Name = "encryptedFileMetaData";
-            this.encryptedFileMetaData.Size = new System.Drawing.Size(408, 73);
+            this.encryptedFileMetaData.Size = new System.Drawing.Size(408, 76);
             this.encryptedFileMetaData.TabIndex = 12;
             this.encryptedFileMetaData.Text = "PLACEHOLDER METADATA";
             this.encryptedFileMetaData.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -160,9 +163,9 @@
             // statusInformation
             // 
             this.statusInformation.ForeColor = System.Drawing.Color.White;
-            this.statusInformation.Location = new System.Drawing.Point(3, 274);
+            this.statusInformation.Location = new System.Drawing.Point(3, 259);
             this.statusInformation.Name = "statusInformation";
-            this.statusInformation.Size = new System.Drawing.Size(408, 35);
+            this.statusInformation.Size = new System.Drawing.Size(408, 25);
             this.statusInformation.TabIndex = 13;
             this.statusInformation.Text = "Error: PLACEHOLDER ERROR";
             this.statusInformation.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -179,11 +182,30 @@
             this.openFileToDecrypt.Filter = "FileAES Files|*.faes;*.mcrypt";
             this.openFileToDecrypt.Title = "Select a file to decrypt";
             // 
+            // decryptionTimer
+            // 
+            this.decryptionTimer.Tick += new System.EventHandler(this.decryptionTimer_Tick);
+            // 
+            // progressBar
+            // 
+            this.progressBar.CustomText = "";
+            this.progressBar.ForeColor = System.Drawing.Color.ForestGreen;
+            this.progressBar.Location = new System.Drawing.Point(3, 287);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.ProgressColor = System.Drawing.Color.Lime;
+            this.progressBar.Size = new System.Drawing.Size(408, 20);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.TabIndex = 18;
+            this.progressBar.TextColor = System.Drawing.Color.Black;
+            this.progressBar.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.progressBar.VisualMode = FAES_GUI.CustomControls.ProgressBarDisplayMode.Percentage;
+            // 
             // decryptPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.statusInformation);
             this.Controls.Add(this.encryptedFileMetaData);
             this.Controls.Add(this.decryptButton);
@@ -215,5 +237,7 @@
         private System.Windows.Forms.Label statusInformation;
         private System.ComponentModel.BackgroundWorker backgroundDecrypt;
         private System.Windows.Forms.OpenFileDialog openFileToDecrypt;
+        private System.Windows.Forms.Timer decryptionTimer;
+        private CustomControls.TextProgressBar progressBar;
     }
 }

@@ -33,8 +33,8 @@
             this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
-            this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.SuspendLayout();
@@ -71,9 +71,9 @@
             this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
             this.titleLabel.Location = new System.Drawing.Point(26, 1);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(216, 25);
+            this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "FileAES ";
+            this.titleLabel.Text = "Encrypt | FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
@@ -96,6 +96,12 @@
             this.quitButton.MouseLeave += new System.EventHandler(this.quitButton_MouseLeave);
             this.quitButton.MouseHover += new System.EventHandler(this.quitButton_MouseHover);
             // 
+            // slowToolTip
+            // 
+            this.slowToolTip.AutoPopDelay = 5000;
+            this.slowToolTip.InitialDelay = 1000;
+            this.slowToolTip.ReshowDelay = 100;
+            // 
             // encryptPanel
             // 
             this.encryptPanel.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -103,12 +109,6 @@
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 2;
-            // 
-            // slowToolTip
-            // 
-            this.slowToolTip.AutoPopDelay = 5000;
-            this.slowToolTip.InitialDelay = 1000;
-            this.slowToolTip.ReshowDelay = 100;
             // 
             // EncryptForm
             // 

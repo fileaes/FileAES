@@ -12,6 +12,7 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
 
             encryptPanel.LockFileSelect(true);
             encryptPanel.setCloseAfterOperationSuccessful(true);

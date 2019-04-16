@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAES;
+using System.Threading;
 
 namespace FAES_GUI.MenuPanels
 {
@@ -18,6 +19,7 @@ namespace FAES_GUI.MenuPanels
         private bool _inProgress = false;
         private bool _encryptSuccessful;
         private bool _closeAfterOp = false;
+        private decimal _progress = 0;
 
         public encryptPanel()
         {
@@ -52,6 +54,10 @@ namespace FAES_GUI.MenuPanels
 
         public void ResetFile()
         {
+            encryptionTimer.Stop();
+            progressBar.ProgressColor = Color.Lime;
+            progressBar.Value = progressBar.Minimum;
+
             Locked(true);
             _fileToEncrypt = null;
             passTextbox.Text = "";
@@ -124,7 +130,16 @@ namespace FAES_GUI.MenuPanels
                     FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, passTextbox.Text, passHintTextbox.Text);
                     encrypt.SetCompressionMode(FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressMode.SelectedIndex]);
 
-                    _encryptSuccessful = encrypt.encryptFile();
+                    Thread eThread = new Thread(() =>
+                    {
+                        _encryptSuccessful = encrypt.encryptFile();
+                    });
+                    eThread.Start();
+
+                    while (eThread.ThreadState == ThreadState.Running)
+                    {
+                        _progress = encrypt.GetEncryptionPercentComplete();
+                    }
 
                     backgroundEncrypt.CancelAsync();
                 }
@@ -154,21 +169,40 @@ namespace FAES_GUI.MenuPanels
             else setNoteLabel("Encryption Failed. Try again later.", 1);
         }
 
+        private void encryptionTimer_Tick(object sender, EventArgs e)
+        {
+            if (_progress < 100)
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            else
+                progressBar.Value = 100;
+        }
+
         private void encryptButton_Click(object sender, EventArgs e)
         {
             if (_fileToEncrypt.isFileEncryptable() && !_inProgress && passConfTextbox.Text == passTextbox.Text)
             {
+                progressBar.ProgressColor = Color.Lime;
+                progressBar.Value = progressBar.Minimum;
+                encryptionTimer.Start();
                 backgroundEncrypt.RunWorkerAsync();
                 Locked(true);
             }
             else if (passConfTextbox.Text != passTextbox.Text)
             {
+                encryptionTimer.Stop();
+                progressBar.ProgressColor = Color.Red;
+                progressBar.Value = progressBar.Maximum;
+
                 setNoteLabel("Passwords do not match!", 2);
                 passConfTextbox.Focus();
             }
             else if (_inProgress) setNoteLabel("Encryption already in progress.", 1);
             else
             {
+                encryptionTimer.Stop();
+                progressBar.ProgressColor = Color.Red;
+                progressBar.Value = progressBar.Maximum;
+
                 setNoteLabel("Encryption Failed. Try again later.", 1);
                 encryptButton.Focus();
             }

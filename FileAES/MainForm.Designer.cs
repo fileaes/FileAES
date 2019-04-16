@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.titleBar = new System.Windows.Forms.Panel();
+            this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.sidePanel = new System.Windows.Forms.Panel();
@@ -44,15 +45,16 @@
             this.openFileDialogAutoSelect = new System.Windows.Forms.OpenFileDialog();
             this.decryptPanel = new FAES_GUI.MenuPanels.decryptPanel();
             this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
-            this.titleBarLogo = new System.Windows.Forms.PictureBox();
+            this.minButton = new System.Windows.Forms.Button();
             this.titleBar.SuspendLayout();
-            this.sidePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
+            this.sidePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // titleBar
             // 
             this.titleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.titleBar.Controls.Add(this.minButton);
             this.titleBar.Controls.Add(this.titleBarLogo);
             this.titleBar.Controls.Add(this.titleLabel);
             this.titleBar.Controls.Add(this.quitButton);
@@ -63,6 +65,18 @@
             this.titleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.titleBar_Paint);
             this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
+            // titleBarLogo
+            // 
+            this.titleBarLogo.Image = global::FAES_GUI.Properties.Resources.Icon;
+            this.titleBarLogo.InitialImage = global::FAES_GUI.Properties.Resources.Icon;
+            this.titleBarLogo.Location = new System.Drawing.Point(4, 3);
+            this.titleBarLogo.Name = "titleBarLogo";
+            this.titleBarLogo.Size = new System.Drawing.Size(20, 20);
+            this.titleBarLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.titleBarLogo.TabIndex = 2;
+            this.titleBarLogo.TabStop = false;
+            this.titleBarLogo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
+            // 
             // titleLabel
             // 
             this.titleLabel.BackColor = System.Drawing.Color.Transparent;
@@ -70,7 +84,7 @@
             this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
             this.titleLabel.Location = new System.Drawing.Point(26, 1);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(216, 25);
+            this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
             this.titleLabel.Text = "FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -209,17 +223,24 @@
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 5;
             // 
-            // titleBarLogo
+            // minButton
             // 
-            this.titleBarLogo.Image = global::FAES_GUI.Properties.Resources.Icon;
-            this.titleBarLogo.InitialImage = global::FAES_GUI.Properties.Resources.Icon;
-            this.titleBarLogo.Location = new System.Drawing.Point(4, 3);
-            this.titleBarLogo.Name = "titleBarLogo";
-            this.titleBarLogo.Size = new System.Drawing.Size(20, 20);
-            this.titleBarLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.titleBarLogo.TabIndex = 2;
-            this.titleBarLogo.TabStop = false;
-            this.titleBarLogo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
+            this.minButton.BackColor = System.Drawing.Color.Transparent;
+            this.minButton.FlatAppearance.BorderSize = 0;
+            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minButton.ForeColor = System.Drawing.Color.LightGray;
+            this.minButton.Location = new System.Drawing.Point(514, 1);
+            this.minButton.Name = "minButton";
+            this.minButton.Size = new System.Drawing.Size(23, 23);
+            this.minButton.TabIndex = 3;
+            this.minButton.TabStop = false;
+            this.minButton.Text = "–";
+            this.minButton.UseVisualStyleBackColor = false;
+            this.minButton.Click += new System.EventHandler(this.minButton_Click);
+            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
+            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
+            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
             // 
             // MainForm
             // 
@@ -238,8 +259,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FileAES";
             this.titleBar.ResumeLayout(false);
-            this.sidePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
+            this.sidePanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -261,6 +282,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialogAutoSelect;
         private MenuPanels.encryptPanel encryptPanel;
         private MenuPanels.decryptPanel decryptPanel;
+        private System.Windows.Forms.Button minButton;
     }
 }
 

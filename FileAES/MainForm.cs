@@ -23,6 +23,7 @@ namespace FAES_GUI
             autoDetect.BringToFront();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
 
             autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { encryptMenuButton, decryptMenuButton, settingsMenuButton });
             encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton });
@@ -52,6 +53,11 @@ namespace FAES_GUI
         private void quitButton_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void minButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
@@ -92,6 +98,23 @@ namespace FAES_GUI
         private void quitButton_MouseHover(object sender, EventArgs e)
         {
             slowToolTip.SetToolTip(quitButton, "Close");
+        }
+
+        private void minButton_MouseEnter(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.LightGray;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseLeave(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.Transparent;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseHover(object sender, EventArgs e)
+        {
+            slowToolTip.SetToolTip(minButton, "Minimise");
         }
 
         private void autoDetect_Click(object sender, EventArgs e)
@@ -145,11 +168,13 @@ namespace FAES_GUI
 
         private void encryptMenuButton_Click(object sender, EventArgs e)
         {
+            if (Control.ModifierKeys == Keys.Shift) encryptPanel.ResetFile();
             encryptPanel.BringToFront();
         }
 
         private void decryptMenuButton_Click(object sender, EventArgs e)
         {
+            if (Control.ModifierKeys == Keys.Shift) decryptPanel.ResetFile();
             decryptPanel.BringToFront();
         }
 
@@ -160,7 +185,11 @@ namespace FAES_GUI
 
         private void CopyrightLabel_Click(object sender, EventArgs e)
         {
-            _devForm.Visible = !_devForm.Visible;
+            if (_devForm.WindowState == FormWindowState.Minimized && _devForm.Visible)
+            {
+                _devForm.WindowState = FormWindowState.Normal;
+            }
+            else _devForm.Visible = !_devForm.Visible;
         }
     }
 }

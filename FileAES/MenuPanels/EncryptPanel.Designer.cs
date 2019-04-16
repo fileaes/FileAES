@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.fileInfoPanel = new System.Windows.Forms.Panel();
             this.fileInfoLabel = new System.Windows.Forms.Label();
             this.selectEncryptButton = new System.Windows.Forms.Button();
@@ -43,7 +44,11 @@
             this.openFileToEncrypt = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.compressMode = new System.Windows.Forms.ComboBox();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.encryptionTimer = new System.Windows.Forms.Timer(this.components);
+            this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
             this.fileInfoPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // fileInfoPanel
@@ -114,7 +119,7 @@
             this.passConfLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passConfLabel.ForeColor = System.Drawing.Color.White;
             this.passConfLabel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.passConfLabel.Location = new System.Drawing.Point(3, 138);
+            this.passConfLabel.Location = new System.Drawing.Point(3, 133);
             this.passConfLabel.Name = "passConfLabel";
             this.passConfLabel.Size = new System.Drawing.Size(128, 23);
             this.passConfLabel.TabIndex = 8;
@@ -126,7 +131,7 @@
             this.passConfTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passConfTextbox.Enabled = false;
             this.passConfTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passConfTextbox.Location = new System.Drawing.Point(137, 136);
+            this.passConfTextbox.Location = new System.Drawing.Point(137, 131);
             this.passConfTextbox.Name = "passConfTextbox";
             this.passConfTextbox.PasswordChar = '*';
             this.passConfTextbox.Size = new System.Drawing.Size(266, 27);
@@ -139,7 +144,7 @@
             this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passHintLabel.ForeColor = System.Drawing.Color.White;
             this.passHintLabel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.passHintLabel.Location = new System.Drawing.Point(3, 176);
+            this.passHintLabel.Location = new System.Drawing.Point(3, 171);
             this.passHintLabel.Name = "passHintLabel";
             this.passHintLabel.Size = new System.Drawing.Size(128, 50);
             this.passHintLabel.TabIndex = 10;
@@ -151,7 +156,7 @@
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
             this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passHintTextbox.Location = new System.Drawing.Point(137, 174);
+            this.passHintTextbox.Location = new System.Drawing.Point(137, 169);
             this.passHintTextbox.MaxLength = 64;
             this.passHintTextbox.Multiline = true;
             this.passHintTextbox.Name = "passHintTextbox";
@@ -180,9 +185,9 @@
             // statusInformation
             // 
             this.statusInformation.ForeColor = System.Drawing.Color.White;
-            this.statusInformation.Location = new System.Drawing.Point(3, 274);
+            this.statusInformation.Location = new System.Drawing.Point(3, 260);
             this.statusInformation.Name = "statusInformation";
-            this.statusInformation.Size = new System.Drawing.Size(408, 35);
+            this.statusInformation.Size = new System.Drawing.Size(408, 25);
             this.statusInformation.TabIndex = 14;
             this.statusInformation.Text = "Error: PLACEHOLDER ERROR";
             this.statusInformation.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -203,7 +208,7 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label1.Location = new System.Drawing.Point(7, 241);
+            this.label1.Location = new System.Drawing.Point(7, 231);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(124, 29);
             this.label1.TabIndex = 15;
@@ -215,16 +220,39 @@
             this.compressMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.compressMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.compressMode.FormattingEnabled = true;
-            this.compressMode.Location = new System.Drawing.Point(137, 238);
+            this.compressMode.Location = new System.Drawing.Point(137, 228);
             this.compressMode.Name = "compressMode";
             this.compressMode.Size = new System.Drawing.Size(266, 28);
             this.compressMode.TabIndex = 16;
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // encryptionTimer
+            // 
+            this.encryptionTimer.Tick += new System.EventHandler(this.encryptionTimer_Tick);
+            // 
+            // progressBar
+            // 
+            this.progressBar.CustomText = "";
+            this.progressBar.ForeColor = System.Drawing.Color.ForestGreen;
+            this.progressBar.Location = new System.Drawing.Point(3, 288);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.ProgressColor = System.Drawing.Color.Lime;
+            this.progressBar.Size = new System.Drawing.Size(408, 20);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.TabIndex = 17;
+            this.progressBar.TextColor = System.Drawing.Color.Black;
+            this.progressBar.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.progressBar.VisualMode = FAES_GUI.CustomControls.ProgressBarDisplayMode.Percentage;
             // 
             // encryptPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.compressMode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.statusInformation);
@@ -240,6 +268,7 @@
             this.Name = "encryptPanel";
             this.Size = new System.Drawing.Size(414, 357);
             this.fileInfoPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -262,5 +291,8 @@
         private System.Windows.Forms.OpenFileDialog openFileToEncrypt;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox compressMode;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Timer encryptionTimer;
+        private CustomControls.TextProgressBar progressBar;
     }
 }

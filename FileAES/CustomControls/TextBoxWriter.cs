@@ -49,39 +49,6 @@ namespace FAES_GUI.CustomControls
 
         private void AppendWithColour(string text)
         {
-            /*
-            if (text.Contains("DEBUG]"))
-            {
-                _output.SelectionStart = _output.TextLength;
-                _output.SelectionLength = 0;
-                _output.SelectionColor = Color.Violet;
-                _output.AppendText(text.ToString());
-                _output.SelectionColor = _output.ForeColor;
-            }
-            else if (text.Contains("WARN]"))
-            {
-                _output.SelectionStart = _output.TextLength;
-                _output.SelectionLength = 0;
-                _output.SelectionColor = Color.Yellow;
-                _output.AppendText(text.ToString());
-                _output.SelectionColor = _output.ForeColor;
-            }
-            else if (text.Contains("ERROR]"))
-            {
-                _output.SelectionStart = _output.TextLength;
-                _output.SelectionLength = 0;
-                _output.SelectionColor = Color.Red;
-                _output.AppendText(text.ToString());
-                _output.SelectionColor = _output.ForeColor;
-            }
-            else
-            {
-                _output.SelectionStart = _output.TextLength;
-                _output.SelectionLength = 0;
-                _output.SelectionColor = Color.LightGray;
-                _output.AppendText(text.ToString());
-            }*/
-
             _output.SelectionColor = Color.LightGray;
             _output.AppendText(text.ToString());
             _output.AppendText(Environment.NewLine);

@@ -71,9 +71,9 @@
             this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
             this.titleLabel.Location = new System.Drawing.Point(26, 1);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(216, 25);
+            this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "FileAES ";
+            this.titleLabel.Text = "Decrypt | FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 

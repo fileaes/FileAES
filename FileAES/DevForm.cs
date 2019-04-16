@@ -13,6 +13,8 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
+
             Console.SetOut(new RichTextBoxWriter(consoleTextBox));
         }
 
@@ -23,6 +25,11 @@ namespace FAES_GUI
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
+        }
+
+        private void titleBar_Paint(object sender, PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(e.Graphics, titleBar.ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -55,9 +62,31 @@ namespace FAES_GUI
             slowToolTip.SetToolTip(quitButton, "Close");
         }
 
-        private void QuitButton_Click(object sender, EventArgs e)
+        private void minButton_MouseEnter(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.LightGray;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseLeave(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.Transparent;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseHover(object sender, EventArgs e)
+        {
+            slowToolTip.SetToolTip(minButton, "Minimise");
+        }
+
+        private void quitButton_Click(object sender, EventArgs e)
         {
             Hide();
+        }
+
+        private void minButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
