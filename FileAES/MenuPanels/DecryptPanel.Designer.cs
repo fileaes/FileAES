@@ -163,7 +163,7 @@
             // statusInformation
             // 
             this.statusInformation.ForeColor = System.Drawing.Color.White;
-            this.statusInformation.Location = new System.Drawing.Point(3, 259);
+            this.statusInformation.Location = new System.Drawing.Point(3, 260);
             this.statusInformation.Name = "statusInformation";
             this.statusInformation.Size = new System.Drawing.Size(408, 25);
             this.statusInformation.TabIndex = 13;
@@ -190,7 +190,7 @@
             // 
             this.progressBar.CustomText = "";
             this.progressBar.ForeColor = System.Drawing.Color.ForestGreen;
-            this.progressBar.Location = new System.Drawing.Point(3, 287);
+            this.progressBar.Location = new System.Drawing.Point(3, 288);
             this.progressBar.Name = "progressBar";
             this.progressBar.ProgressColor = System.Drawing.Color.Lime;
             this.progressBar.Size = new System.Drawing.Size(408, 20);

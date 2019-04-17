@@ -35,17 +35,17 @@
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.sidePanel = new System.Windows.Forms.Panel();
-            this.settingsMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
-            this.decryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
-            this.encryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
-            this.autoSelectMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.autoDetect = new System.Windows.Forms.Label();
             this.openFileDialogAutoSelect = new System.Windows.Forms.OpenFileDialog();
+            this.minButton = new System.Windows.Forms.Button();
+            this.settingsMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
+            this.decryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
+            this.encryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
+            this.autoSelectMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.decryptPanel = new FAES_GUI.MenuPanels.decryptPanel();
             this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
-            this.minButton = new System.Windows.Forms.Button();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.sidePanel.SuspendLayout();
@@ -123,6 +123,64 @@
             this.sidePanel.TabIndex = 1;
             this.sidePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.sidePanel_Paint);
             // 
+            // copyrightLabel
+            // 
+            this.copyrightLabel.BackColor = System.Drawing.Color.Transparent;
+            this.copyrightLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.copyrightLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.copyrightLabel.Location = new System.Drawing.Point(3, 318);
+            this.copyrightLabel.Name = "copyrightLabel";
+            this.copyrightLabel.Size = new System.Drawing.Size(143, 37);
+            this.copyrightLabel.TabIndex = 2;
+            this.copyrightLabel.Text = "© - 2019 | mullak99";
+            this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.copyrightLabel.Click += new System.EventHandler(this.CopyrightLabel_Click);
+            // 
+            // slowToolTip
+            // 
+            this.slowToolTip.AutoPopDelay = 5000;
+            this.slowToolTip.InitialDelay = 1000;
+            this.slowToolTip.ReshowDelay = 100;
+            // 
+            // autoDetect
+            // 
+            this.autoDetect.AllowDrop = true;
+            this.autoDetect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.autoDetect.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.autoDetect.ForeColor = System.Drawing.Color.White;
+            this.autoDetect.Location = new System.Drawing.Point(149, 25);
+            this.autoDetect.Name = "autoDetect";
+            this.autoDetect.Size = new System.Drawing.Size(414, 357);
+            this.autoDetect.TabIndex = 4;
+            this.autoDetect.Text = "Select any file to Encrypt/Decrypt";
+            this.autoDetect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.autoDetect.Click += new System.EventHandler(this.autoDetect_Click);
+            this.autoDetect.DragDrop += new System.Windows.Forms.DragEventHandler(this.autoDetect_DragDrop);
+            this.autoDetect.DragEnter += new System.Windows.Forms.DragEventHandler(this.autoDetect_DragEnter);
+            // 
+            // openFileDialogAutoSelect
+            // 
+            this.openFileDialogAutoSelect.FileName = "openFileDialogAutoSelect";
+            // 
+            // minButton
+            // 
+            this.minButton.BackColor = System.Drawing.Color.Transparent;
+            this.minButton.FlatAppearance.BorderSize = 0;
+            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minButton.ForeColor = System.Drawing.Color.LightGray;
+            this.minButton.Location = new System.Drawing.Point(514, 1);
+            this.minButton.Name = "minButton";
+            this.minButton.Size = new System.Drawing.Size(23, 23);
+            this.minButton.TabIndex = 3;
+            this.minButton.TabStop = false;
+            this.minButton.Text = "–";
+            this.minButton.UseVisualStyleBackColor = false;
+            this.minButton.Click += new System.EventHandler(this.minButton_Click);
+            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
+            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
+            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
+            // 
             // settingsMenuButton
             // 
             this.settingsMenuButton.BackColor = System.Drawing.Color.Transparent;
@@ -168,45 +226,6 @@
             this.autoSelectMenuButton.Text = "Auto-Select Drag/Drop";
             this.autoSelectMenuButton.Click += new System.EventHandler(this.autoSelectMenuButton_Click);
             // 
-            // copyrightLabel
-            // 
-            this.copyrightLabel.BackColor = System.Drawing.Color.Transparent;
-            this.copyrightLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.copyrightLabel.ForeColor = System.Drawing.SystemColors.Control;
-            this.copyrightLabel.Location = new System.Drawing.Point(3, 318);
-            this.copyrightLabel.Name = "copyrightLabel";
-            this.copyrightLabel.Size = new System.Drawing.Size(143, 37);
-            this.copyrightLabel.TabIndex = 2;
-            this.copyrightLabel.Text = "© - 2018 | mullak99";
-            this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.copyrightLabel.Click += new System.EventHandler(this.CopyrightLabel_Click);
-            // 
-            // slowToolTip
-            // 
-            this.slowToolTip.AutoPopDelay = 5000;
-            this.slowToolTip.InitialDelay = 1000;
-            this.slowToolTip.ReshowDelay = 100;
-            // 
-            // autoDetect
-            // 
-            this.autoDetect.AllowDrop = true;
-            this.autoDetect.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.autoDetect.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.autoDetect.ForeColor = System.Drawing.Color.White;
-            this.autoDetect.Location = new System.Drawing.Point(149, 25);
-            this.autoDetect.Name = "autoDetect";
-            this.autoDetect.Size = new System.Drawing.Size(414, 357);
-            this.autoDetect.TabIndex = 4;
-            this.autoDetect.Text = "Select any file to Encrypt/Decrypt";
-            this.autoDetect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.autoDetect.Click += new System.EventHandler(this.autoDetect_Click);
-            this.autoDetect.DragDrop += new System.Windows.Forms.DragEventHandler(this.autoDetect_DragDrop);
-            this.autoDetect.DragEnter += new System.Windows.Forms.DragEventHandler(this.autoDetect_DragEnter);
-            // 
-            // openFileDialogAutoSelect
-            // 
-            this.openFileDialogAutoSelect.FileName = "openFileDialogAutoSelect";
-            // 
             // decryptPanel
             // 
             this.decryptPanel.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -222,25 +241,6 @@
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 5;
-            // 
-            // minButton
-            // 
-            this.minButton.BackColor = System.Drawing.Color.Transparent;
-            this.minButton.FlatAppearance.BorderSize = 0;
-            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minButton.ForeColor = System.Drawing.Color.LightGray;
-            this.minButton.Location = new System.Drawing.Point(514, 1);
-            this.minButton.Name = "minButton";
-            this.minButton.Size = new System.Drawing.Size(23, 23);
-            this.minButton.TabIndex = 3;
-            this.minButton.TabStop = false;
-            this.minButton.Text = "–";
-            this.minButton.UseVisualStyleBackColor = false;
-            this.minButton.Click += new System.EventHandler(this.minButton_Click);
-            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
-            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
-            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
             // 
             // MainForm
             // 

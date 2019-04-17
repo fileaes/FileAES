@@ -54,6 +54,7 @@ namespace FAES_GUI.CustomControls
             _output.AppendText(Environment.NewLine);
 
             CheckKeyword("[DEBUG]", Color.Violet);
+            CheckKeyword("[INFO]", Color.LightBlue);
             CheckKeyword("[WARN]", Color.Yellow);
             CheckKeyword("[ERROR]", Color.Red);
 

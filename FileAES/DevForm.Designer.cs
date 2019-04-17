@@ -32,13 +32,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DevForm));
             this.quitButton = new System.Windows.Forms.Button();
             this.titleBar = new System.Windows.Forms.Panel();
+            this.minButton = new System.Windows.Forms.Button();
             this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.consoleTextBox = new System.Windows.Forms.RichTextBox();
             this.clearConsole = new System.Windows.Forms.Button();
             this.exportLog = new System.Windows.Forms.Button();
-            this.minButton = new System.Windows.Forms.Button();
+            this.consoleInputTextBox = new System.Windows.Forms.RichTextBox();
+            this.sendInputButton = new System.Windows.Forms.Button();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.SuspendLayout();
@@ -76,6 +78,25 @@
             this.titleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.titleBar_Paint);
             this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
+            // minButton
+            // 
+            this.minButton.BackColor = System.Drawing.Color.Transparent;
+            this.minButton.FlatAppearance.BorderSize = 0;
+            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minButton.ForeColor = System.Drawing.Color.LightGray;
+            this.minButton.Location = new System.Drawing.Point(366, 1);
+            this.minButton.Name = "minButton";
+            this.minButton.Size = new System.Drawing.Size(23, 23);
+            this.minButton.TabIndex = 4;
+            this.minButton.TabStop = false;
+            this.minButton.Text = "–";
+            this.minButton.UseVisualStyleBackColor = false;
+            this.minButton.Click += new System.EventHandler(this.minButton_Click);
+            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
+            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
+            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
+            // 
             // titleBarLogo
             // 
             this.titleBarLogo.Image = global::FAES_GUI.Properties.Resources.Icon;
@@ -112,12 +133,13 @@
             this.consoleTextBox.BackColor = System.Drawing.Color.Black;
             this.consoleTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.consoleTextBox.ForeColor = System.Drawing.Color.LightGray;
-            this.consoleTextBox.Location = new System.Drawing.Point(12, 31);
+            this.consoleTextBox.Location = new System.Drawing.Point(12, 29);
             this.consoleTextBox.Name = "consoleTextBox";
             this.consoleTextBox.ReadOnly = true;
             this.consoleTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.consoleTextBox.Size = new System.Drawing.Size(392, 241);
+            this.consoleTextBox.Size = new System.Drawing.Size(392, 236);
             this.consoleTextBox.TabIndex = 3;
+            this.consoleTextBox.TabStop = false;
             this.consoleTextBox.Text = "";
             // 
             // clearConsole
@@ -129,7 +151,7 @@
             this.clearConsole.Location = new System.Drawing.Point(12, 293);
             this.clearConsole.Name = "clearConsole";
             this.clearConsole.Size = new System.Drawing.Size(121, 32);
-            this.clearConsole.TabIndex = 4;
+            this.clearConsole.TabIndex = 3;
             this.clearConsole.Text = "Clear";
             this.clearConsole.UseVisualStyleBackColor = false;
             this.clearConsole.Click += new System.EventHandler(this.ClearConsole_Click);
@@ -143,29 +165,40 @@
             this.exportLog.Location = new System.Drawing.Point(283, 293);
             this.exportLog.Name = "exportLog";
             this.exportLog.Size = new System.Drawing.Size(121, 32);
-            this.exportLog.TabIndex = 5;
+            this.exportLog.TabIndex = 4;
             this.exportLog.Text = "Export Log";
             this.exportLog.UseVisualStyleBackColor = false;
             this.exportLog.Click += new System.EventHandler(this.ExportLog_Click);
             // 
-            // minButton
+            // consoleInputTextBox
             // 
-            this.minButton.BackColor = System.Drawing.Color.Transparent;
-            this.minButton.FlatAppearance.BorderSize = 0;
-            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minButton.ForeColor = System.Drawing.Color.LightGray;
-            this.minButton.Location = new System.Drawing.Point(366, 1);
-            this.minButton.Name = "minButton";
-            this.minButton.Size = new System.Drawing.Size(23, 23);
-            this.minButton.TabIndex = 4;
-            this.minButton.TabStop = false;
-            this.minButton.Text = "–";
-            this.minButton.UseVisualStyleBackColor = false;
-            this.minButton.Click += new System.EventHandler(this.minButton_Click);
-            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
-            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
-            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
+            this.consoleInputTextBox.BackColor = System.Drawing.Color.Black;
+            this.consoleInputTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.consoleInputTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.consoleInputTextBox.ForeColor = System.Drawing.Color.LightGray;
+            this.consoleInputTextBox.Location = new System.Drawing.Point(12, 267);
+            this.consoleInputTextBox.Multiline = false;
+            this.consoleInputTextBox.Name = "consoleInputTextBox";
+            this.consoleInputTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.consoleInputTextBox.Size = new System.Drawing.Size(332, 20);
+            this.consoleInputTextBox.TabIndex = 1;
+            this.consoleInputTextBox.Text = "";
+            this.consoleInputTextBox.TextChanged += new System.EventHandler(this.ConsoleInputTextBox_TextChanged);
+            this.consoleInputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ConsoleInputTextBox_KeyDown);
+            // 
+            // sendInputButton
+            // 
+            this.sendInputButton.BackColor = System.Drawing.Color.Teal;
+            this.sendInputButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.sendInputButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sendInputButton.ForeColor = System.Drawing.Color.White;
+            this.sendInputButton.Location = new System.Drawing.Point(346, 267);
+            this.sendInputButton.Name = "sendInputButton";
+            this.sendInputButton.Size = new System.Drawing.Size(58, 20);
+            this.sendInputButton.TabIndex = 2;
+            this.sendInputButton.Text = "Send";
+            this.sendInputButton.UseVisualStyleBackColor = false;
+            this.sendInputButton.Click += new System.EventHandler(this.SendInputButton_Click);
             // 
             // DevForm
             // 
@@ -173,6 +206,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(416, 337);
+            this.Controls.Add(this.sendInputButton);
+            this.Controls.Add(this.consoleInputTextBox);
             this.Controls.Add(this.exportLog);
             this.Controls.Add(this.clearConsole);
             this.Controls.Add(this.consoleTextBox);
@@ -198,5 +233,7 @@
         private System.Windows.Forms.Button clearConsole;
         private System.Windows.Forms.Button exportLog;
         private System.Windows.Forms.Button minButton;
+        private System.Windows.Forms.RichTextBox consoleInputTextBox;
+        private System.Windows.Forms.Button sendInputButton;
     }
 }
