@@ -1,6 +1,8 @@
 ﻿using FAES;
+using FAES_GUI.CustomControls;
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI
@@ -18,6 +20,10 @@ namespace FAES_GUI
 
             titleLabel.Text += Program.GetVersion();
             this.Text = titleLabel.Text;
+
+            // Hacky solution to the RichTextBox Console.SetOut causing issues if the DevForm is not opened at least once before encryption/decryption (otherwise it hangs)
+            _devForm.Show();
+            _devForm.Hide();
 
             autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { encryptMenuButton, decryptMenuButton, settingsMenuButton });
             encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton });
@@ -183,7 +189,11 @@ namespace FAES_GUI
             {
                 _devForm.WindowState = FormWindowState.Normal;
             }
-            else _devForm.Visible = !_devForm.Visible;
+            else
+            {
+                _devForm.Visible = !_devForm.Visible;
+                if (_devForm.Visible) _devForm.WindowState = FormWindowState.Normal;
+            }
         }
     }
 }

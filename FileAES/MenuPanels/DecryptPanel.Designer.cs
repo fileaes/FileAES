@@ -39,7 +39,6 @@
             this.decryptButton = new System.Windows.Forms.Button();
             this.encryptedFileMetaData = new System.Windows.Forms.Label();
             this.statusInformation = new System.Windows.Forms.Label();
-            this.backgroundDecrypt = new System.ComponentModel.BackgroundWorker();
             this.openFileToDecrypt = new System.Windows.Forms.OpenFileDialog();
             this.decryptionTimer = new System.Windows.Forms.Timer(this.components);
             this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
@@ -170,13 +169,6 @@
             this.statusInformation.Text = "Error: PLACEHOLDER ERROR";
             this.statusInformation.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
-            // backgroundDecrypt
-            // 
-            this.backgroundDecrypt.WorkerReportsProgress = true;
-            this.backgroundDecrypt.WorkerSupportsCancellation = true;
-            this.backgroundDecrypt.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundDecrypt_DoWork);
-            this.backgroundDecrypt.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundDecrypt_Complete);
-            // 
             // openFileToDecrypt
             // 
             this.openFileToDecrypt.Filter = "FileAES Files|*.faes;*.mcrypt";
@@ -235,7 +227,6 @@
         private System.Windows.Forms.Button decryptButton;
         private System.Windows.Forms.Label encryptedFileMetaData;
         private System.Windows.Forms.Label statusInformation;
-        private System.ComponentModel.BackgroundWorker backgroundDecrypt;
         private System.Windows.Forms.OpenFileDialog openFileToDecrypt;
         private System.Windows.Forms.Timer decryptionTimer;
         private CustomControls.TextProgressBar progressBar;

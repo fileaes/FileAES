@@ -36,6 +36,11 @@ namespace FAES_GUI.MenuPanels
                 throw new Exception("Input file cannot be encrypted!");
         }
 
+        public bool GetInProgress()
+        {
+            return _inProgress;
+        }
+
         public void setCloseAfterOperationSuccessful(bool close)
         {
             _closeAfterOp = close;
@@ -64,6 +69,8 @@ namespace FAES_GUI.MenuPanels
             passConfTextbox.Text = "";
             passHintTextbox.Text = "";
             fileInfoLabel.Text = "No File Selected!";
+            progressBar.CustomText = "";
+            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.Percentage;
         }
 
         public void LockFileSelect(bool lockFile)
@@ -118,14 +125,14 @@ namespace FAES_GUI.MenuPanels
 
         private void doEncrypt()
         {
-            try
+            setNoteLabel("Encrypting... Please wait.", 0);
+
+            _inProgress = true;
+            _encryptSuccessful = false;
+
+            Thread mainEncryptThread = new Thread(() =>
             {
-                setNoteLabel("Encrypting... Please wait.", 0);
-
-                _inProgress = true;
-                _encryptSuccessful = false;
-
-                while (!backgroundEncrypt.CancellationPending)
+                try
                 {
                     FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, passTextbox.Text, passHintTextbox.Text);
                     encrypt.SetCompressionMode(FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressMode.SelectedIndex]);
@@ -141,40 +148,44 @@ namespace FAES_GUI.MenuPanels
                         _progress = encrypt.GetEncryptionPercentComplete();
                     }
 
-                    backgroundEncrypt.CancelAsync();
+                    {
+                        _inProgress = false;
+                        Locked(false);
+
+                        if (_encryptSuccessful)
+                        {
+                            setNoteLabel("Encryption Complete", 0);
+                            progressBar.CustomText = "Done";
+                            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                            if (_closeAfterOp) Application.Exit();
+                            else ResetFile();
+                        }
+                        else setNoteLabel("Encryption Failed. Try again later.", 1);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
-            }
-        }
-
-        private void backgroundEncrypt_DoWork(object sender, DoWorkEventArgs e)
-        {
-            doEncrypt();
-        }
-
-        private void backgroundEncrypt_Complete(object sender, RunWorkerCompletedEventArgs e)
-        {
-            _inProgress = false;
-            Locked(false);
-
-            if (_encryptSuccessful)
-            {
-                setNoteLabel("Encryption Complete", 0);
-                if (_closeAfterOp) Application.Exit();
-                else ResetFile();
-            }
-            else setNoteLabel("Encryption Failed. Try again later.", 1);
+                catch (Exception e)
+                {
+                    setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
+                }
+            });
+            mainEncryptThread.Start();
         }
 
         private void encryptionTimer_Tick(object sender, EventArgs e)
         {
             if (_progress < 100)
+            {
+                if (_progress > 0) progressBar.CustomText = "Encrypting";
+                else progressBar.CustomText = "Compressing";
+                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                 progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
             else
+            {
+                progressBar.CustomText = "Finishing";
+                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                 progressBar.Value = 100;
+            }
         }
 
         private void encryptButton_Click(object sender, EventArgs e)
@@ -184,7 +195,7 @@ namespace FAES_GUI.MenuPanels
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;
                 encryptionTimer.Start();
-                backgroundEncrypt.RunWorkerAsync();
+                doEncrypt();
                 Locked(true);
             }
             else if (passConfTextbox.Text != passTextbox.Text)

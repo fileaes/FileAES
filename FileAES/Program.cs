@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190417-1";
+        private const string betaAppendTag = "DEV190417-2";
 
         private static bool _verbose = false;
         private static bool _debugMenu = false;
@@ -18,11 +19,15 @@ namespace FAES_GUI
         private static bool _headless = false;
         private static bool _getFaesVersion = false;
         private static bool _getVersion = false;
+        private static bool _showProgress = false;
+        private static bool _overwriteDuplicates = false;
+        private static bool _deleteOriginalFile = true;
         private static string _directory = null;
         private static string _password;
         private static string _passwordHint = null;
         private static string _compressionMethod = null;
         private static int _compressionLevel = 7;
+        private static ushort _progressSleep = 5000;
         private static List<string> _strippedArgs = new List<string>();
 
         public static FAES_File faesFile;
@@ -39,9 +44,7 @@ namespace FAES_GUI
                 if (Directory.Exists(args[i])) _directory = args[i];
                 else if (File.Exists(args[i])) _directory = args[i];
 
-                if (args[i][0] == '-') strippedArg = args[i].Replace("-", string.Empty);
-                else if (args[i][0] == '/') strippedArg = args[i].Replace("/", string.Empty);
-                else if (args[i][0] == '\\') strippedArg = args[i].Replace("\\", string.Empty);
+                strippedArg = strippedArg.TrimStart('-', '/', '\\');
 
                 if (strippedArg == "verbose" || strippedArg == "v") _verbose = true;
                 else if (strippedArg == "password" || strippedArg == "p" && !string.IsNullOrEmpty(args[i + 1])) _password = args[i + 1];
@@ -49,23 +52,21 @@ namespace FAES_GUI
                 else if (strippedArg == "purgetemp" || strippedArg == "deletetemp") _purgeTemp = true;
                 else if (strippedArg == "debug" || strippedArg == "debugmode" || strippedArg == "developer" || strippedArg == "devmode" || strippedArg == "dev") _debugMenu = true;
                 else if (strippedArg == "headless" || strippedArg == "cli" || strippedArg == "commandline") _headless = true;
+                else if (strippedArg == "showprogress" || strippedArg == "progress" || strippedArg == "prog")
+                {
+                    if (!string.IsNullOrEmpty(args[i + 1]) && UInt16.TryParse(args[i + 1], out _progressSleep)) { }
+                    _showProgress = true;
+                }
                 else if (strippedArg == "faesversion" || strippedArg == "faes" || strippedArg == "faesver") _getFaesVersion = true;
                 else if (strippedArg == "faesguiversion" || strippedArg == "faesguiver" || strippedArg == "faesgui" || strippedArg == "guiver" || strippedArg == "ver")
                 {
                     _getVersion = true;
                     _getFaesVersion = true;
                 }
-
                 else if (String.IsNullOrEmpty(_compressionMethod) && (strippedArg == "compression" || strippedArg == "compressionmethod" || strippedArg == "c") && !string.IsNullOrEmpty(args[i + 1])) _compressionMethod = args[i + 1].ToUpper();
-                else if ((strippedArg == "level" || strippedArg == "compressionlevel" || strippedArg == "l") && !string.IsNullOrEmpty(args[i + 1]))
-                {
-                    try
-                    {
-                        _compressionLevel = Convert.ToInt32(args[i + 1]);
-                    }
-                    catch
-                    { }
-                }
+                else if ((strippedArg == "level" || strippedArg == "compressionlevel" || strippedArg == "l") && !string.IsNullOrEmpty(args[i + 1])) Int32.TryParse(args[i + 1], out _compressionLevel);
+                else if (strippedArg == "overwrite" || strippedArg == "overwriteduplicates" || strippedArg == "o") _overwriteDuplicates = true;
+                else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
 
                 _strippedArgs.Add(strippedArg);
             }
@@ -102,7 +103,7 @@ namespace FAES_GUI
                     {
                         if (faesFile.isFileEncryptable())
                         {
-                            FileAES_Encrypt encrypt = new FileAES_Encrypt(faesFile, _password, _passwordHint);
+                            FileAES_Encrypt encrypt = new FileAES_Encrypt(faesFile, _password, _passwordHint, Optimise.Balanced, null, _deleteOriginalFile, _overwriteDuplicates);
 
                             if (!String.IsNullOrEmpty(_compressionMethod))
                             {
@@ -136,41 +137,108 @@ namespace FAES_GUI
                                 }
                             }
 
-                            if (encrypt.encryptFile())
+                            Thread progressThread = new Thread(() =>
                             {
-                                Console.WriteLine("Encryption on {0} succeeded!", faesFile.getFaesType().ToLower());
-                            }
-                            else
+                                while (_showProgress)
+                                {
+                                    ushort percentComplete = Convert.ToUInt16(encrypt.GetEncryptionPercentComplete());
+                                    if (_verbose) Console.WriteLine("[INFO] Progress: {0}%", percentComplete);
+                                    else Console.WriteLine("Progress: {0}%", percentComplete);
+                                    Thread.Sleep(_progressSleep);
+                                }
+                            });
+
+                            Thread eThread = new Thread(() =>
                             {
-                                Console.WriteLine("Encryption on {0} failed!", faesFile.getFaesType().ToLower());
-                            }
+                                try
+                                {
+                                    if (encrypt.encryptFile())
+                                    {
+                                        if (_showProgress)
+                                        {
+                                            if (_verbose) Console.WriteLine("[INFO] Progress: 100%");
+                                            else Console.WriteLine("Progress: 100%");
+                                        }
+
+                                        Console.WriteLine("Encryption on {0} succeeded!", faesFile.getFaesType().ToLower());
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Encryption on {0} failed!", faesFile.getFaesType().ToLower());
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    progressThread.Abort();
+                                    HandleException(e);
+                                }
+                            });
+
+                            if (_showProgress) progressThread.Start();
+                            eThread.Start();
+
+                            while (eThread.ThreadState == ThreadState.Running)
+                            { }
+
+                            progressThread.Abort();
                         }
                         else
                         {
-                            FileAES_Decrypt decrypt = new FileAES_Decrypt(faesFile, _password);
+                            FileAES_Decrypt decrypt = new FileAES_Decrypt(faesFile, _password, _deleteOriginalFile, _overwriteDuplicates);
 
-                            if (decrypt.decryptFile())
+                            Thread progressThread = new Thread(() =>
                             {
-                                Console.WriteLine("Decryption on {0} succeeded!", faesFile.getFaesType().ToLower());
-                            }
-                            else
+                                while (_showProgress)
+                                {
+                                    ushort percentComplete = Convert.ToUInt16(decrypt.GetDecryptionPercentComplete());
+
+                                    if (_verbose) Console.WriteLine("[INFO] Progress: {0}%", percentComplete);
+                                    else Console.WriteLine("Progress: {0}%", percentComplete);
+                                    Thread.Sleep(_progressSleep);
+                                }
+                            });
+
+                            Thread dThread = new Thread(() =>
                             {
-                                Console.WriteLine("Decryption on {0} failed!", faesFile.getFaesType().ToLower());
-                                Console.WriteLine("Ensure that you entered the correct password!");
-                                Console.WriteLine("Password Hint: {0}", faesFile.getPasswordHint());
-                            }
+                                try
+                                {
+                                    if (decrypt.decryptFile())
+                                    {
+                                        if (_showProgress)
+                                        {
+                                            if (_verbose) Console.WriteLine("[INFO] Progress: 100%");
+                                            else Console.WriteLine("Progress: 100%");
+                                        }
+
+                                        Console.WriteLine("Decryption on {0} succeeded!", faesFile.getFaesType().ToLower());
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Decryption on {0} failed!", faesFile.getFaesType().ToLower());
+                                        Console.WriteLine("Ensure that you entered the correct password!");
+                                        Console.WriteLine("Password Hint: {0}", faesFile.getPasswordHint());
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    progressThread.Abort();
+                                    HandleException(e);
+                                }
+                            });
+
+                            if (_showProgress) progressThread.Start();
+                            dThread.Start();
+
+                            while (dThread.ThreadState == ThreadState.Running)
+                            { }
+
+                            progressThread.Abort();
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    if (!_verbose)
-                        Console.WriteLine(FileAES_Utilities.FAES_ExceptionHandling(e));
-                    else
-                    {
-                        Console.WriteLine("Verbose Mode: Showing Full Exception...");
-                        Console.WriteLine(e.ToString());
-                    }
+                    HandleException(e);
                 }
             }
             else
@@ -189,6 +257,19 @@ namespace FAES_GUI
                 }
                 else  
                     Application.Run(new MainForm());
+            }
+        }
+
+        internal static void HandleException(Exception e)
+        {
+            if (!_verbose)
+                Console.WriteLine(FileAES_Utilities.FAES_ExceptionHandling(e));
+            else
+            {
+                Console.WriteLine("[ERROR] Verbose Mode Enabled: Showing Full Exception...\n");
+                Console.WriteLine(e.ToString());
+                Console.WriteLine("\n\nConsole held open. Press any key to exit.");
+                Console.ReadKey();
             }
         }
 

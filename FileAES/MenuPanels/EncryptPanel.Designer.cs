@@ -40,15 +40,12 @@
             this.passHintTextbox = new System.Windows.Forms.TextBox();
             this.encryptButton = new System.Windows.Forms.Button();
             this.statusInformation = new System.Windows.Forms.Label();
-            this.backgroundEncrypt = new System.ComponentModel.BackgroundWorker();
             this.openFileToEncrypt = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.compressMode = new System.Windows.Forms.ComboBox();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.encryptionTimer = new System.Windows.Forms.Timer(this.components);
             this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
             this.fileInfoPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // fileInfoPanel
@@ -192,13 +189,6 @@
             this.statusInformation.Text = "Error: PLACEHOLDER ERROR";
             this.statusInformation.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
-            // backgroundEncrypt
-            // 
-            this.backgroundEncrypt.WorkerReportsProgress = true;
-            this.backgroundEncrypt.WorkerSupportsCancellation = true;
-            this.backgroundEncrypt.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundEncrypt_DoWork);
-            this.backgroundEncrypt.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundEncrypt_Complete);
-            // 
             // openFileToEncrypt
             // 
             this.openFileToEncrypt.Title = "Select a file to encrypt";
@@ -224,10 +214,6 @@
             this.compressMode.Name = "compressMode";
             this.compressMode.Size = new System.Drawing.Size(266, 28);
             this.compressMode.TabIndex = 16;
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
             // 
             // encryptionTimer
             // 
@@ -268,7 +254,6 @@
             this.Name = "encryptPanel";
             this.Size = new System.Drawing.Size(414, 357);
             this.fileInfoPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,11 +272,9 @@
         private System.Windows.Forms.TextBox passHintTextbox;
         private System.Windows.Forms.Button encryptButton;
         private System.Windows.Forms.Label statusInformation;
-        private System.ComponentModel.BackgroundWorker backgroundEncrypt;
         private System.Windows.Forms.OpenFileDialog openFileToEncrypt;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox compressMode;
-        private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Timer encryptionTimer;
         private CustomControls.TextProgressBar progressBar;
     }

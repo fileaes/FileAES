@@ -215,7 +215,9 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DevForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FileAES: Developer Menu";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.titleBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
             this.ResumeLayout(false);
@@ -229,11 +231,11 @@
         private System.Windows.Forms.PictureBox titleBarLogo;
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.ToolTip slowToolTip;
-        private System.Windows.Forms.RichTextBox consoleTextBox;
         private System.Windows.Forms.Button clearConsole;
         private System.Windows.Forms.Button exportLog;
         private System.Windows.Forms.Button minButton;
         private System.Windows.Forms.RichTextBox consoleInputTextBox;
         private System.Windows.Forms.Button sendInputButton;
+        private System.Windows.Forms.RichTextBox consoleTextBox;
     }
 }

@@ -31,6 +31,11 @@ namespace FAES_GUI.MenuPanels
                 throw new Exception("Input file cannot be decrypted!");
         }
 
+        public bool GetInProgress()
+        {
+            return _inProgress;
+        }
+
         public void setCloseAfterOperationSuccessful(bool close)
         {
             _closeAfterOp = close;
@@ -53,6 +58,8 @@ namespace FAES_GUI.MenuPanels
             Locked(true);
             _fileToDecrypt = null;
             fileInfoLabel.Text = "No File Selected!";
+            progressBar.CustomText = "";
+            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.Percentage;
             passTextbox.Text = "";
             passHintTextbox.Text = "";
             encryptedFileMetaData.Text = "";
@@ -116,17 +123,17 @@ namespace FAES_GUI.MenuPanels
 
         private void doDecrypt()
         {
-            try
+            setNoteLabel("Decrypting... Please wait.", 0);
+
+            _inProgress = true;
+            _decryptSuccessful = false;
+
+            Thread mainDecryptThread = new Thread(() =>
             {
-                setNoteLabel("Decrypting... Please wait.", 0);
-
-                _inProgress = true;
-                _decryptSuccessful = false;
-
-                while (!backgroundDecrypt.CancellationPending)
+                try
                 {
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, passTextbox.Text);
-                    
+
                     Thread dThread = new Thread(() =>
                     {
                         _decryptSuccessful = decrypt.decryptFile();
@@ -138,48 +145,54 @@ namespace FAES_GUI.MenuPanels
                         _progress = decrypt.GetDecryptionPercentComplete();
                     }
 
-                    backgroundDecrypt.CancelAsync();
+                    {
+                        _inProgress = false;
+                        Locked(false);
+
+                        if (_decryptSuccessful)
+                        {
+                            setNoteLabel("Decryption Complete", 0);
+                            progressBar.CustomText = "Done";
+                            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                            if (_closeAfterOp) Application.Exit();
+                            else ResetFile();
+                        }
+                        else
+                        {
+                            decryptionTimer.Stop();
+                            progressBar.ProgressColor = Color.Red;
+                            progressBar.Value = progressBar.Maximum;
+
+                            setNoteLabel("Password Incorrect!", 3);
+                            progressBar.CustomText = "Password Incorrect!";
+                            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                            passTextbox.Focus();
+                        }
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
-            }
-        }
-
-        private void backgroundDecrypt_DoWork(object sender, DoWorkEventArgs e)
-        {
-            doDecrypt();
-        }
-
-        private void backgroundDecrypt_Complete(object sender, RunWorkerCompletedEventArgs e)
-        {
-            _inProgress = false;
-            Locked(false);
-
-            if (_decryptSuccessful)
-            {
-                setNoteLabel("Decryption Complete", 0);
-                if (_closeAfterOp) Application.Exit();
-                else ResetFile();
-            }
-            else
-            {
-                decryptionTimer.Stop();
-                progressBar.ProgressColor = Color.Red;
-                progressBar.Value = progressBar.Maximum;
-
-                setNoteLabel("Password Incorrect!", 3);
-                passTextbox.Focus();
-            }
+                catch (Exception e)
+                {
+                    setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
+                }
+            });
+            mainDecryptThread.Start();
         }
 
         private void decryptionTimer_Tick(object sender, EventArgs e)
         {
             if (_progress < 100)
+            {
+                if (_progress < 99) progressBar.CustomText = "Decrypting";
+                else progressBar.CustomText = "Uncompressing";
+                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                 progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
             else
+            {
+                progressBar.CustomText = "Finishing";
+                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                 progressBar.Value = 100;
+            }
         }
 
         private void decryptButton_Click(object sender, EventArgs e)
@@ -189,8 +202,7 @@ namespace FAES_GUI.MenuPanels
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;
                 decryptionTimer.Start();
-
-                backgroundDecrypt.RunWorkerAsync();
+                doDecrypt();
                 Locked(true);
             }
             else if (_inProgress) setNoteLabel("Decryption already in progress.", 1);
