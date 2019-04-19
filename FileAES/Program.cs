@@ -11,7 +11,7 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190417-2";
+        private const string betaAppendTag = "DEV190419-1";
 
         private static bool _verbose = false;
         private static bool _debugMenu = false;

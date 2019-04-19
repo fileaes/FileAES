@@ -51,7 +51,7 @@ namespace FAES_GUI.MenuPanels
             InitializeComponent();
 
             ResetFile();
-            populateCompressionModes();
+            PopulateCompressionModes();
             statusInformation.Text = "";
 
             this.Focus();
@@ -92,12 +92,23 @@ namespace FAES_GUI.MenuPanels
             return false;
         }
 
-        private void setNoteLabel(string note, int severity)
+        private void SetNote(string note, int severity)
         {
-            if (severity == 1) statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Warning: " + note; }));
-            else if (severity == 2) statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Important: " + note; }));
-            else if (severity == 3) statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Error: " + note; }));
-            else statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Note: " + note; }));
+            switch (severity)
+            {
+                case 1:
+                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Warning: " + note; }));
+                    break;
+                case 2:
+                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Important: " + note; }));
+                    break;
+                case 3:
+                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Error: " + note; }));
+                    break;
+                default:
+                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Note: " + note; }));
+                    break;
+            }
         }
 
         private void Locked(bool lockChanges)
@@ -109,7 +120,7 @@ namespace FAES_GUI.MenuPanels
             compressMode.Enabled = !lockChanges;
         }
 
-        private void populateCompressionModes()
+        private void PopulateCompressionModes()
         {
             List<string> optimiseModes = FAES.Packaging.CompressionUtils.GetAllOptimiseModesAsStrings();
 
@@ -123,9 +134,9 @@ namespace FAES_GUI.MenuPanels
             compressMode.SelectedIndex = 0;
         }
 
-        private void doEncrypt()
+        private void Encrypt()
         {
-            setNoteLabel("Encrypting... Please wait.", 0);
+            SetNote("Encrypting... Please wait.", 0);
 
             _inProgress = true;
             _encryptSuccessful = false;
@@ -154,18 +165,18 @@ namespace FAES_GUI.MenuPanels
 
                         if (_encryptSuccessful)
                         {
-                            setNoteLabel("Encryption Complete", 0);
+                            SetNote("Encryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                             if (_closeAfterOp) Application.Exit();
                             else ResetFile();
                         }
-                        else setNoteLabel("Encryption Failed. Try again later.", 1);
+                        else SetNote("Encryption Failed. Try again later.", 1);
                     }
                 }
                 catch (Exception e)
                 {
-                    setNoteLabel(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
+                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
                 }
             });
             mainEncryptThread.Start();
@@ -195,7 +206,7 @@ namespace FAES_GUI.MenuPanels
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;
                 encryptionTimer.Start();
-                doEncrypt();
+                Encrypt();
                 Locked(true);
             }
             else if (passConfTextbox.Text != passTextbox.Text)
@@ -204,17 +215,17 @@ namespace FAES_GUI.MenuPanels
                 progressBar.ProgressColor = Color.Red;
                 progressBar.Value = progressBar.Maximum;
 
-                setNoteLabel("Passwords do not match!", 2);
+                SetNote("Passwords do not match!", 2);
                 passConfTextbox.Focus();
             }
-            else if (_inProgress) setNoteLabel("Encryption already in progress.", 1);
+            else if (_inProgress) SetNote("Encryption already in progress.", 1);
             else
             {
                 encryptionTimer.Stop();
                 progressBar.ProgressColor = Color.Red;
                 progressBar.Value = progressBar.Maximum;
 
-                setNoteLabel("Encryption Failed. Try again later.", 1);
+                SetNote("Encryption Failed. Try again later.", 1);
                 encryptButton.Focus();
             }
         }
@@ -223,11 +234,11 @@ namespace FAES_GUI.MenuPanels
         {
             string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            if (FileList.Length > 1) setNoteLabel("You may only encrypt a single file or folder at a time.", 2);
+            if (FileList.Length > 1) SetNote("You may only encrypt a single file or folder at a time.", 2);
             else
             {
                 FAES_File tFaesFile = new FAES_File(FileList[0]);
-                if (!setFileToEncrypt(tFaesFile)) setNoteLabel("Chosen file cannot be encrypted!", 2);
+                if (!setFileToEncrypt(tFaesFile)) SetNote("Chosen file cannot be encrypted!", 2);
             }
         }
 
