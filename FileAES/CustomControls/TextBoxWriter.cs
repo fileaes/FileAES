@@ -31,6 +31,7 @@ namespace FAES_GUI.CustomControls
     public class RichTextBoxWriter : TextWriter
     {
         RichTextBox _output = null;
+        string _logPath = "FileAES-" + DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString() + ".log";
 
         public RichTextBoxWriter(RichTextBox output)
         {

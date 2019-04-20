@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileAES", "FileAES\FileAES.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FAES", "..\FAES\FAES\FAES.csproj", "{46365F22-AFCB-42ED-964C-BDB282449FA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSettingsManager", "..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\SimpleSettingsManager.csproj", "{B4E5C358-6C6C-48F5-8D50-B6179070AFBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{46365F22-AFCB-42ED-964C-BDB282449FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46365F22-AFCB-42ED-964C-BDB282449FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46365F22-AFCB-42ED-964C-BDB282449FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4E5C358-6C6C-48F5-8D50-B6179070AFBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E5C358-6C6C-48F5-8D50-B6179070AFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E5C358-6C6C-48F5-8D50-B6179070AFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E5C358-6C6C-48F5-8D50-B6179070AFBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

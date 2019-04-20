@@ -180,7 +180,8 @@ namespace FAES_GUI
 
         private void settingsMenuButton_Click(object sender, EventArgs e)
         {
-            autoSelectMenuButton_Click(sender, e);
+            settingsPanel.BringToFront();
+            settingsPanel.LoadSettings();
         }
 
         private void CopyrightLabel_Click(object sender, EventArgs e)

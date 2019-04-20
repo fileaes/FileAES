@@ -111,6 +111,10 @@ namespace FAES_GUI
         {
             string logPath = "FileAES-" + DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString() + ".log";
 
+            _overrideLogPath = Program.settingsManager.GetLogPath();
+
+            _overrideLogPath = _overrideLogPath.Replace('/', '\\').TrimStart('/', '\\');
+
             if (!string.IsNullOrWhiteSpace(_overrideLogPath))
             {
                 if (_overrideLogPath.Contains("{default}") || _overrideLogPath.Contains("{d}"))
@@ -182,18 +186,26 @@ namespace FAES_GUI
             {
                 ExportLog_Click(null, null);
             }
-            else if (input[0] == "setlogpath" || input[0] == "logpath")
+            else if (input[0] == "setlogpath")
             {
                 if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
                 {
                     _overrideLogPath = input[1].Replace("\"", string.Empty).Replace("\'", string.Empty);
+                    Program.settingsManager.SetLogPath(_overrideLogPath);
+
                     AppendWithColour(consoleTextBox, String.Format("[INFO] Log path changed to: {0}", _overrideLogPath));
                 }
                 else AppendWithColour(consoleTextBox, String.Format("[WARN] Too few arguments provided for the '{0}' command!", textbox.Text));
             }
+            else if (input[0] == "getlogpath" || input[0] == "logpath")
+            {
+                _overrideLogPath = Program.settingsManager.GetLogPath();
+
+                AppendWithColour(consoleTextBox, String.Format("[INFO] Log path set to: {0}", _overrideLogPath));
+            }
             else if (input[0] == "resetlogpath")
             {
-                _overrideLogPath = "";
+                Program.settingsManager.ResetLogPath();
                 AppendWithColour(consoleTextBox, String.Format("[INFO] Log path reset!"));
             }
             else if (input[0] == "clear" || input[0] == "cls")

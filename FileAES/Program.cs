@@ -11,7 +11,7 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190419-1";
+        private const string betaAppendTag = "DEV190420-1";
 
         private static bool _verbose = false;
         private static bool _debugMenu = false;
@@ -31,6 +31,8 @@ namespace FAES_GUI
         private static List<string> _strippedArgs = new List<string>();
 
         public static FAES_File faesFile;
+        public static ProgramManager programManager;
+        public static SettingsManager settingsManager;
 
         [STAThread]
         static void Main(string[] args)
@@ -216,7 +218,7 @@ namespace FAES_GUI
                                     {
                                         Console.WriteLine("Decryption on {0} failed!", faesFile.getFaesType().ToLower());
                                         Console.WriteLine("Ensure that you entered the correct password!");
-                                        Console.WriteLine("Password Hint: {0}", faesFile.getPasswordHint());
+                                        Console.WriteLine("Password Hint: {0}", faesFile.GetPasswordHint());
                                     }
                                 }
                                 catch (Exception e)
@@ -243,6 +245,10 @@ namespace FAES_GUI
             }
             else
             {
+
+                programManager = new ProgramManager();
+                settingsManager = new SettingsManager();
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 

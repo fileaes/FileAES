@@ -36,9 +36,6 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SSM">
-      <HintPath>..\..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\bin\Release\SSM.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
     </Reference>
@@ -54,6 +51,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\SettingsControls\SettingTextInput.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingTextInput.Designer.cs">
+      <DependentUpon>SettingTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingIncrementBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingIncrementBox.Designer.cs">
+      <DependentUpon>SettingIncrementBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingToggle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingToggle.Designer.cs">
+      <DependentUpon>SettingToggle.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\SubMenuButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -109,6 +124,15 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingTextInput.resx">
+      <DependentUpon>SettingTextInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingIncrementBox.resx">
+      <DependentUpon>SettingIncrementBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingToggle.resx">
+      <DependentUpon>SettingToggle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\SubMenuButton.resx">
       <DependentUpon>SubMenuButton.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,6 +189,10 @@
     <None Include="Resources\Icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\SimpleSettingsManager.csproj">
+      <Project>{b4e5c358-6c6c-48f5-8d50-b6179070afbb}</Project>
+      <Name>SimpleSettingsManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\FAES\FAES\FAES.csproj">
       <Project>{46365f22-afcb-42ed-964c-bdb282449fa3}</Project>
       <Name>FAES</Name>

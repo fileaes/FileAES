@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.titleBar = new System.Windows.Forms.Panel();
+            this.minButton = new System.Windows.Forms.Button();
             this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
@@ -39,13 +40,13 @@
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.autoDetect = new System.Windows.Forms.Label();
             this.openFileDialogAutoSelect = new System.Windows.Forms.OpenFileDialog();
-            this.minButton = new System.Windows.Forms.Button();
             this.settingsMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.decryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.encryptMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.autoSelectMenuButton = new FAES_GUI.CustomControls.SubMenuButton();
             this.decryptPanel = new FAES_GUI.MenuPanels.decryptPanel();
             this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
+            this.settingsPanel = new FAES_GUI.MenuPanels.settingsPanel();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.sidePanel.SuspendLayout();
@@ -64,6 +65,25 @@
             this.titleBar.TabIndex = 0;
             this.titleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.titleBar_Paint);
             this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
+            // 
+            // minButton
+            // 
+            this.minButton.BackColor = System.Drawing.Color.Transparent;
+            this.minButton.FlatAppearance.BorderSize = 0;
+            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.minButton.ForeColor = System.Drawing.Color.LightGray;
+            this.minButton.Location = new System.Drawing.Point(514, 1);
+            this.minButton.Name = "minButton";
+            this.minButton.Size = new System.Drawing.Size(23, 23);
+            this.minButton.TabIndex = 3;
+            this.minButton.TabStop = false;
+            this.minButton.Text = "–";
+            this.minButton.UseVisualStyleBackColor = false;
+            this.minButton.Click += new System.EventHandler(this.minButton_Click);
+            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
+            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
+            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
             // 
             // titleBarLogo
             // 
@@ -162,29 +182,9 @@
             // 
             this.openFileDialogAutoSelect.FileName = "openFileDialogAutoSelect";
             // 
-            // minButton
-            // 
-            this.minButton.BackColor = System.Drawing.Color.Transparent;
-            this.minButton.FlatAppearance.BorderSize = 0;
-            this.minButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.minButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minButton.ForeColor = System.Drawing.Color.LightGray;
-            this.minButton.Location = new System.Drawing.Point(514, 1);
-            this.minButton.Name = "minButton";
-            this.minButton.Size = new System.Drawing.Size(23, 23);
-            this.minButton.TabIndex = 3;
-            this.minButton.TabStop = false;
-            this.minButton.Text = "–";
-            this.minButton.UseVisualStyleBackColor = false;
-            this.minButton.Click += new System.EventHandler(this.minButton_Click);
-            this.minButton.MouseEnter += new System.EventHandler(this.minButton_MouseEnter);
-            this.minButton.MouseLeave += new System.EventHandler(this.minButton_MouseLeave);
-            this.minButton.MouseHover += new System.EventHandler(this.minButton_MouseHover);
-            // 
             // settingsMenuButton
             // 
             this.settingsMenuButton.BackColor = System.Drawing.Color.Transparent;
-            this.settingsMenuButton.Enabled = false;
             this.settingsMenuButton.Location = new System.Drawing.Point(1, 231);
             this.settingsMenuButton.Name = "settingsMenuButton";
             this.settingsMenuButton.Selected = false;
@@ -242,6 +242,14 @@
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 5;
             // 
+            // settingsPanel
+            // 
+            this.settingsPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.settingsPanel.Location = new System.Drawing.Point(149, 25);
+            this.settingsPanel.Name = "settingsPanel";
+            this.settingsPanel.Size = new System.Drawing.Size(414, 357);
+            this.settingsPanel.TabIndex = 7;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -253,6 +261,7 @@
             this.Controls.Add(this.autoDetect);
             this.Controls.Add(this.decryptPanel);
             this.Controls.Add(this.encryptPanel);
+            this.Controls.Add(this.settingsPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
@@ -283,6 +292,7 @@
         private MenuPanels.encryptPanel encryptPanel;
         private MenuPanels.decryptPanel decryptPanel;
         private System.Windows.Forms.Button minButton;
+        private MenuPanels.settingsPanel settingsPanel;
     }
 }
 
