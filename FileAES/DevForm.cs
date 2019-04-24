@@ -111,7 +111,7 @@ namespace FAES_GUI
         {
             string logPath = "FileAES-" + DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString() + ".log";
 
-            _overrideLogPath = Program.settingsManager.GetLogPath();
+            _overrideLogPath = Program.programManager.GetLogPath();
 
             _overrideLogPath = _overrideLogPath.Replace('/', '\\').TrimStart('/', '\\');
 
@@ -129,11 +129,11 @@ namespace FAES_GUI
             try
             {
                 File.WriteAllText(logPath, consoleTextBox.Text);
-                AppendWithColour(consoleTextBox, String.Format("[INFO] Log Exported! ({0})", logPath));
+                Logging.Log(String.Format("Log Exported! ({0})", logPath));
             }
             catch
             {
-                AppendWithColour(consoleTextBox, String.Format("[WARN] Log file could not be written to '{0}'!", logPath));
+                Logging.Log(String.Format("Log file could not be written to '{0}'!", logPath), Severity.WARN);
             }
         }
 
@@ -156,31 +156,35 @@ namespace FAES_GUI
         {
             string[] input = textbox.Text.ToLower().Split(' ');
 
-            uint csBufferTmp = 0;
             if (input[0] == "cryptostreambuffer" || input[0] == "csbuffer" || input[0] == "buffer")
             {
+                uint csBufferTmp = 0;
                 if (input.Length > 1 && !string.IsNullOrEmpty(input[1]) && uint.TryParse(input[1], out csBufferTmp))
                 {
-                    AppendWithColour(consoleTextBox, String.Format("[INFO] CryptoStream Buffer set to {0} bytes", csBufferTmp));
+                    Logging.Log(String.Format("CryptoStream Buffer set to {0} bytes", csBufferTmp));
                     FileAES_Utilities.SetCryptoStreamBuffer(csBufferTmp);
                 }
-                else AppendWithColour(consoleTextBox, String.Format("[WARN] Too few arguments provided for the '{0}' command!", textbox.Text));
+                else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "getcryptostreambuffer" || input[0] == "getcsbuffer" || input[0] == "getbuffer")
             {
-                AppendWithColour(consoleTextBox, String.Format("[INFO] CryptoStream Buffer is {0} bytes", FileAES_Utilities.GetCryptoStreamBuffer()));
+                Logging.Log(String.Format("CryptoStream Buffer is {0} bytes", FileAES_Utilities.GetCryptoStreamBuffer()));
             }
             else if (input[0] == "getfaestempfolder" || input[0] == "gettemp" || input[0] == "gettempfolder")
             {
-                AppendWithColour(consoleTextBox, String.Format("[INFO] FAES Temp Folder is: {0}", FileAES_Utilities.GetFaesTempFolder()));
+                Logging.Log(String.Format("FAES Temp Folder is: {0}", FileAES_Utilities.GetFaesTempFolder()));
             }
             else if (input[0] == "getfaesversion" || input[0] == "getfaesver" || input[0] == "faesver")
             {
-                AppendWithColour(consoleTextBox, String.Format("[INFO] FAES Version: {0}", FileAES_Utilities.GetVersion()));
+                Logging.Log(String.Format("FAES Version: {0}", FileAES_Utilities.GetVersion()));
             }
-            else if (input[0] == "getfaesuiversion" || input[0] == "getfaesuiver" || input[0] == "ver")
+            else if (input[0] == "getfaesuiversion" || input[0] == "getfaesguiversion" || input[0] == "getfaesuiver" || input[0] == "getfaesguiver" || input[0] == "ver" || input[0] == "guiver" || input[0] == "faesguiver")
             {
-                AppendWithColour(consoleTextBox, String.Format("[INFO] FAES_GUI Version: {0}", Program.GetVersion()));
+                Logging.Log(String.Format("FAES_GUI Version: {0}", Program.GetVersion()));
+            }
+            else if (input[0] == "getssmversion" || input[0] == "getssmver" || input[0] == "ssmver")
+            {
+                Logging.Log(String.Format("SSM Version: {0}", SimpleSettingsManager.SSM.GetVersion()));
             }
             else if (input[0] == "exportlog" || input[0] == "export" || input[0] == "log")
             {
@@ -191,69 +195,62 @@ namespace FAES_GUI
                 if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
                 {
                     _overrideLogPath = input[1].Replace("\"", string.Empty).Replace("\'", string.Empty);
-                    Program.settingsManager.SetLogPath(_overrideLogPath);
+                    Program.programManager.SetLogPath(_overrideLogPath);
 
-                    AppendWithColour(consoleTextBox, String.Format("[INFO] Log path changed to: {0}", _overrideLogPath));
+                    Logging.Log(String.Format("Log path changed to: {0}", _overrideLogPath));
                 }
-                else AppendWithColour(consoleTextBox, String.Format("[WARN] Too few arguments provided for the '{0}' command!", textbox.Text));
+                else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "getlogpath" || input[0] == "logpath")
             {
-                _overrideLogPath = Program.settingsManager.GetLogPath();
-
-                AppendWithColour(consoleTextBox, String.Format("[INFO] Log path set to: {0}", _overrideLogPath));
+                _overrideLogPath = Program.programManager.GetLogPath();
+                Logging.Log(String.Format("Log path set to: {0}", _overrideLogPath));
             }
             else if (input[0] == "resetlogpath")
             {
-                Program.settingsManager.ResetLogPath();
-                AppendWithColour(consoleTextBox, String.Format("[INFO] Log path reset!"));
+                Program.programManager.ResetLogPath();
+                Logging.Log("Log path reset!");
+            }
+            else if (input[0] == "setdevmode" || input[0] == "setdevelopermode" || input[0] == "setdebugmode" || input[0] == "setdebug" || input[0] == "setdev" || input[0] == "setdeveloper")
+            {
+                if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
+                {
+                    bool dev = false;
+                    if (input[1] == "1" || input[1] == "true" || input[1] == "t" || input[1] == "y" || input[1] == "yes") dev = true;
+
+                    Program.programManager.SetDevMode(dev);
+
+                    Logging.Log(String.Format("Developer Mode {0}! (Setting will be applied next launch)", dev ? "Enabled" : "Disabled"));
+                }
+                else TooFewArgsError(textbox.Text);
+            }
+            else if (input[0] == "getdevmode" || input[0] == "getdevelopermode" || input[0] == "getdebugmode" || input[0] == "getdebug" || input[0] == "getdev" || input[0] == "getdeveloper" || input[0] == "developer" || input[0] == "dev" || input[0] == "debug")
+            {
+                Logging.Log(String.Format("Developer Mode is {0}!", Program.programManager.GetDevMode() ? "Enabled" : "Disabled"));
+            }
+            else if (input[0] == "resetdevmode" || input[0] == "resetdevelopermode" || input[0] == "resetdebugmode" || input[0] == "resetdebug" || input[0] == "resetdev" || input[0] == "resetdeveloper")
+            {
+                Program.programManager.ResetDevMode();
+                Logging.Log("Developer Mode reset!");
             }
             else if (input[0] == "clear" || input[0] == "cls")
             {
                 clearConsole.PerformClick();
             }
-            else AppendWithColour(consoleTextBox, String.Format("[WARN] Unknown command: {0}", textbox.Text));
+            else Logging.Log(String.Format("Unknown command: {0}", textbox.Text), Severity.WARN);
 
             textbox.Clear();
         }
 
+        private void TooFewArgsError(string command)
+        {
+            Logging.Log(String.Format("Too few arguments provided for the '{0}' command!", command), Severity.WARN);
+        }
+
         private void ConsoleInputTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(consoleInputTextBox.Text))
-                sendInputButton.Enabled = false;
-            else
-                sendInputButton.Enabled = true;
-        }
-
-        private void AppendWithColour(RichTextBox textbox, string text)
-        {
-            textbox.SelectionColor = Color.LightGray;
-            textbox.AppendText(text.ToString());
-            textbox.AppendText(Environment.NewLine);
-
-            CheckKeyword(textbox, "[DEBUG]", Color.Violet);
-            CheckKeyword(textbox, "[INFO]", Color.LightBlue);
-            CheckKeyword(textbox, "[WARN]", Color.Yellow);
-            CheckKeyword(textbox, "[ERROR]", Color.Red);
-
-            textbox.SelectionStart = textbox.TextLength;
-            textbox.SelectionLength = 0;
-            textbox.ScrollToCaret();
-        }
-
-        private void CheckKeyword(RichTextBox textbox, string find, Color color)
-        {
-            if (textbox.Text.Contains(find))
-            {
-                var matchString = Regex.Escape(find);
-                foreach (Match match in Regex.Matches(textbox.Text, matchString))
-                {
-                    textbox.Select(match.Index, find.Length);
-                    textbox.SelectionColor = color;
-                    textbox.Select(textbox.TextLength, 0);
-                    textbox.SelectionColor = Color.LightGray;
-                };
-            }
+            if (string.IsNullOrWhiteSpace(consoleInputTextBox.Text)) sendInputButton.Enabled = false;
+            else sendInputButton.Enabled = true;
         }
     }
 }

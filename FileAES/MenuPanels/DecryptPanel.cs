@@ -1,6 +1,5 @@
 ﻿using FAES;
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,15 +18,13 @@ namespace FAES_GUI.MenuPanels
         public decryptPanel()
         {
             Initialise();
-
-            FileAES_Utilities.SetVerboseLogging(true);
         }
 
         public decryptPanel(FAES_File faesFile)
         {
             Initialise();
 
-            if (!setFileToDecrypt(faesFile))
+            if (!SetFileToDecrypt(faesFile))
                 throw new Exception("Input file cannot be decrypted!");
         }
 
@@ -43,10 +40,12 @@ namespace FAES_GUI.MenuPanels
 
         private void Initialise()
         {
+            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initialising..."), Severity.DEBUG);
             InitializeComponent();
 
             ResetFile();
             statusInformation.Text = "";
+            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initilisation Complete."), Severity.DEBUG);
         }
 
         public void ResetFile()
@@ -63,6 +62,8 @@ namespace FAES_GUI.MenuPanels
             passTextbox.Text = "";
             passHintTextbox.Text = "";
             encryptedFileMetaData.Text = "";
+
+            Logging.Log(String.Format("FAES_GUI(ResetFile): Cleared selected file."), Severity.DEBUG);
         }
 
         public void LockFileSelect(bool lockFile)
@@ -70,7 +71,7 @@ namespace FAES_GUI.MenuPanels
             selectDecryptButton.Enabled = !lockFile;
         }
 
-        public bool setFileToDecrypt(FAES_File faesFile)
+        public bool SetFileToDecrypt(FAES_File faesFile)
         {
             if (faesFile.isFileDecryptable())
             {
@@ -80,6 +81,8 @@ namespace FAES_GUI.MenuPanels
                 Locked(false);
                 decryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
+                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToDecrypt.getPath()), Severity.DEBUG);
+
                 return true;
             }
             return false;
@@ -87,6 +90,8 @@ namespace FAES_GUI.MenuPanels
 
         private void SetNote(string note, int severity)
         {
+            Logging.Log(String.Format("FAES_GUI(SetNote({1})): '{0}'", note, severity), Severity.DEBUG);
+
             switch (severity)
             {
                 case 1:
@@ -136,6 +141,8 @@ namespace FAES_GUI.MenuPanels
 
         private void Decrypt()
         {
+            Logging.Log(String.Format("FAES_GUI(Decrypt): Started!'"), Severity.DEBUG);
+
             SetNote("Decrypting... Please wait.", 0);
 
             _inProgress = true;
@@ -164,6 +171,7 @@ namespace FAES_GUI.MenuPanels
 
                         if (_decryptSuccessful)
                         {
+                            Logging.Log(String.Format("FAES_GUI(Decrypt): Finished successfully!'"), Severity.DEBUG);
                             SetNote("Decryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
@@ -176,6 +184,7 @@ namespace FAES_GUI.MenuPanels
                             progressBar.ProgressColor = Color.Red;
                             progressBar.Value = progressBar.Maximum;
 
+                            Logging.Log(String.Format("FAES_GUI(Decrypt): Finished unsuccessfully!'"), Severity.DEBUG);
                             SetNote("Password Incorrect!", 3);
                             progressBar.CustomText = "Password Incorrect!";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
@@ -238,7 +247,7 @@ namespace FAES_GUI.MenuPanels
             else
             {
                 FAES_File tFaesFile = new FAES_File(FileList[0]);
-                if (!setFileToDecrypt(tFaesFile)) SetNote("Chosen file cannot be decrypted!", 2);
+                if (!SetFileToDecrypt(tFaesFile)) SetNote("Chosen file cannot be decrypted!", 2);
             }
         }
 
@@ -262,7 +271,7 @@ namespace FAES_GUI.MenuPanels
             else if (openFileToDecrypt.ShowDialog() == DialogResult.OK)
             {
                 FAES_File tFaesFile = new FAES_File(openFileToDecrypt.FileName);
-                setFileToDecrypt(tFaesFile);
+                SetFileToDecrypt(tFaesFile);
             }
         }
 

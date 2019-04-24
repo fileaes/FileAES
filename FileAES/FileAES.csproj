@@ -97,6 +97,7 @@
     <Compile Include="DecryptForm.Designer.cs">
       <DependentUpon>DecryptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logging.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

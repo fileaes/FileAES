@@ -11,10 +11,9 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190420-1";
+        private const string betaAppendTag = "DEV190424-1";
 
         private static bool _verbose = false;
-        private static bool _debugMenu = false;
         private static bool _purgeTemp = false;
         private static bool _headless = false;
         private static bool _getFaesVersion = false;
@@ -32,7 +31,6 @@ namespace FAES_GUI
 
         public static FAES_File faesFile;
         public static ProgramManager programManager;
-        public static SettingsManager settingsManager;
 
         [STAThread]
         static void Main(string[] args)
@@ -48,11 +46,10 @@ namespace FAES_GUI
 
                 strippedArg = strippedArg.TrimStart('-', '/', '\\');
 
-                if (strippedArg == "verbose" || strippedArg == "v") _verbose = true;
+                if (strippedArg == "verbose" || strippedArg == "v" || strippedArg == "developer" || strippedArg == "dev" || strippedArg == "debug") _verbose = true;
                 else if (strippedArg == "password" || strippedArg == "p" && !string.IsNullOrEmpty(args[i + 1])) _password = args[i + 1];
                 else if (String.IsNullOrEmpty(_passwordHint) && (strippedArg == "hint" || strippedArg == "passwordhint" || strippedArg == "h") && !string.IsNullOrEmpty(args[i + 1])) _passwordHint = args[i + 1];
                 else if (strippedArg == "purgetemp" || strippedArg == "deletetemp") _purgeTemp = true;
-                else if (strippedArg == "debug" || strippedArg == "debugmode" || strippedArg == "developer" || strippedArg == "devmode" || strippedArg == "dev") _debugMenu = true;
                 else if (strippedArg == "headless" || strippedArg == "cli" || strippedArg == "commandline") _headless = true;
                 else if (strippedArg == "showprogress" || strippedArg == "progress" || strippedArg == "prog")
                 {
@@ -72,6 +69,7 @@ namespace FAES_GUI
 
                 _strippedArgs.Add(strippedArg);
             }
+            FileAES_Utilities.SetVerboseLogging(_verbose);
 
             if (_purgeTemp)
             {
@@ -245,9 +243,8 @@ namespace FAES_GUI
             }
             else
             {
-
                 programManager = new ProgramManager();
-                settingsManager = new SettingsManager();
+                if (!FileAES_Utilities.GetVerboseLogging()) FileAES_Utilities.SetVerboseLogging(programManager.GetDevMode());
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -306,11 +303,6 @@ namespace FAES_GUI
                 return "v" + ver[0] + "." + ver[1] + "." + ver[2];
             else
                 return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + betaAppendTag + ")";
-        }
-
-        public static bool GetDebugMode()
-        {
-            return _debugMenu;
         }
     }
 }

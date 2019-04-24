@@ -9,7 +9,7 @@ namespace FAES_GUI.MenuPanels
     {
         private int _cryptoBuffer;
         private string _logPath;
-        private bool _logToFile;
+        private bool _logToFile, _devMode;
 
         public settingsPanel()
         {
@@ -20,7 +20,7 @@ namespace FAES_GUI.MenuPanels
             settingsScrollPanel.VerticalScroll.Visible = false;
             settingsScrollPanel.AutoScroll = true;
 
-            versionLabel.Text = String.Format("FileAES Version: {0}\n\rFAES Version: {1}", Program.GetVersion(), FAES.FileAES_Utilities.GetVersion());
+            versionLabel.Text = String.Format("FileAES Version: {0}\n\rFAES Version: {1}\n\rSSM Version: {2}", Program.GetVersion(), FAES.FileAES_Utilities.GetVersion(), SimpleSettingsManager.SSM.GetVersion());
 
             LoadSettings();
             RevertSettings();
@@ -29,31 +29,35 @@ namespace FAES_GUI.MenuPanels
         public void RevertSettings()
         {
             cryptoStreamSetting.Value = _cryptoBuffer;
-            settingLogPathRoot.Value = _logPath;
-            settingLogToFile.Toggled = _logToFile;
+            logPathRootSetting.Value = _logPath;
+            logToFileSetting.Toggled = _logToFile;
+            developerSetting.Toggled = _devMode;
         }
 
         public void LoadSettings()
         {
-            _cryptoBuffer = Convert.ToInt32(Program.settingsManager.GetCryptoStreamBufferSize());
-            _logPath = Program.settingsManager.GetLogPath().Replace("{default}", "").Replace("{d}", "");
-            _logToFile = Program.settingsManager.GetLogToFile();
+            _cryptoBuffer = Convert.ToInt32(Program.programManager.GetCryptoStreamBufferSize());
+            _logPath = Program.programManager.GetLogPath().Replace("{default}", "").Replace("{d}", "");
+            _logToFile = Program.programManager.GetLogToFile();
+            _devMode = Program.programManager.GetDevMode();
 
             cryptoStreamSetting.Value = _cryptoBuffer;
-            settingLogPathRoot.Value = _logPath;
-            settingLogToFile.Toggled = _logToFile;
+            logPathRootSetting.Value = _logPath;
+            logToFileSetting.Toggled = _logToFile;
+            developerSetting.Toggled = _devMode;
         }
 
         private void SaveSettings()
         {
-            Program.settingsManager.SetCryptoStreamBufferSize(Convert.ToUInt32(cryptoStreamSetting.Value));
-            Program.settingsManager.SetLogToFile(settingLogToFile.Toggled);
-            Program.settingsManager.SetLogPath(Path.Combine((settingLogPathRoot.Value).Replace("{default}", "").Replace("{d}", ""), "{default}"));
+            Program.programManager.SetDevMode(developerSetting.Toggled);
+            Program.programManager.SetCryptoStreamBufferSize(Convert.ToUInt32(cryptoStreamSetting.Value));
+            Program.programManager.SetLogToFile(logToFileSetting.Toggled);
+            Program.programManager.SetLogPath(Path.Combine((logPathRootSetting.Value).Replace("{default}", "").Replace("{d}", ""), "{default}"));
         }
 
         private void Runtime_Tick(object sender, EventArgs e)
         {
-            if (cryptoStreamSetting.Value != _cryptoBuffer || settingLogPathRoot.Value != _logPath || settingLogToFile.Toggled != _logToFile)
+            if (cryptoStreamSetting.Value != _cryptoBuffer || logPathRootSetting.Value != _logPath || logToFileSetting.Toggled != _logToFile || developerSetting.Toggled != _devMode)
             {
                 saveSettings.Enabled = true;
                 cancelButton.Enabled = true;
@@ -79,9 +83,7 @@ namespace FAES_GUI.MenuPanels
 
         private void resetButton_Click(object sender, EventArgs e)
         {
-            Program.settingsManager.ResetCryptoStreamBufferSize();
-            Program.settingsManager.ResetLogToFile();
-            Program.settingsManager.ResetLogPath();
+            Program.programManager.ResetAllSettings();
 
             LoadSettings();
             RevertSettings();

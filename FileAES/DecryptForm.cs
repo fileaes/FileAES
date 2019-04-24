@@ -16,7 +16,7 @@ namespace FAES_GUI
 
             decryptPanel.LockFileSelect(true);
             decryptPanel.setCloseAfterOperationSuccessful(true);
-            decryptPanel.setFileToDecrypt(faesFile);
+            decryptPanel.SetFileToDecrypt(faesFile);
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)

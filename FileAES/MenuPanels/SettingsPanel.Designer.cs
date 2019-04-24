@@ -36,10 +36,11 @@
             this.resetButton = new System.Windows.Forms.Button();
             this.buttonPanel = new System.Windows.Forms.Panel();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.settingLogPathRoot = new FAES_GUI.CustomControls.SettingTextInput();
-            this.settingLogToFile = new FAES_GUI.CustomControls.SettingToggle();
-            this.cryptoStreamSetting = new FAES_GUI.CustomControls.SettingIncrementBox();
             this.runtime = new System.Windows.Forms.Timer(this.components);
+            this.developerSetting = new FAES_GUI.CustomControls.SettingToggle();
+            this.logPathRootSetting = new FAES_GUI.CustomControls.SettingTextInput();
+            this.logToFileSetting = new FAES_GUI.CustomControls.SettingToggle();
+            this.cryptoStreamSetting = new FAES_GUI.CustomControls.SettingIncrementBox();
             this.settingsScrollPanel.SuspendLayout();
             this.buttonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -47,8 +48,9 @@
             // settingsScrollPanel
             // 
             this.settingsScrollPanel.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.settingsScrollPanel.Controls.Add(this.settingLogPathRoot);
-            this.settingsScrollPanel.Controls.Add(this.settingLogToFile);
+            this.settingsScrollPanel.Controls.Add(this.developerSetting);
+            this.settingsScrollPanel.Controls.Add(this.logPathRootSetting);
+            this.settingsScrollPanel.Controls.Add(this.logToFileSetting);
             this.settingsScrollPanel.Controls.Add(this.cryptoStreamSetting);
             this.settingsScrollPanel.Controls.Add(this.versionLabel);
             this.settingsScrollPanel.Location = new System.Drawing.Point(0, 0);
@@ -63,9 +65,9 @@
             this.versionLabel.ForeColor = System.Drawing.Color.White;
             this.versionLabel.Location = new System.Drawing.Point(1, 3);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(395, 48);
+            this.versionLabel.Size = new System.Drawing.Size(395, 61);
             this.versionLabel.TabIndex = 0;
-            this.versionLabel.Text = "FileAES Version:\r\nFAES Version:";
+            this.versionLabel.Text = "FileAES Version:\r\nFAES Version:\r\nSSM Version:";
             // 
             // saveSettings
             // 
@@ -120,30 +122,48 @@
             this.cancelButton.UseVisualStyleBackColor = false;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // settingLogPathRoot
+            // runtime
             // 
-            this.settingLogPathRoot.BackColor = System.Drawing.Color.Transparent;
-            this.settingLogPathRoot.DescriptionText = resources.GetString("settingLogPathRoot.DescriptionText");
-            this.settingLogPathRoot.ForeColor = System.Drawing.Color.White;
-            this.settingLogPathRoot.HeaderText = "Log File Path";
-            this.settingLogPathRoot.Location = new System.Drawing.Point(-1, 252);
-            this.settingLogPathRoot.Name = "settingLogPathRoot";
-            this.settingLogPathRoot.Size = new System.Drawing.Size(400, 100);
-            this.settingLogPathRoot.TabIndex = 3;
-            this.settingLogPathRoot.Value = "";
+            this.runtime.Enabled = true;
+            this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
-            // settingLogToFile
+            // developerSetting
             // 
-            this.settingLogToFile.BackColor = System.Drawing.Color.Transparent;
-            this.settingLogToFile.DescriptionText = "Toggles whether the program will automatically log directly to a file.";
-            this.settingLogToFile.Enabled = false;
-            this.settingLogToFile.ForeColor = System.Drawing.Color.White;
-            this.settingLogToFile.HeaderText = "Log to file";
-            this.settingLogToFile.Location = new System.Drawing.Point(-1, 153);
-            this.settingLogToFile.Name = "settingLogToFile";
-            this.settingLogToFile.Size = new System.Drawing.Size(400, 100);
-            this.settingLogToFile.TabIndex = 2;
-            this.settingLogToFile.Toggled = true;
+            this.developerSetting.BackColor = System.Drawing.Color.Transparent;
+            this.developerSetting.DescriptionText = resources.GetString("developerSetting.DescriptionText");
+            this.developerSetting.ForeColor = System.Drawing.Color.White;
+            this.developerSetting.HeaderText = "Developer Mode";
+            this.developerSetting.Location = new System.Drawing.Point(0, 66);
+            this.developerSetting.Name = "developerSetting";
+            this.developerSetting.Size = new System.Drawing.Size(400, 100);
+            this.developerSetting.TabIndex = 4;
+            this.developerSetting.Toggled = true;
+            // 
+            // logPathRootSetting
+            // 
+            this.logPathRootSetting.BackColor = System.Drawing.Color.Transparent;
+            this.logPathRootSetting.DescriptionText = resources.GetString("logPathRootSetting.DescriptionText");
+            this.logPathRootSetting.ForeColor = System.Drawing.Color.White;
+            this.logPathRootSetting.HeaderText = "Log File Path";
+            this.logPathRootSetting.Location = new System.Drawing.Point(-1, 363);
+            this.logPathRootSetting.Name = "logPathRootSetting";
+            this.logPathRootSetting.Size = new System.Drawing.Size(400, 100);
+            this.logPathRootSetting.TabIndex = 3;
+            this.logPathRootSetting.Value = "";
+            // 
+            // logToFileSetting
+            // 
+            this.logToFileSetting.BackColor = System.Drawing.Color.Transparent;
+            this.logToFileSetting.DescriptionText = "Toggles whether the program will automatically log directly to a file. This setti" +
+    "ng works best with Developer Mode toggled.";
+            this.logToFileSetting.Enabled = false;
+            this.logToFileSetting.ForeColor = System.Drawing.Color.White;
+            this.logToFileSetting.HeaderText = "Log to file";
+            this.logToFileSetting.Location = new System.Drawing.Point(-1, 264);
+            this.logToFileSetting.Name = "logToFileSetting";
+            this.logToFileSetting.Size = new System.Drawing.Size(400, 100);
+            this.logToFileSetting.TabIndex = 2;
+            this.logToFileSetting.Toggled = true;
             // 
             // cryptoStreamSetting
             // 
@@ -152,18 +172,13 @@
     "iles using FAES. (Size is in bytes)";
             this.cryptoStreamSetting.ForeColor = System.Drawing.Color.White;
             this.cryptoStreamSetting.HeaderText = "CryptoStream Buffer";
-            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 54);
+            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 165);
             this.cryptoStreamSetting.MinValue = 1024;
             this.cryptoStreamSetting.Name = "cryptoStreamSetting";
             this.cryptoStreamSetting.Size = new System.Drawing.Size(400, 100);
             this.cryptoStreamSetting.TabIndex = 1;
             this.cryptoStreamSetting.Tag = "";
             this.cryptoStreamSetting.Value = 1048576;
-            // 
-            // runtime
-            // 
-            this.runtime.Enabled = true;
-            this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
             // settingsPanel
             // 
@@ -187,10 +202,11 @@
         private System.Windows.Forms.Button resetButton;
         private System.Windows.Forms.Label versionLabel;
         private CustomControls.SettingIncrementBox cryptoStreamSetting;
-        private CustomControls.SettingToggle settingLogToFile;
-        private CustomControls.SettingTextInput settingLogPathRoot;
+        private CustomControls.SettingToggle logToFileSetting;
+        private CustomControls.SettingTextInput logPathRootSetting;
         private System.Windows.Forms.Panel buttonPanel;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Timer runtime;
+        private CustomControls.SettingToggle developerSetting;
     }
 }

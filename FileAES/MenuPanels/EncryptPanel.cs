@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAES;
 using System.Threading;
@@ -24,15 +19,13 @@ namespace FAES_GUI.MenuPanels
         public encryptPanel()
         {
             Initialise();
-
-            FileAES_Utilities.SetVerboseLogging(true);
         }
 
         public encryptPanel(FAES_File faesFile)
         {
             Initialise();
 
-            if (!setFileToEncrypt(faesFile))
+            if (!SetFileToEncrypt(faesFile))
                 throw new Exception("Input file cannot be encrypted!");
         }
 
@@ -48,6 +41,7 @@ namespace FAES_GUI.MenuPanels
 
         private void Initialise()
         {
+            Logging.Log(String.Format("FAES_GUI(EncryptPanel): Initialising..."), Severity.DEBUG);
             InitializeComponent();
 
             ResetFile();
@@ -55,6 +49,7 @@ namespace FAES_GUI.MenuPanels
             statusInformation.Text = "";
 
             this.Focus();
+            Logging.Log(String.Format("FAES_GUI(EncryptPanel): Initilisation Complete."), Severity.DEBUG);
         }
 
         public void ResetFile()
@@ -71,6 +66,8 @@ namespace FAES_GUI.MenuPanels
             fileInfoLabel.Text = "No File Selected!";
             progressBar.CustomText = "";
             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.Percentage;
+
+            Logging.Log(String.Format("FAES_GUI(ResetFile): Cleared selected file."), Severity.DEBUG);
         }
 
         public void LockFileSelect(bool lockFile)
@@ -78,7 +75,7 @@ namespace FAES_GUI.MenuPanels
             selectEncryptButton.Enabled = !lockFile;
         }
 
-        public bool setFileToEncrypt(FAES_File faesFile)
+        public bool SetFileToEncrypt(FAES_File faesFile)
         {
             if (faesFile.isFileEncryptable())
             {
@@ -87,6 +84,8 @@ namespace FAES_GUI.MenuPanels
                 Locked(false);
                 encryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
+                Logging.Log(String.Format("FAES_GUI(SetFileToEncrypt): '{0}'", _fileToEncrypt.getPath()), Severity.DEBUG);
+
                 return true;
             }
             return false;
@@ -94,6 +93,8 @@ namespace FAES_GUI.MenuPanels
 
         private void SetNote(string note, int severity)
         {
+            Logging.Log(String.Format("FAES_GUI(SetNote({1})): '{0}'", note, severity), Severity.DEBUG);
+
             switch (severity)
             {
                 case 1:
@@ -136,6 +137,8 @@ namespace FAES_GUI.MenuPanels
 
         private void Encrypt()
         {
+            Logging.Log(String.Format("FAES_GUI(Encrypt): Started!'"), Severity.DEBUG);
+
             SetNote("Encrypting... Please wait.", 0);
 
             _inProgress = true;
@@ -165,13 +168,18 @@ namespace FAES_GUI.MenuPanels
 
                         if (_encryptSuccessful)
                         {
+                            Logging.Log(String.Format("FAES_GUI(Encrypt): Finished successfully!'"), Severity.DEBUG);
                             SetNote("Encryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
                             if (_closeAfterOp) Application.Exit();
                             else ResetFile();
                         }
-                        else SetNote("Encryption Failed. Try again later.", 1);
+                        else
+                        {
+                            Logging.Log(String.Format("FAES_GUI(Encrypt): Finished unsuccessfully!'"), Severity.DEBUG);
+                            SetNote("Encryption Failed. Try again later.", 1);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -238,7 +246,7 @@ namespace FAES_GUI.MenuPanels
             else
             {
                 FAES_File tFaesFile = new FAES_File(FileList[0]);
-                if (!setFileToEncrypt(tFaesFile)) SetNote("Chosen file cannot be encrypted!", 2);
+                if (!SetFileToEncrypt(tFaesFile)) SetNote("Chosen file cannot be encrypted!", 2);
             }
         }
 
@@ -262,7 +270,7 @@ namespace FAES_GUI.MenuPanels
             else if (openFileToEncrypt.ShowDialog() == DialogResult.OK)
             {
                 FAES_File tFaesFile = new FAES_File(openFileToEncrypt.FileName);
-                setFileToEncrypt(tFaesFile);
+                SetFileToEncrypt(tFaesFile);
             }
         }
 
