@@ -133,7 +133,7 @@
             this.developerSetting.DescriptionText = resources.GetString("developerSetting.DescriptionText");
             this.developerSetting.ForeColor = System.Drawing.Color.White;
             this.developerSetting.HeaderText = "Developer Mode";
-            this.developerSetting.Location = new System.Drawing.Point(0, 66);
+            this.developerSetting.Location = new System.Drawing.Point(-1, 66);
             this.developerSetting.Name = "developerSetting";
             this.developerSetting.Size = new System.Drawing.Size(400, 100);
             this.developerSetting.TabIndex = 4;
