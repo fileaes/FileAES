@@ -63,6 +63,12 @@
     <Compile Include="CustomControls\SettingsControls\SettingIncrementBox.Designer.cs">
       <DependentUpon>SettingIncrementBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingDropDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingDropDown.Designer.cs">
+      <DependentUpon>SettingDropDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\SettingsControls\SettingToggle.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -130,6 +136,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\SettingsControls\SettingIncrementBox.resx">
       <DependentUpon>SettingIncrementBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingDropDown.resx">
+      <DependentUpon>SettingDropDown.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\SettingsControls\SettingToggle.resx">
       <DependentUpon>SettingToggle.cs</DependentUpon>

@@ -3,6 +3,7 @@ using FAES.Packaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,7 +12,7 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190424-1";
+        private const string betaAppendTag = "DEV190511-1";
 
         private static bool _verbose = false;
         private static bool _purgeTemp = false;
@@ -35,6 +36,8 @@ namespace FAES_GUI
         [STAThread]
         static void Main(string[] args)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             for (int i = 0; i < args.Length; i++)
             {
                 args[i].ToLower();

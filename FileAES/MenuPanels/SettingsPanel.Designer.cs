@@ -37,6 +37,7 @@
             this.buttonPanel = new System.Windows.Forms.Panel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.runtime = new System.Windows.Forms.Timer(this.components);
+            this.branchSelection = new FAES_GUI.CustomControls.SettingDropDown();
             this.developerSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.logPathRootSetting = new FAES_GUI.CustomControls.SettingTextInput();
             this.logToFileSetting = new FAES_GUI.CustomControls.SettingToggle();
@@ -48,6 +49,7 @@
             // settingsScrollPanel
             // 
             this.settingsScrollPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.settingsScrollPanel.Controls.Add(this.branchSelection);
             this.settingsScrollPanel.Controls.Add(this.developerSetting);
             this.settingsScrollPanel.Controls.Add(this.logPathRootSetting);
             this.settingsScrollPanel.Controls.Add(this.logToFileSetting);
@@ -127,6 +129,19 @@
             this.runtime.Enabled = true;
             this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
+            // branchSelection
+            // 
+            this.branchSelection.BackColor = System.Drawing.Color.Transparent;
+            this.branchSelection.DescriptionText = "Determines the branch used to determine if an update is availible for FileAES. Un" +
+    "less you knowm what you are doing, it is recommended to keep on the Stable branc" +
+    "h.";
+            this.branchSelection.ForeColor = System.Drawing.Color.White;
+            this.branchSelection.HeaderText = "FileAES Branch";
+            this.branchSelection.Location = new System.Drawing.Point(-1, 165);
+            this.branchSelection.Name = "branchSelection";
+            this.branchSelection.Size = new System.Drawing.Size(400, 100);
+            this.branchSelection.TabIndex = 5;
+            // 
             // developerSetting
             // 
             this.developerSetting.BackColor = System.Drawing.Color.Transparent;
@@ -145,7 +160,7 @@
             this.logPathRootSetting.DescriptionText = resources.GetString("logPathRootSetting.DescriptionText");
             this.logPathRootSetting.ForeColor = System.Drawing.Color.White;
             this.logPathRootSetting.HeaderText = "Log File Path";
-            this.logPathRootSetting.Location = new System.Drawing.Point(-1, 363);
+            this.logPathRootSetting.Location = new System.Drawing.Point(-1, 462);
             this.logPathRootSetting.Name = "logPathRootSetting";
             this.logPathRootSetting.Size = new System.Drawing.Size(400, 100);
             this.logPathRootSetting.TabIndex = 3;
@@ -159,7 +174,7 @@
             this.logToFileSetting.Enabled = false;
             this.logToFileSetting.ForeColor = System.Drawing.Color.White;
             this.logToFileSetting.HeaderText = "Log to file";
-            this.logToFileSetting.Location = new System.Drawing.Point(-1, 264);
+            this.logToFileSetting.Location = new System.Drawing.Point(-1, 363);
             this.logToFileSetting.Name = "logToFileSetting";
             this.logToFileSetting.Size = new System.Drawing.Size(400, 100);
             this.logToFileSetting.TabIndex = 2;
@@ -172,7 +187,7 @@
     "iles using FAES. (Size is in bytes)";
             this.cryptoStreamSetting.ForeColor = System.Drawing.Color.White;
             this.cryptoStreamSetting.HeaderText = "CryptoStream Buffer";
-            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 165);
+            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 264);
             this.cryptoStreamSetting.MinValue = 1024;
             this.cryptoStreamSetting.Name = "cryptoStreamSetting";
             this.cryptoStreamSetting.Size = new System.Drawing.Size(400, 100);
@@ -208,5 +223,6 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Timer runtime;
         private CustomControls.SettingToggle developerSetting;
+        private CustomControls.SettingDropDown branchSelection;
     }
 }

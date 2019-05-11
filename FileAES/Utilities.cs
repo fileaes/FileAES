@@ -48,6 +48,7 @@ namespace FAES_GUI
             _ssm.AddUInt32("CryptoStreamBufferSize", 1048576, "The size of the CryptoStream Buffer.", "FAES_Configs");
             _ssm.AddBoolean("LogToFile", false, "Always output FAES log to a file.", "FAES_Configs");
             _ssm.AddBoolean("DeveloperMode", false, "Toggle verbose logging and ability to open the Developer Console.", "FAES_Configs");
+            _ssm.AddString("Branch", "dev", "The branch used to determine updates.", "FAES_Configs");
             _ssm.Close();
         }
 
@@ -60,6 +61,38 @@ namespace FAES_GUI
         }
         #endregion
         #region Settings (Getters/Setters)
+        public string GetBranch()
+        {
+            _ssm.Open();
+            string returnVal = _ssm.GetString("Branch");
+            _ssm.Close();
+
+            if (returnVal.ToLower() == "dev") return "dev";
+            else if (returnVal.ToLower() == "beta") return "beta";
+            else return "stable";
+        }
+
+        public bool ResetBranch()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetString("Branch", "dev");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetBranch(string branch)
+        {
+            string b = "stable";
+            if (branch.ToLower() == "dev") b = "dev";
+            else if (branch.ToLower() == "beta") b = "beta";
+            else b = "stable";
+
+            _ssm.Open();
+            bool returnVal = _ssm.SetString("Branch", b);
+            _ssm.Close();
+            return returnVal;
+        }
+
         public string GetLogPath()
         {
             _ssm.Open();
@@ -198,7 +231,7 @@ namespace FAES_GUI
 
         private long _ssmLastModifiedTime;
         private bool _ssmCachedLogToFile, _ssmCachedDevMode;
-        private string _ssmCachedLogPath;
+        private string _ssmCachedLogPath, _ssmCachedBranch;
         private UInt32 _ssmCachedCsBuffer;
 
         public ProgramManager(bool fullInstall = false)
@@ -222,6 +255,7 @@ namespace FAES_GUI
             _ssmCachedLogToFile = _settingsManager.GetLogToFile();
             _ssmCachedLogPath = _settingsManager.GetLogPath();
             _ssmCachedCsBuffer = _settingsManager.GetCryptoStreamBufferSize();
+            _ssmCachedBranch = _settingsManager.GetBranch();
         }
 
         private void CreateAppDataDirectory(bool fullInstall)
@@ -278,6 +312,12 @@ namespace FAES_GUI
             return _ssmCachedLogPath;
         }
 
+        public string GetBranch()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _ssmCachedBranch;
+        }
+
         public UInt32 GetCryptoStreamBufferSize()
         {
             EnsureCachedVarsAreUpdated();
@@ -308,6 +348,13 @@ namespace FAES_GUI
         public bool SetLogPath(string logPath)
         {
             bool changed = _settingsManager.SetLogPath(logPath);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
+        public bool SetBranch(string branch)
+        {
+            bool changed = _settingsManager.SetBranch(branch);
             if (changed) EnsureCachedVarsAreUpdated();
             return changed;
         }
@@ -347,6 +394,13 @@ namespace FAES_GUI
             return changed;
         }
 
+        public bool ResetBranch()
+        {
+            bool changed = _settingsManager.ResetBranch();
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
         public bool ResetCryptoStreamBufferSize()
         {
             bool changed = _settingsManager.ResetCryptoStreamBufferSize();
@@ -359,6 +413,7 @@ namespace FAES_GUI
             ResetDevMode();
             ResetLogToFile();
             ResetLogPath();
+            ResetBranch();
             ResetCryptoStreamBufferSize();
         }
         #endregion

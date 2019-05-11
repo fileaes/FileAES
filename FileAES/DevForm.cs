@@ -3,7 +3,9 @@ using FAES_GUI.CustomControls;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI
@@ -185,6 +187,63 @@ namespace FAES_GUI
             else if (input[0] == "getssmversion" || input[0] == "getssmver" || input[0] == "ssmver")
             {
                 Logging.Log(String.Format("SSM Version: {0}", SimpleSettingsManager.SSM.GetVersion()));
+            }
+            else if (input[0] == "getlatestversiononbranch" || input[0] == "latestver" || input[0] == "latestversion" || input[0] == "latestvercheck")
+            {
+                Thread updateCheckThread = new Thread(() =>
+                {
+                    try
+                    {
+                        string branch = Program.programManager.GetBranch();
+
+                        if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
+                        {
+                            string rawBranchRequest = input[1];
+
+                            if (rawBranchRequest.ToLower() == "stable" || rawBranchRequest.ToLower() == "beta" || rawBranchRequest.ToLower() == "dev")
+                                branch = rawBranchRequest.ToLower();
+                        }
+
+                        string verCheck = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&ver=latest&branch={0}&showver=true", branch);
+
+                        Logging.Log(String.Format("Getting the latest FAES_GUI version number on branch '{0}'.", branch));
+                        Logging.Log(String.Format("This process may take a few seconds..."));
+
+                        WebClient webClient = new WebClient();
+                        string latestVer = webClient.DownloadString(new Uri(verCheck));
+
+                        if (!String.IsNullOrWhiteSpace(latestVer))
+                            Logging.Log(String.Format("Latest FAES_GUI Version on branch '{0}' is '{1}'.", branch, latestVer));
+                        else
+                            Logging.Log(String.Format("The branch '{0}' does not contain any versions!", branch), Severity.WARN);
+                    }
+                    catch
+                    {
+                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                    }
+                });
+                updateCheckThread.Start();
+            }
+            else if (input[0] == "getselectedbranch" || input[0] == "branch" || input[0] == "getbranch")
+            {
+                Logging.Log(String.Format("FAES_GUI Branch: {0}", Program.programManager.GetBranch()));
+            }
+            else if (input[0] == "setselectedbranch" || input[0] == "setbranch")
+            {
+                if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
+                {
+                    string rawBranchRequest = input[1];
+                    string validBranch;
+
+                    if (rawBranchRequest.ToLower() == "stable" || rawBranchRequest.ToLower() == "beta" || rawBranchRequest.ToLower() == "dev")
+                    {
+                        validBranch = rawBranchRequest.ToLower();
+                        Program.programManager.SetBranch(validBranch);
+                        Logging.Log(String.Format("FAES_GUI Branch changed to: {0}", validBranch));
+                    }
+                    else Logging.Log(String.Format("'{0}' is not a valid branch!", rawBranchRequest), Severity.WARN);
+                }
+                else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "exportlog" || input[0] == "export" || input[0] == "log")
             {
