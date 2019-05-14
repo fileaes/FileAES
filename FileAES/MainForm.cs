@@ -19,19 +19,30 @@ namespace FAES_GUI
             titleLabel.Text += Program.GetVersion();
             this.Text = titleLabel.Text;
 
+            DateTime buildDate = Program.GetBuildDate();
+
+            longVersionLabel.Text = String.Format("FileAES {0} | Built on {1} at {2}", Program.GetVersion(), buildDate.ToString("dd/MM/yyyy"), buildDate.ToString("hh:mm:ss tt"));
+
             if (FileAES_Utilities.GetVerboseLogging())
             {
                 _devForm = new DevForm();
+                _devForm.SetCheckUpdateAction(() => InvokeCheckUpdate());
 
                 // Hacky solution to the RichTextBox Console.SetOut causing issues if the DevForm is not opened at least once before encryption/decryption (otherwise it hangs)
                 _devForm.Show();
                 _devForm.Hide();
             }
 
-            autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { encryptMenuButton, decryptMenuButton, settingsMenuButton });
-            encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton });
-            decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton });
-            settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton });
+            autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { encryptMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton, aboutMenuButton });
+            settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, aboutMenuButton });
+            aboutMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, settingsMenuButton });
+
+            
+
+            aboutPanel.SetIsUpdateAction(() => aboutMenuButton_Click(null, null));
+            aboutPanel.CheckForUpdate();
 
             if (faesFile != null)
             {
@@ -42,6 +53,11 @@ namespace FAES_GUI
 
                 FAESMenuHandler(faesFile);
             }
+        }
+
+        private void InvokeCheckUpdate()
+        {
+            aboutPanel.CheckForUpdate();
         }
 
         private void titleBar_MouseDown(object sender, MouseEventArgs e)
@@ -195,6 +211,12 @@ namespace FAES_GUI
             settingsPanel.BringToFront();
             settingsPanel.LoadSettings();
             Logging.Log(String.Format("FAES_GUI(MainGUI): SettingsPanel Active."), Severity.DEBUG);
+        }
+
+        private void aboutMenuButton_Click(object sender, EventArgs e)
+        {
+            aboutPanel.BringToFront();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): AboutPanel Active."), Severity.DEBUG);
         }
 
         private void CopyrightLabel_Click(object sender, EventArgs e)

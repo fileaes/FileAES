@@ -9,7 +9,7 @@ namespace FAES_GUI.MenuPanels
     {
         private int _cryptoBuffer, _branchIndex;
         private string _logPath, _branch;
-        private bool _logToFile, _devMode;
+        private bool _logToFile, _devMode, _ignoreUpdates;
 
         public settingsPanel()
         {
@@ -19,8 +19,6 @@ namespace FAES_GUI.MenuPanels
             settingsScrollPanel.AutoScroll = false;
             settingsScrollPanel.VerticalScroll.Visible = false;
             settingsScrollPanel.AutoScroll = true;
-
-            versionLabel.Text = String.Format("FileAES Version: {0}\n\rFAES Version: {1}\n\rSSM Version: {2}", Program.GetVersion(), FAES.FileAES_Utilities.GetVersion(), SimpleSettingsManager.SSM.GetVersion());
 
             branchSelection.AddItem("Stable Releases");
             branchSelection.AddItem("Beta Releases");
@@ -36,6 +34,7 @@ namespace FAES_GUI.MenuPanels
             logPathRootSetting.Value = _logPath;
             logToFileSetting.Toggled = _logToFile;
             developerSetting.Toggled = _devMode;
+            ignoreUpdatesSetting.Toggled = _ignoreUpdates;
 
             if (_branch == "dev") branchSelection.SetSelectedIndex(2);
             else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
@@ -46,22 +45,28 @@ namespace FAES_GUI.MenuPanels
 
         public void LoadSettings()
         {
-            _cryptoBuffer = Convert.ToInt32(Program.programManager.GetCryptoStreamBufferSize());
-            _logPath = Program.programManager.GetLogPath().Replace("{default}", "").Replace("{d}", "");
-            _logToFile = Program.programManager.GetLogToFile();
-            _devMode = Program.programManager.GetDevMode();
-            _branch = Program.programManager.GetBranch();
+            try
+            {
+                _cryptoBuffer = Convert.ToInt32(Program.programManager.GetCryptoStreamBufferSize());
+                _logPath = Program.programManager.GetLogPath().Replace("{default}", "").Replace("{d}", "");
+                _logToFile = Program.programManager.GetLogToFile();
+                _devMode = Program.programManager.GetDevMode();
+                _branch = Program.programManager.GetBranch();
+                _ignoreUpdates = Program.programManager.GetSkipUpdates();
 
-            cryptoStreamSetting.Value = _cryptoBuffer;
-            logPathRootSetting.Value = _logPath;
-            logToFileSetting.Toggled = _logToFile;
-            developerSetting.Toggled = _devMode;
+                cryptoStreamSetting.Value = _cryptoBuffer;
+                logPathRootSetting.Value = _logPath;
+                logToFileSetting.Toggled = _logToFile;
+                developerSetting.Toggled = _devMode;
+                ignoreUpdatesSetting.Toggled = _ignoreUpdates;
 
-            if (_branch == "dev") branchSelection.SetSelectedIndex(2);
-            else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
-            else branchSelection.SetSelectedIndex(0);
+                if (_branch == "dev") branchSelection.SetSelectedIndex(2);
+                else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
+                else branchSelection.SetSelectedIndex(0);
 
-            _branchIndex = branchSelection.GetSelectedIndex();
+                _branchIndex = branchSelection.GetSelectedIndex();
+            }
+            catch { }
         }
 
         private void SaveSettings()
@@ -70,6 +75,7 @@ namespace FAES_GUI.MenuPanels
             Program.programManager.SetCryptoStreamBufferSize(Convert.ToUInt32(cryptoStreamSetting.Value));
             Program.programManager.SetLogToFile(logToFileSetting.Toggled);
             Program.programManager.SetLogPath(Path.Combine((logPathRootSetting.Value).Replace("{default}", "").Replace("{d}", ""), "{default}"));
+            Program.programManager.SetSkipUpdates(ignoreUpdatesSetting.Toggled);
 
             if (branchSelection.GetSelectedIndex() == 2) Program.programManager.SetBranch("dev");
             else if (branchSelection.GetSelectedIndex() == 1) Program.programManager.SetBranch("beta");
@@ -78,7 +84,8 @@ namespace FAES_GUI.MenuPanels
 
         private void Runtime_Tick(object sender, EventArgs e)
         {
-            if (cryptoStreamSetting.Value != _cryptoBuffer || logPathRootSetting.Value != _logPath || logToFileSetting.Toggled != _logToFile || developerSetting.Toggled != _devMode || branchSelection.GetSelectedIndex() != _branchIndex)
+            if (cryptoStreamSetting.Value != _cryptoBuffer || logPathRootSetting.Value != _logPath || logToFileSetting.Toggled != _logToFile ||
+                developerSetting.Toggled != _devMode || ignoreUpdatesSetting.Toggled != _ignoreUpdates || branchSelection.GetSelectedIndex() != _branchIndex)
             {
                 saveSettings.Enabled = true;
                 cancelButton.Enabled = true;

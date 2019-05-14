@@ -12,7 +12,8 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string betaAppendTag = "DEV190511-1";
+        private const string devAppendTag = "DEV190514-1";
+        private const string betaAppendTag = "";
 
         private static bool _verbose = false;
         private static bool _purgeTemp = false;
@@ -29,6 +30,9 @@ namespace FAES_GUI
         private static int _compressionLevel = 7;
         private static ushort _progressSleep = 5000;
         private static List<string> _strippedArgs = new List<string>();
+
+        private static string _spoofedVersion = "v2.0.0";
+        private static bool _useSpoofedVersion = false;
 
         public static FAES_File faesFile;
         public static ProgramManager programManager;
@@ -82,6 +86,7 @@ namespace FAES_GUI
             if (_getVersion)
             {
                 Console.WriteLine("Current FileAES Version: {0}", GetVersion());
+                Console.WriteLine("Current FileAES Build Date: {0}", GetBuildDateFormatted());
             }
 
             if (_getFaesVersion)
@@ -301,11 +306,55 @@ namespace FAES_GUI
 
         public static string GetVersion()
         {
-            string[] ver = (typeof(FAES_GUI.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
-            if (String.IsNullOrEmpty(betaAppendTag))
-                return "v" + ver[0] + "." + ver[1] + "." + ver[2];
-            else
-                return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + betaAppendTag + ")";
+            if (!_useSpoofedVersion)
+            {
+                string[] ver = (typeof(FAES_GUI.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
+                if (IsDevBuild())
+                    return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + devAppendTag + ")";
+                else if (IsBetaBuild())
+                    return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + betaAppendTag + ")";
+                else
+                    return "v" + ver[0] + "." + ver[1] + "." + ver[2];
+            }
+            else return _spoofedVersion;
+        }
+
+        public static void SetSpoofedVersion(bool useSpoofed, string formattedVersion = "v2.0.0")
+        {
+            _useSpoofedVersion = useSpoofed;
+            _spoofedVersion = formattedVersion;
+        }
+
+        public static bool IsStableBuild()
+        {
+            return (!IsDevBuild() && !IsBetaBuild());
+        }
+
+        public static bool IsBetaBuild()
+        {
+            return (!String.IsNullOrEmpty(devAppendTag) && String.IsNullOrEmpty(betaAppendTag));
+        }
+
+        public static bool IsDevBuild()
+        {
+            return !String.IsNullOrEmpty(devAppendTag);
+        }
+
+        public static string GetBuild()
+        {
+            if (IsDevBuild()) return "dev";
+            else if (IsBetaBuild()) return "beta";
+            else return "stable";
+        }
+
+        public static string GetBuildDateFormatted()
+        {
+            return GetBuildDate().ToString("dd/MM/yyyy hh:mm:ss tt");
+        }
+
+        public static DateTime GetBuildDate()
+        {
+            return new FileInfo(Assembly.GetExecutingAssembly().Location).LastWriteTime;
         }
     }
 }

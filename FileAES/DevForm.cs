@@ -4,7 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -13,6 +13,7 @@ namespace FAES_GUI
     public partial class DevForm : Form
     {
         private string _overrideLogPath = "";
+        private Action _checkUpdateAction;
 
         public DevForm()
         {
@@ -109,6 +110,19 @@ namespace FAES_GUI
             consoleTextBox.Clear();
         }
 
+        public void SetCheckUpdateAction(Action action)
+        {
+            _checkUpdateAction = action;
+        }
+
+        private void DoCheckUpdate()
+        {
+            if (_checkUpdateAction != null)
+            {
+                this.BeginInvoke(new MethodInvoker(_checkUpdateAction));
+            }
+        }
+
         private void ExportLog_Click(object sender, EventArgs e)
         {
             string logPath = "FileAES-" + DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString() + ".log";
@@ -156,7 +170,8 @@ namespace FAES_GUI
 
         private void CommandInput(RichTextBox textbox)
         {
-            string[] input = textbox.Text.ToLower().Split(' ');
+            string[] input = textbox.Text.Split(' ');
+            input[0] = input[0].ToLower();
 
             if (input[0] == "cryptostreambuffer" || input[0] == "csbuffer" || input[0] == "buffer")
             {
@@ -223,6 +238,73 @@ namespace FAES_GUI
                     }
                 });
                 updateCheckThread.Start();
+            }
+            else if (input[0] == "checkupdate" || input[0] == "check" || input[0] == "updatecheck")
+            {
+                try
+                {
+                    string latestVer = GetLatestVersion();
+                    string currentVer = ConvertVersionToNonFormatted(Program.GetVersion());
+
+                    string branch = Program.programManager.GetBranch();
+                    string compareVersions = String.Format("https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={0}&version1={1}&version2={2}", "dev", currentVer, latestVer);
+
+                    WebClient client = new WebClient();
+                    byte[] html = client.DownloadData(compareVersions);
+                    UTF8Encoding utf = new UTF8Encoding();
+                    string result = utf.GetString(html).ToLower();
+
+                    if (String.IsNullOrEmpty(result) || result == "null")
+                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                    else if (result.Contains("not exist in the database!") || result == "version1 is newer than version2")
+                        Logging.Log(String.Format("You are on a private build. ({0} is newer than {1}).", currentVer, latestVer));
+                    else if (result == "version1 is older than version2")
+                        Logging.Log(String.Format("You are on an outdated build. ({0} is older than {1}).", currentVer, latestVer));
+                    else if (result == "version1 is equal to version2")
+                        Logging.Log(String.Format("You are on the latest build. ({0} is equal to {1}).", currentVer, latestVer));
+                    else
+                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                }
+                catch
+                {
+                    Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                }
+
+                DoCheckUpdate();
+            }
+            else if (input[0] == "spoofversion" || input[0] == "spoof")
+            {
+                if (input.Length > 1 && !string.IsNullOrEmpty(input[1]))
+                {
+                    string verToSpoof = "";
+
+                    if (input[1].Contains("\"") || input[1].Contains("\'"))
+                    {
+                        for (int i = 1; i < input.Length; i++)
+                        {
+                            verToSpoof += input[i].Replace("\"", "").Replace("\'", "");
+                            verToSpoof += " ";
+                        }
+                        verToSpoof.TrimEnd(' ');
+                    }
+                    else verToSpoof = input[1];
+
+                    if (verToSpoof.ToLower() == "reset" || verToSpoof.ToLower() == "off" || verToSpoof.ToLower() == "false")
+                    {
+                        Logging.Log(String.Format("Disabled Version Spoofing."));
+                        Program.SetSpoofedVersion(false);
+                    }
+                    else
+                    {
+                        Logging.Log(String.Format("Enabled Version Spoofing. Spoofing Version: {0}", verToSpoof));
+                        Program.SetSpoofedVersion(true, verToSpoof);
+                    }
+                }
+                else
+                {
+                    Logging.Log(String.Format("Disabled Version Spoofing."));
+                    Program.SetSpoofedVersion(false);
+                }
             }
             else if (input[0] == "getselectedbranch" || input[0] == "branch" || input[0] == "getbranch")
             {
@@ -310,6 +392,69 @@ namespace FAES_GUI
         {
             if (string.IsNullOrWhiteSpace(consoleInputTextBox.Text)) sendInputButton.Enabled = false;
             else sendInputButton.Enabled = true;
+        }
+
+        private string GetLatestVersion()
+        {
+            try
+            {
+                string latestUrl = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&branch={0}&showver=true&version={1}", Program.programManager.GetBranch(), ConvertVersionToNonFormatted(Program.GetVersion()));
+
+                WebClient client = new WebClient();
+                byte[] html = client.DownloadData(latestUrl);
+                UTF8Encoding utf = new UTF8Encoding();
+                if (String.IsNullOrEmpty(utf.GetString(html)) || utf.GetString(html) == "null")
+                    return "v0.0.0";
+                else
+                    return utf.GetString(html);
+            }
+            catch (Exception)
+            {
+                return "v0.0.0";
+            }
+        }
+
+        private string ConvertVersionToNonFormatted(string formattedVersion)
+        {
+
+            string[] versionSplit = formattedVersion.Replace("(", "").Replace(")", "").Split(' ');
+            string nonFormattedVersion;
+
+            if (versionSplit.Length > 0)
+            {
+                nonFormattedVersion = versionSplit[0];
+
+                if (versionSplit.Length > 1)
+                {
+                    if (versionSplit[1].ToUpper()[0] == 'B')
+                    {
+                        nonFormattedVersion += "-B";
+                    }
+                    else if (versionSplit[1].ToUpper()[0] == 'D')
+                    {
+                        nonFormattedVersion += "-DEV";
+                    }
+                    nonFormattedVersion += versionSplit[1].ToUpper().Replace("BETA", "").Replace("B", "").Replace("DEV", "").Replace("D", "");
+
+                    if (versionSplit.Length > 2)
+                    {
+                        for (int i = 2; i < versionSplit.Length; i++)
+                        {
+                            formattedVersion += "-";
+                            formattedVersion += versionSplit[i].ToUpper();
+                        }
+                    }
+                }
+            }
+            else nonFormattedVersion = formattedVersion;
+
+            if (nonFormattedVersion.Contains("-B-"))
+                nonFormattedVersion = nonFormattedVersion.Replace("-B-", "-B");
+            else if (nonFormattedVersion.Contains("-DEV-"))
+                nonFormattedVersion = nonFormattedVersion.Replace("-DEV-", "-DEV");
+            nonFormattedVersion = nonFormattedVersion.TrimEnd('-');
+
+            return nonFormattedVersion;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -14,8 +13,9 @@ namespace FAES_GUI.CustomControls
         public SettingDropDown()
         {
             InitializeComponent();
-        }
 
+            dropDownBox.MouseWheel += new MouseEventHandler(DropDownBox_MouseWheel);
+        }
 
         public void AddItem(string name)
         {
@@ -97,6 +97,11 @@ namespace FAES_GUI.CustomControls
         private void SettingToggle_Paint(object sender, PaintEventArgs e)
         {
             ControlPaint.DrawBorder(e.Graphics, mainPanel.ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
+        }
+
+        private void DropDownBox_MouseWheel(object sender, MouseEventArgs e)
+        {
+            ((HandledMouseEventArgs)e).Handled = true;
         }
     }
 }

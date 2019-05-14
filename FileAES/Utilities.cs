@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FAES;
 using SimpleSettingsManager;
 
@@ -48,7 +44,8 @@ namespace FAES_GUI
             _ssm.AddUInt32("CryptoStreamBufferSize", 1048576, "The size of the CryptoStream Buffer.", "FAES_Configs");
             _ssm.AddBoolean("LogToFile", false, "Always output FAES log to a file.", "FAES_Configs");
             _ssm.AddBoolean("DeveloperMode", false, "Toggle verbose logging and ability to open the Developer Console.", "FAES_Configs");
-            _ssm.AddString("Branch", "dev", "The branch used to determine updates.", "FAES_Configs");
+            _ssm.AddString("Branch", Program.GetBuild(), "The branch used to determine updates.", "FAES_Configs");
+            _ssm.AddBoolean("SkipUpdates", false, "Toggles whether a new update warning should be shown.", "FAES_Configs");
             _ssm.Close();
         }
 
@@ -75,7 +72,10 @@ namespace FAES_GUI
         public bool ResetBranch()
         {
             _ssm.Open();
-            bool returnVal = _ssm.SetString("Branch", "dev");
+            bool returnVal = _ssm.SetString("Branch", Program.GetBuild());
+
+            Logging.Log(String.Format("ResetBranch: {0}", Program.GetBuild()), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -86,6 +86,8 @@ namespace FAES_GUI
             if (branch.ToLower() == "dev") b = "dev";
             else if (branch.ToLower() == "beta") b = "beta";
             else b = "stable";
+
+            Logging.Log(String.Format("SetBranch: {0}", b), Severity.DEBUG);
 
             _ssm.Open();
             bool returnVal = _ssm.SetString("Branch", b);
@@ -105,6 +107,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetString("LogPath", "log\\{default}");
+
+            Logging.Log(String.Format("ResetLogPath: {0}", "log\\{default}"), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -113,6 +118,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetString("LogPath", path.Replace('/', '\\').TrimEnd('/', '\\'));
+
+            Logging.Log(String.Format("SetLogPath: {0}", path), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -129,6 +137,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("FullInstall", false);
+
+            Logging.Log(String.Format("ResetFullInstall: {0}", false), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -137,6 +148,39 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("FullInstall", fullInstall);
+
+            Logging.Log(String.Format("SetFullInstall: {0}", fullInstall), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool GetSkipUpdates()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.GetBoolean("SkipUpdates");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool ResetSkipUpdates()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("SkipUpdates", false);
+
+            Logging.Log(String.Format("ResetSkipUpdates: {0}", false), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetSkipUpdates(bool skipUpdates)
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("SkipUpdates", skipUpdates);
+
+            Logging.Log(String.Format("SetSkipUpdates: {0}", skipUpdates), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -153,6 +197,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("DeveloperMode", false);
+
+            Logging.Log(String.Format("ResetDeveloperMode: {0}", false), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -161,6 +208,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("DeveloperMode", devMode);
+
+            Logging.Log(String.Format("SetDeveloperMode: {0}", devMode), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -177,6 +227,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetUInt32("CryptoStreamBufferSize", 1048576);
+
+            Logging.Log(String.Format("ResetCryptoStreamBufferSize: {0}", 1048576), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -186,6 +239,9 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetUInt32("CryptoStreamBufferSize", size);
             FileAES_Utilities.SetCryptoStreamBuffer(size);
+
+            Logging.Log(String.Format("SetCryptoStreamBufferSize: {0}", size), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -202,6 +258,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("LogToFile", false);
+
+            Logging.Log(String.Format("ResetLogToFile: {0}", false), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -210,6 +269,9 @@ namespace FAES_GUI
         {
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("LogToFile", state);
+
+            Logging.Log(String.Format("SetLogToFile: {0}", state), Severity.DEBUG);
+
             _ssm.Close();
             return returnVal;
         }
@@ -230,7 +292,7 @@ namespace FAES_GUI
         protected SettingsManager _settingsManager;
 
         private long _ssmLastModifiedTime;
-        private bool _ssmCachedLogToFile, _ssmCachedDevMode;
+        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates;
         private string _ssmCachedLogPath, _ssmCachedBranch;
         private UInt32 _ssmCachedCsBuffer;
 
@@ -256,6 +318,7 @@ namespace FAES_GUI
             _ssmCachedLogPath = _settingsManager.GetLogPath();
             _ssmCachedCsBuffer = _settingsManager.GetCryptoStreamBufferSize();
             _ssmCachedBranch = _settingsManager.GetBranch();
+            _ssmCachedSkipUpdates = _settingsManager.GetSkipUpdates();
         }
 
         private void CreateAppDataDirectory(bool fullInstall)
@@ -306,6 +369,12 @@ namespace FAES_GUI
             return _ssmCachedDevMode;
         }
 
+        public bool GetSkipUpdates()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _ssmCachedSkipUpdates;
+        }
+
         public string GetLogPath()
         {
             EnsureCachedVarsAreUpdated();
@@ -341,6 +410,13 @@ namespace FAES_GUI
         public bool SetDevMode(bool devMode)
         {
             bool changed = _settingsManager.SetDevMode(devMode);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
+        public bool SetSkipUpdates(bool skipUpdates)
+        {
+            bool changed = _settingsManager.SetSkipUpdates(skipUpdates);
             if (changed) EnsureCachedVarsAreUpdated();
             return changed;
         }
@@ -387,6 +463,13 @@ namespace FAES_GUI
             return changed;
         }
 
+        public bool ResetSkipUpdates()
+        {
+            bool changed = _settingsManager.ResetSkipUpdates();
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
         public bool ResetLogPath()
         {
             bool changed = _settingsManager.ResetLogPath();
@@ -415,6 +498,7 @@ namespace FAES_GUI
             ResetLogPath();
             ResetBranch();
             ResetCryptoStreamBufferSize();
+            ResetSkipUpdates();
         }
         #endregion
 

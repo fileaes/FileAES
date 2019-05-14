@@ -50,6 +50,7 @@ namespace FAES_GUI.CustomControls
 
         private void AppendWithColour(string text)
         {
+            TextBox.CheckForIllegalCrossThreadCalls = false;
             _output.SelectionColor = Color.LightGray;
             _output.AppendText(text.ToString());
             _output.AppendText(Environment.NewLine);

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.mainPanel = new System.Windows.Forms.Panel();
+            this.dropDownBox = new System.Windows.Forms.ComboBox();
             this.settingDesc = new System.Windows.Forms.Label();
             this.settingHeader = new System.Windows.Forms.Label();
-            this.dropDownBox = new System.Windows.Forms.ComboBox();
             this.mainPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,6 +45,17 @@
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.Size = new System.Drawing.Size(400, 100);
             this.mainPanel.TabIndex = 1;
+            // 
+            // dropDownBox
+            // 
+            this.dropDownBox.BackColor = System.Drawing.SystemColors.Window;
+            this.dropDownBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.dropDownBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dropDownBox.FormattingEnabled = true;
+            this.dropDownBox.Location = new System.Drawing.Point(3, 74);
+            this.dropDownBox.Name = "dropDownBox";
+            this.dropDownBox.Size = new System.Drawing.Size(393, 21);
+            this.dropDownBox.TabIndex = 10;
             // 
             // settingDesc
             // 
@@ -69,17 +80,6 @@
             this.settingHeader.TabIndex = 8;
             this.settingHeader.Text = "Setting Header";
             this.settingHeader.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // dropDownBox
-            // 
-            this.dropDownBox.BackColor = System.Drawing.SystemColors.Window;
-            this.dropDownBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dropDownBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.dropDownBox.FormattingEnabled = true;
-            this.dropDownBox.Location = new System.Drawing.Point(3, 74);
-            this.dropDownBox.Name = "dropDownBox";
-            this.dropDownBox.Size = new System.Drawing.Size(393, 21);
-            this.dropDownBox.TabIndex = 10;
             // 
             // SettingDropDown
             // 
