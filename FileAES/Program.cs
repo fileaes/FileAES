@@ -78,6 +78,12 @@ namespace FAES_GUI
             }
             FileAES_Utilities.SetVerboseLogging(_verbose);
 
+            try
+            {
+                if (File.Exists("FAES-Updater.exe")) File.Delete("FAES-Updater.exe");
+            }
+            catch { }
+
             if (_purgeTemp)
             {
                 FileAES_Utilities.PurgeTempFolder();
