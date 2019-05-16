@@ -1,5 +1,6 @@
 ﻿using FAES;
 using FAES.Packaging;
+using SimpleSettingsManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string devAppendTag = "DEV190514-1";
+        private const string devAppendTag = "DEV190516-1";
         private const string betaAppendTag = "";
 
         private static bool _verbose = false;
@@ -77,6 +78,7 @@ namespace FAES_GUI
                 _strippedArgs.Add(strippedArg);
             }
             FileAES_Utilities.SetVerboseLogging(_verbose);
+            SSM.SetVerboseLogging(_verbose);
 
             try
             {
