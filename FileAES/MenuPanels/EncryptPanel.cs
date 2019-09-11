@@ -119,6 +119,8 @@ namespace FAES_GUI.MenuPanels
             passHintTextbox.Enabled = !lockChanges;
             encryptButton.Enabled = !lockChanges;
             compressMode.Enabled = !lockChanges;
+            deleteOriginal.Enabled = !lockChanges;
+            overwriteDuplicate.Enabled = !lockChanges;
         }
 
         private void PopulateCompressionModes()
@@ -150,10 +152,19 @@ namespace FAES_GUI.MenuPanels
                 {
                     FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, passTextbox.Text, passHintTextbox.Text);
                     encrypt.SetCompressionMode(FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressMode.SelectedIndex]);
+                    encrypt.SetDeleteAfterEncrypt(deleteOriginal.Checked);
+                    encrypt.SetOverwriteDuplicate(overwriteDuplicate.Checked);
 
                     Thread eThread = new Thread(() =>
                     {
-                        _encryptSuccessful = encrypt.encryptFile();
+                        try
+                        {
+                            _encryptSuccessful = encrypt.encryptFile();
+                        }
+                        catch (Exception e)
+                        {
+                            SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
+                        }
                     });
                     eThread.Start();
 
@@ -178,13 +189,13 @@ namespace FAES_GUI.MenuPanels
                         else
                         {
                             Logging.Log(String.Format("FAES_GUI(Encrypt): Finished unsuccessfully!'"), Severity.DEBUG);
-                            SetNote("Encryption Failed. Try again later.", 1);
+                            if (!statusInformation.Text.ToLower().Contains("error")) SetNote("Encryption Failed. Try again later.", 1);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
+                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
                 }
             });
             mainEncryptThread.Start();

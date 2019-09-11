@@ -41,6 +41,8 @@
             this.statusInformation = new System.Windows.Forms.Label();
             this.openFileToDecrypt = new System.Windows.Forms.OpenFileDialog();
             this.decryptionTimer = new System.Windows.Forms.Timer(this.components);
+            this.overwriteDuplicate = new System.Windows.Forms.CheckBox();
+            this.deleteOriginal = new System.Windows.Forms.CheckBox();
             this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
             this.fileInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -49,7 +51,7 @@
             // 
             this.fileInfoPanel.BackColor = System.Drawing.Color.Gray;
             this.fileInfoPanel.Controls.Add(this.fileInfoLabel);
-            this.fileInfoPanel.Location = new System.Drawing.Point(0, 45);
+            this.fileInfoPanel.Location = new System.Drawing.Point(0, 40);
             this.fileInfoPanel.Name = "fileInfoPanel";
             this.fileInfoPanel.Size = new System.Drawing.Size(414, 34);
             this.fileInfoPanel.TabIndex = 0;
@@ -75,7 +77,7 @@
             this.selectDecryptButton.ForeColor = System.Drawing.Color.White;
             this.selectDecryptButton.Location = new System.Drawing.Point(0, 0);
             this.selectDecryptButton.Name = "selectDecryptButton";
-            this.selectDecryptButton.Size = new System.Drawing.Size(414, 46);
+            this.selectDecryptButton.Size = new System.Drawing.Size(414, 39);
             this.selectDecryptButton.TabIndex = 1;
             this.selectDecryptButton.Text = "Select File/Folder";
             this.selectDecryptButton.UseVisualStyleBackColor = false;
@@ -87,20 +89,20 @@
             // 
             this.passTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passTextbox.Enabled = false;
-            this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passTextbox.Location = new System.Drawing.Point(137, 95);
+            this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passTextbox.Location = new System.Drawing.Point(137, 81);
             this.passTextbox.Name = "passTextbox";
             this.passTextbox.PasswordChar = '*';
-            this.passTextbox.Size = new System.Drawing.Size(266, 27);
+            this.passTextbox.Size = new System.Drawing.Size(266, 24);
             this.passTextbox.TabIndex = 2;
             this.passTextbox.TextChanged += new System.EventHandler(this.combinedPassword_TextChanged);
             this.passTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.allTextbox_KeyDown);
             // 
             // passLabel
             // 
-            this.passLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passLabel.ForeColor = System.Drawing.Color.White;
-            this.passLabel.Location = new System.Drawing.Point(3, 97);
+            this.passLabel.Location = new System.Drawing.Point(3, 83);
             this.passLabel.Name = "passLabel";
             this.passLabel.Size = new System.Drawing.Size(128, 23);
             this.passLabel.TabIndex = 3;
@@ -109,9 +111,9 @@
             // 
             // passHintLabel
             // 
-            this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passHintLabel.ForeColor = System.Drawing.Color.White;
-            this.passHintLabel.Location = new System.Drawing.Point(7, 130);
+            this.passHintLabel.Location = new System.Drawing.Point(7, 110);
             this.passHintLabel.Name = "passHintLabel";
             this.passHintLabel.Size = new System.Drawing.Size(124, 50);
             this.passHintLabel.TabIndex = 10;
@@ -122,8 +124,8 @@
             // 
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
-            this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passHintTextbox.Location = new System.Drawing.Point(137, 131);
+            this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintTextbox.Location = new System.Drawing.Point(137, 111);
             this.passHintTextbox.MaxLength = 64;
             this.passHintTextbox.Multiline = true;
             this.passHintTextbox.Name = "passHintTextbox";
@@ -150,11 +152,11 @@
             // 
             // encryptedFileMetaData
             // 
-            this.encryptedFileMetaData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.encryptedFileMetaData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.encryptedFileMetaData.ForeColor = System.Drawing.Color.White;
-            this.encryptedFileMetaData.Location = new System.Drawing.Point(3, 183);
+            this.encryptedFileMetaData.Location = new System.Drawing.Point(3, 195);
             this.encryptedFileMetaData.Name = "encryptedFileMetaData";
-            this.encryptedFileMetaData.Size = new System.Drawing.Size(408, 76);
+            this.encryptedFileMetaData.Size = new System.Drawing.Size(408, 64);
             this.encryptedFileMetaData.TabIndex = 12;
             this.encryptedFileMetaData.Text = "PLACEHOLDER METADATA";
             this.encryptedFileMetaData.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -178,6 +180,35 @@
             // 
             this.decryptionTimer.Tick += new System.EventHandler(this.decryptionTimer_Tick);
             // 
+            // overwriteDuplicate
+            // 
+            this.overwriteDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.overwriteDuplicate.AutoSize = true;
+            this.overwriteDuplicate.Checked = true;
+            this.overwriteDuplicate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.overwriteDuplicate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
+            this.overwriteDuplicate.ForeColor = System.Drawing.Color.White;
+            this.overwriteDuplicate.Location = new System.Drawing.Point(227, 168);
+            this.overwriteDuplicate.Name = "overwriteDuplicate";
+            this.overwriteDuplicate.Size = new System.Drawing.Size(176, 24);
+            this.overwriteDuplicate.TabIndex = 21;
+            this.overwriteDuplicate.Text = "Overwrite Duplicate";
+            this.overwriteDuplicate.UseVisualStyleBackColor = true;
+            // 
+            // deleteOriginal
+            // 
+            this.deleteOriginal.AutoSize = true;
+            this.deleteOriginal.Checked = true;
+            this.deleteOriginal.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.deleteOriginal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
+            this.deleteOriginal.ForeColor = System.Drawing.Color.White;
+            this.deleteOriginal.Location = new System.Drawing.Point(11, 168);
+            this.deleteOriginal.Name = "deleteOriginal";
+            this.deleteOriginal.Size = new System.Drawing.Size(140, 24);
+            this.deleteOriginal.TabIndex = 20;
+            this.deleteOriginal.Text = "Delete Original";
+            this.deleteOriginal.UseVisualStyleBackColor = true;
+            // 
             // progressBar
             // 
             this.progressBar.CustomText = "";
@@ -197,6 +228,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.overwriteDuplicate);
+            this.Controls.Add(this.deleteOriginal);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.statusInformation);
             this.Controls.Add(this.encryptedFileMetaData);
@@ -230,5 +263,7 @@
         private System.Windows.Forms.OpenFileDialog openFileToDecrypt;
         private System.Windows.Forms.Timer decryptionTimer;
         private CustomControls.TextProgressBar progressBar;
+        private System.Windows.Forms.CheckBox overwriteDuplicate;
+        private System.Windows.Forms.CheckBox deleteOriginal;
     }
 }

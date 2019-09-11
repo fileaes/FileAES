@@ -334,7 +334,7 @@ namespace FAES_GUI
             }
             else
             {
-                _appDataPath = Path.Combine("");
+                _appDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);                
 
                 CreateDirectory(GetConfigPath());
             }

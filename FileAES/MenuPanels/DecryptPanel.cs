@@ -137,6 +137,8 @@ namespace FAES_GUI.MenuPanels
             passTextbox.Enabled = !lockChanges;
             passHintTextbox.Enabled = !lockChanges;
             decryptButton.Enabled = !lockChanges;
+            deleteOriginal.Enabled = !lockChanges;
+            overwriteDuplicate.Enabled = !lockChanges;
         }
 
         private void Decrypt()
@@ -153,10 +155,19 @@ namespace FAES_GUI.MenuPanels
                 try
                 {
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, passTextbox.Text);
+                    decrypt.SetDeleteAfterDecrypt(deleteOriginal.Checked);
+                    decrypt.SetOverwriteDuplicate(overwriteDuplicate.Checked);
 
                     Thread dThread = new Thread(() =>
                     {
-                        _decryptSuccessful = decrypt.decryptFile();
+                        try
+                        {
+                            _decryptSuccessful = decrypt.decryptFile();
+                        }
+                        catch (Exception e)
+                        {
+                            SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
+                        }
                     });
                     dThread.Start();
 
@@ -185,16 +196,19 @@ namespace FAES_GUI.MenuPanels
                             progressBar.Value = progressBar.Maximum;
 
                             Logging.Log(String.Format("FAES_GUI(Decrypt): Finished unsuccessfully!'"), Severity.DEBUG);
-                            SetNote("Password Incorrect!", 3);
-                            progressBar.CustomText = "Password Incorrect!";
-                            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                            passTextbox.Focus();
+                            if (!statusInformation.Text.ToLower().Contains("error"))
+                            {
+                                SetNote("Password Incorrect!", 3);
+                                progressBar.CustomText = "Password Incorrect!";
+                                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                                passTextbox.Focus();
+                            }
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, true), 3);
+                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
                 }
             });
             mainDecryptThread.Start();

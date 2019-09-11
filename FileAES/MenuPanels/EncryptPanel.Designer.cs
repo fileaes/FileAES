@@ -44,6 +44,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.compressMode = new System.Windows.Forms.ComboBox();
             this.encryptionTimer = new System.Windows.Forms.Timer(this.components);
+            this.deleteOriginal = new System.Windows.Forms.CheckBox();
+            this.overwriteDuplicate = new System.Windows.Forms.CheckBox();
             this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
             this.fileInfoPanel.SuspendLayout();
             this.SuspendLayout();
@@ -52,7 +54,7 @@
             // 
             this.fileInfoPanel.BackColor = System.Drawing.Color.Gray;
             this.fileInfoPanel.Controls.Add(this.fileInfoLabel);
-            this.fileInfoPanel.Location = new System.Drawing.Point(0, 45);
+            this.fileInfoPanel.Location = new System.Drawing.Point(0, 40);
             this.fileInfoPanel.Name = "fileInfoPanel";
             this.fileInfoPanel.Size = new System.Drawing.Size(414, 34);
             this.fileInfoPanel.TabIndex = 0;
@@ -61,7 +63,7 @@
             // 
             this.fileInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileInfoLabel.ForeColor = System.Drawing.Color.White;
-            this.fileInfoLabel.Location = new System.Drawing.Point(3, 3);
+            this.fileInfoLabel.Location = new System.Drawing.Point(3, 4);
             this.fileInfoLabel.Name = "fileInfoLabel";
             this.fileInfoLabel.Size = new System.Drawing.Size(408, 30);
             this.fileInfoLabel.TabIndex = 2;
@@ -78,7 +80,7 @@
             this.selectEncryptButton.ForeColor = System.Drawing.Color.White;
             this.selectEncryptButton.Location = new System.Drawing.Point(0, 0);
             this.selectEncryptButton.Name = "selectEncryptButton";
-            this.selectEncryptButton.Size = new System.Drawing.Size(414, 46);
+            this.selectEncryptButton.Size = new System.Drawing.Size(414, 39);
             this.selectEncryptButton.TabIndex = 1;
             this.selectEncryptButton.Text = "Select File/Folder";
             this.selectEncryptButton.UseVisualStyleBackColor = false;
@@ -90,21 +92,21 @@
             // 
             this.passTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passTextbox.Enabled = false;
-            this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passTextbox.Location = new System.Drawing.Point(137, 95);
+            this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passTextbox.Location = new System.Drawing.Point(137, 81);
             this.passTextbox.Name = "passTextbox";
             this.passTextbox.PasswordChar = '*';
-            this.passTextbox.Size = new System.Drawing.Size(266, 27);
+            this.passTextbox.Size = new System.Drawing.Size(266, 24);
             this.passTextbox.TabIndex = 2;
             this.passTextbox.TextChanged += new System.EventHandler(this.combinedPassword_TextChanged);
             this.passTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.allTextbox_KeyDown);
             // 
             // passLabel
             // 
-            this.passLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passLabel.ForeColor = System.Drawing.Color.White;
             this.passLabel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.passLabel.Location = new System.Drawing.Point(3, 97);
+            this.passLabel.Location = new System.Drawing.Point(3, 83);
             this.passLabel.Name = "passLabel";
             this.passLabel.Size = new System.Drawing.Size(128, 23);
             this.passLabel.TabIndex = 3;
@@ -113,10 +115,10 @@
             // 
             // passConfLabel
             // 
-            this.passConfLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passConfLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passConfLabel.ForeColor = System.Drawing.Color.White;
             this.passConfLabel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.passConfLabel.Location = new System.Drawing.Point(3, 133);
+            this.passConfLabel.Location = new System.Drawing.Point(3, 113);
             this.passConfLabel.Name = "passConfLabel";
             this.passConfLabel.Size = new System.Drawing.Size(128, 23);
             this.passConfLabel.TabIndex = 8;
@@ -127,21 +129,21 @@
             // 
             this.passConfTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passConfTextbox.Enabled = false;
-            this.passConfTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passConfTextbox.Location = new System.Drawing.Point(137, 131);
+            this.passConfTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passConfTextbox.Location = new System.Drawing.Point(137, 111);
             this.passConfTextbox.Name = "passConfTextbox";
             this.passConfTextbox.PasswordChar = '*';
-            this.passConfTextbox.Size = new System.Drawing.Size(266, 27);
+            this.passConfTextbox.Size = new System.Drawing.Size(266, 24);
             this.passConfTextbox.TabIndex = 3;
             this.passConfTextbox.TextChanged += new System.EventHandler(this.combinedPassword_TextChanged);
             this.passConfTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.allTextbox_KeyDown);
             // 
             // passHintLabel
             // 
-            this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passHintLabel.ForeColor = System.Drawing.Color.White;
             this.passHintLabel.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.passHintLabel.Location = new System.Drawing.Point(3, 171);
+            this.passHintLabel.Location = new System.Drawing.Point(3, 143);
             this.passHintLabel.Name = "passHintLabel";
             this.passHintLabel.Size = new System.Drawing.Size(128, 50);
             this.passHintLabel.TabIndex = 10;
@@ -152,8 +154,8 @@
             // 
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
-            this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passHintTextbox.Location = new System.Drawing.Point(137, 169);
+            this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintTextbox.Location = new System.Drawing.Point(137, 141);
             this.passHintTextbox.MaxLength = 0;
             this.passHintTextbox.Multiline = true;
             this.passHintTextbox.Name = "passHintTextbox";
@@ -195,10 +197,10 @@
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.label1.Location = new System.Drawing.Point(7, 231);
+            this.label1.Location = new System.Drawing.Point(7, 199);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(124, 29);
             this.label1.TabIndex = 15;
@@ -208,16 +210,45 @@
             // compressMode
             // 
             this.compressMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.compressMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.compressMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.compressMode.FormattingEnabled = true;
-            this.compressMode.Location = new System.Drawing.Point(137, 228);
+            this.compressMode.Location = new System.Drawing.Point(137, 196);
             this.compressMode.Name = "compressMode";
-            this.compressMode.Size = new System.Drawing.Size(266, 28);
+            this.compressMode.Size = new System.Drawing.Size(266, 26);
             this.compressMode.TabIndex = 16;
             // 
             // encryptionTimer
             // 
             this.encryptionTimer.Tick += new System.EventHandler(this.encryptionTimer_Tick);
+            // 
+            // deleteOriginal
+            // 
+            this.deleteOriginal.AutoSize = true;
+            this.deleteOriginal.Checked = true;
+            this.deleteOriginal.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.deleteOriginal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
+            this.deleteOriginal.ForeColor = System.Drawing.Color.White;
+            this.deleteOriginal.Location = new System.Drawing.Point(11, 229);
+            this.deleteOriginal.Name = "deleteOriginal";
+            this.deleteOriginal.Size = new System.Drawing.Size(140, 24);
+            this.deleteOriginal.TabIndex = 18;
+            this.deleteOriginal.Text = "Delete Original";
+            this.deleteOriginal.UseVisualStyleBackColor = true;
+            // 
+            // overwriteDuplicate
+            // 
+            this.overwriteDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.overwriteDuplicate.AutoSize = true;
+            this.overwriteDuplicate.Checked = true;
+            this.overwriteDuplicate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.overwriteDuplicate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
+            this.overwriteDuplicate.ForeColor = System.Drawing.Color.White;
+            this.overwriteDuplicate.Location = new System.Drawing.Point(227, 229);
+            this.overwriteDuplicate.Name = "overwriteDuplicate";
+            this.overwriteDuplicate.Size = new System.Drawing.Size(176, 24);
+            this.overwriteDuplicate.TabIndex = 19;
+            this.overwriteDuplicate.Text = "Overwrite Duplicate";
+            this.overwriteDuplicate.UseVisualStyleBackColor = true;
             // 
             // progressBar
             // 
@@ -238,6 +269,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.overwriteDuplicate);
+            this.Controls.Add(this.deleteOriginal);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.compressMode);
             this.Controls.Add(this.label1);
@@ -277,5 +310,7 @@
         private System.Windows.Forms.ComboBox compressMode;
         private System.Windows.Forms.Timer encryptionTimer;
         private CustomControls.TextProgressBar progressBar;
+        private System.Windows.Forms.CheckBox deleteOriginal;
+        private System.Windows.Forms.CheckBox overwriteDuplicate;
     }
 }
