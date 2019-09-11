@@ -111,7 +111,7 @@ namespace FAES_GUI.MenuPanels
 
         private void SetMetaData()
         {
-            int timestamp = _fileToDecrypt.GetEncryptionTimeStamp();
+            long timestamp = _fileToDecrypt.GetEncryptionTimeStamp();
             string version = _fileToDecrypt.GetEncryptionVersion();
             string compression = _fileToDecrypt.GetEncryptionCompressionMode();
 

@@ -154,7 +154,7 @@
             this.passHintTextbox.Enabled = false;
             this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.passHintTextbox.Location = new System.Drawing.Point(137, 169);
-            this.passHintTextbox.MaxLength = 64;
+            this.passHintTextbox.MaxLength = 0;
             this.passHintTextbox.Multiline = true;
             this.passHintTextbox.Name = "passHintTextbox";
             this.passHintTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
