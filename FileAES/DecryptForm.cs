@@ -12,15 +12,16 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
 
             decryptPanel.LockFileSelect(true);
             decryptPanel.setCloseAfterOperationSuccessful(true);
-            decryptPanel.setFileToDecrypt(faesFile);
+            decryptPanel.SetFileToDecrypt(faesFile);
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)
         {
-
+            ControlPaint.DrawBorder(e.Graphics, titleBar.ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
         }
 
         private void titleBar_MouseDown(object sender, MouseEventArgs e)

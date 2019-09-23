@@ -12,10 +12,11 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
 
             encryptPanel.LockFileSelect(true);
             encryptPanel.setCloseAfterOperationSuccessful(true);
-            encryptPanel.setFileToEncrypt(faesFile);
+            encryptPanel.SetFileToEncrypt(faesFile);
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)

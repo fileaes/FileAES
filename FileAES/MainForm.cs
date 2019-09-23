@@ -1,12 +1,6 @@
 ﻿using FAES;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FAES_GUI
@@ -15,17 +9,40 @@ namespace FAES_GUI
     {
         private bool _closeAfterOperation = false;
 
+        private DevForm _devForm;
+
         public MainForm(FAES_File faesFile = null)
         {
             InitializeComponent();
             autoDetect.BringToFront();
 
             titleLabel.Text += Program.GetVersion();
+            this.Text = titleLabel.Text;
 
-            autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { encryptMenuButton, decryptMenuButton, settingsMenuButton });
-            encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton });
-            decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton });
-            settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[3] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton });
+            DateTime buildDate = Program.GetBuildDate();
+
+            longVersionLabel.Text = String.Format("FileAES {0} | Built on {1} at {2}", Program.GetVersion(), buildDate.ToString("dd/MM/yyyy"), buildDate.ToString("hh:mm:ss tt"));
+
+            if (FileAES_Utilities.GetVerboseLogging())
+            {
+                _devForm = new DevForm();
+                _devForm.SetCheckUpdateAction(() => InvokeCheckUpdate());
+
+                // Hacky solution to the RichTextBox Console.SetOut causing issues if the DevForm is not opened at least once before encryption/decryption (otherwise it hangs)
+                _devForm.Show();
+                _devForm.Hide();
+            }
+
+            autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { encryptMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton, aboutMenuButton });
+            settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, aboutMenuButton });
+            aboutMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, settingsMenuButton });
+
+            
+
+            aboutPanel.SetIsUpdateAction(() => aboutMenuButton_Click(null, null));
+            aboutPanel.CheckForUpdate();
 
             if (faesFile != null)
             {
@@ -36,6 +53,11 @@ namespace FAES_GUI
 
                 FAESMenuHandler(faesFile);
             }
+        }
+
+        private void InvokeCheckUpdate()
+        {
+            aboutPanel.CheckForUpdate();
         }
 
         private void titleBar_MouseDown(object sender, MouseEventArgs e)
@@ -49,7 +71,13 @@ namespace FAES_GUI
 
         private void quitButton_Click(object sender, EventArgs e)
         {
+            Logging.Log(String.Format("FAES_GUI(MainGUI): Quit Button pressed. Exiting..."), Severity.DEBUG);
             Environment.Exit(0);
+        }
+
+        private void minButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
@@ -92,6 +120,23 @@ namespace FAES_GUI
             slowToolTip.SetToolTip(quitButton, "Close");
         }
 
+        private void minButton_MouseEnter(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.LightGray;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseLeave(object sender, EventArgs e)
+        {
+            minButton.BackColor = Color.Transparent;
+            minButton.ForeColor = Color.White;
+        }
+
+        private void minButton_MouseHover(object sender, EventArgs e)
+        {
+            slowToolTip.SetToolTip(minButton, "Minimise");
+        }
+
         private void autoDetect_Click(object sender, EventArgs e)
         {
             if (openFileDialogAutoSelect.ShowDialog() == DialogResult.OK)
@@ -122,38 +167,74 @@ namespace FAES_GUI
         {
             if (faesFile.isFileEncryptable())
             {
+                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, encryptable file! ({0})", faesFile.getPath()), Severity.DEBUG);
+
                 encryptMenuButton_Click(null, null);
                 encryptMenuButton.Selected = true;
                 autoSelectMenuButton.Selected = false;
-                encryptPanel.setFileToEncrypt(faesFile);
+                encryptPanel.SetFileToEncrypt(faesFile);
             }
             else if (faesFile.isFileDecryptable())
             {
+                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, decryptable file! ({0})", faesFile.getPath()), Severity.DEBUG);
+
                 decryptMenuButton_Click(null, null);
                 decryptMenuButton.Selected = true;
                 autoSelectMenuButton.Selected = false;
-                decryptPanel.setFileToDecrypt(faesFile);
+                decryptPanel.SetFileToDecrypt(faesFile);
             }
+            else Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected an invalid file! ({0})", faesFile.getPath()), Severity.DEBUG);
         }
 
         private void autoSelectMenuButton_Click(object sender, EventArgs e)
         {
             autoDetect.BringToFront();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): AutoSelectPanel Active."), Severity.DEBUG);
         }
 
         private void encryptMenuButton_Click(object sender, EventArgs e)
         {
+            if (Control.ModifierKeys == Keys.Shift) encryptPanel.ResetFile();
             encryptPanel.BringToFront();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): EncryptPanel Active."), Severity.DEBUG);
         }
 
         private void decryptMenuButton_Click(object sender, EventArgs e)
         {
+            if (Control.ModifierKeys == Keys.Shift) decryptPanel.ResetFile();
             decryptPanel.BringToFront();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): DecryptPanel Active."), Severity.DEBUG);
         }
 
         private void settingsMenuButton_Click(object sender, EventArgs e)
         {
-            autoSelectMenuButton_Click(sender, e);
+            settingsPanel.BringToFront();
+            settingsPanel.LoadSettings();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): SettingsPanel Active."), Severity.DEBUG);
+        }
+
+        private void aboutMenuButton_Click(object sender, EventArgs e)
+        {
+            aboutPanel.BringToFront();
+            Logging.Log(String.Format("FAES_GUI(MainGUI): AboutPanel Active."), Severity.DEBUG);
+        }
+
+        private void CopyrightLabel_Click(object sender, EventArgs e)
+        {
+            if (FileAES_Utilities.GetVerboseLogging())
+            {
+                if (_devForm.WindowState == FormWindowState.Minimized && _devForm.Visible)
+                {
+                    Logging.Log(String.Format("FAES_GUI(MainGUI): DevForm detected in a minimised state. Setting its WindowState to Normal."), Severity.DEBUG);
+                    _devForm.WindowState = FormWindowState.Normal;
+                }
+                else
+                {
+                    _devForm.Visible = !_devForm.Visible;
+                    if (_devForm.Visible) _devForm.WindowState = FormWindowState.Normal;
+                    Logging.Log(String.Format("FAES_GUI(MainGUI): DevForm visibility changed to: {0}.", _devForm.Visible ? "Shown" : "Hidden"), Severity.DEBUG);
+                }
+            }
         }
     }
 }

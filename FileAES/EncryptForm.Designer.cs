@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EncryptForm));
             this.titleBar = new System.Windows.Forms.Panel();
             this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
-            this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.encryptPanel = new FAES_GUI.MenuPanels.encryptPanel();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.SuspendLayout();
@@ -71,9 +72,9 @@
             this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
             this.titleLabel.Location = new System.Drawing.Point(26, 1);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(216, 25);
+            this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "FileAES 2.0.0 (Beta 1)";
+            this.titleLabel.Text = "Encrypt | FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
@@ -88,12 +89,19 @@
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(23, 23);
             this.quitButton.TabIndex = 1;
+            this.quitButton.TabStop = false;
             this.quitButton.Text = "✖";
             this.quitButton.UseVisualStyleBackColor = false;
             this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
             this.quitButton.MouseEnter += new System.EventHandler(this.quitButton_MouseEnter);
             this.quitButton.MouseLeave += new System.EventHandler(this.quitButton_MouseLeave);
             this.quitButton.MouseHover += new System.EventHandler(this.quitButton_MouseHover);
+            // 
+            // slowToolTip
+            // 
+            this.slowToolTip.AutoPopDelay = 5000;
+            this.slowToolTip.InitialDelay = 1000;
+            this.slowToolTip.ReshowDelay = 100;
             // 
             // encryptPanel
             // 
@@ -102,12 +110,6 @@
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
             this.encryptPanel.TabIndex = 2;
-            // 
-            // slowToolTip
-            // 
-            this.slowToolTip.AutoPopDelay = 5000;
-            this.slowToolTip.InitialDelay = 1000;
-            this.slowToolTip.ReshowDelay = 100;
             // 
             // EncryptForm
             // 
@@ -118,9 +120,10 @@
             this.Controls.Add(this.titleBar);
             this.Controls.Add(this.encryptPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "EncryptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FileAES: encrypt";
+            this.Text = "FileAES: Encrypt";
             this.TopMost = true;
             this.titleBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();

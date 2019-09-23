@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DecryptForm));
             this.titleBar = new System.Windows.Forms.Panel();
             this.titleBarLogo = new System.Windows.Forms.PictureBox();
             this.titleLabel = new System.Windows.Forms.Label();
@@ -71,9 +72,9 @@
             this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
             this.titleLabel.Location = new System.Drawing.Point(26, 1);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(216, 25);
+            this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "FileAES 2.0.0 (Beta 1)";
+            this.titleLabel.Text = "Decrypt | FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
@@ -88,6 +89,7 @@
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(23, 23);
             this.quitButton.TabIndex = 1;
+            this.quitButton.TabStop = false;
             this.quitButton.Text = "✖";
             this.quitButton.UseVisualStyleBackColor = false;
             this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
@@ -118,6 +120,7 @@
             this.Controls.Add(this.titleBar);
             this.Controls.Add(this.decryptPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DecryptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FileAES: Decrypt";

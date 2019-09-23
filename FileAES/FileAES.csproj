@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -36,14 +37,14 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAES">
-      <HintPath>..\FAES\bin\Release\net45\FAES.dll</HintPath>
+    <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="SSM">
-      <HintPath>..\..\..\..\Visual Studio 2019\Projects\SimpleSettingsManager\SimpleSettingsManager\bin\Release\SSM.dll</HintPath>
+    <Reference Include="System">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,11 +56,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\SettingsControls\SettingTextInput.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingTextInput.Designer.cs">
+      <DependentUpon>SettingTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingIncrementBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingIncrementBox.Designer.cs">
+      <DependentUpon>SettingIncrementBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingDropDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingDropDown.Designer.cs">
+      <DependentUpon>SettingDropDown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingToggle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\SettingsControls\SettingToggle.Designer.cs">
+      <DependentUpon>SettingToggle.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\SubMenuButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CustomControls\SubMenuButton.Designer.cs">
       <DependentUpon>SubMenuButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\TextBoxWriter.cs" />
+    <Compile Include="CustomControls\TextProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DevForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevForm.Designer.cs">
+      <DependentUpon>DevForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EncryptForm.cs">
       <SubType>Form</SubType>
@@ -73,11 +108,18 @@
     <Compile Include="DecryptForm.Designer.cs">
       <DependentUpon>DecryptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logging.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuPanels\aboutPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\aboutPanel.Designer.cs">
+      <DependentUpon>aboutPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="MenuPanels\encryptPanel.cs">
       <SubType>UserControl</SubType>
@@ -100,8 +142,23 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingTextInput.resx">
+      <DependentUpon>SettingTextInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingIncrementBox.resx">
+      <DependentUpon>SettingIncrementBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingDropDown.resx">
+      <DependentUpon>SettingDropDown.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\SettingsControls\SettingToggle.resx">
+      <DependentUpon>SettingToggle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\SubMenuButton.resx">
       <DependentUpon>SubMenuButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DevForm.resx">
+      <DependentUpon>DevForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EncryptForm.resx">
       <DependentUpon>EncryptForm.cs</DependentUpon>
@@ -111,6 +168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\aboutPanel.resx">
+      <DependentUpon>aboutPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MenuPanels\encryptPanel.resx">
       <DependentUpon>encryptPanel.cs</DependentUpon>
@@ -152,15 +212,23 @@
     <Content Include="Icon.ico" />
     <None Include="Resources\Icon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\SimpleSettingsManager.csproj">
+      <Project>{b4e5c358-6c6c-48f5-8d50-b6179070afbb}</Project>
+      <Name>SimpleSettingsManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\FAES\FAES\FAES.csproj">
+      <Project>{46365f22-afcb-42ed-964c-bdb282449fa3}</Project>
+      <Name>FAES</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Costura.Fody.3.1.1\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.3.1.1\build\Costura.Fody.targets')" />
+  <Import Project="..\packages\Fody.6.0.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.0.0\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.1.1\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.1.1\build\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Fody.3.2.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.2.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.6.0.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.0.0\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.4.1.0\build\Costura.Fody.props'))" />
   </Target>
-  <Import Project="..\packages\Fody.3.2.3\build\Fody.targets" Condition="Exists('..\packages\Fody.3.2.3\build\Fody.targets')" />
 </Project>
