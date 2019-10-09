@@ -328,7 +328,7 @@ namespace FAES_GUI.MenuPanels
                     if (versionSplit[1].ToUpper()[0] == 'B')
                     {
                         string betaTag = versionSplit[1].ToUpper().Replace("BETA", "").Replace("B", "");
-                        formattedVersion += String.Format(" (BETA{0}", betaTag);
+                        formattedVersion += String.Format(" (BETA {0}", betaTag.Replace(" ", ""));
                     }
                     else if (versionSplit[1].ToUpper()[0] == 'D')
                     {
