@@ -105,7 +105,7 @@
             // 
             // encryptPanel
             // 
-            this.encryptPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.encryptPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.encryptPanel.Location = new System.Drawing.Point(1, -21);
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
@@ -115,10 +115,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Black;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.ClientSize = new System.Drawing.Size(416, 337);
             this.Controls.Add(this.titleBar);
             this.Controls.Add(this.encryptPanel);
+            this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "EncryptForm";

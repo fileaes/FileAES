@@ -169,7 +169,7 @@
             this.copyrightLabel.Name = "copyrightLabel";
             this.copyrightLabel.Size = new System.Drawing.Size(146, 21);
             this.copyrightLabel.TabIndex = 2;
-            this.copyrightLabel.Text = "© - 2019 | mullak99";
+            this.copyrightLabel.Text = "© - 2020 | mullak99";
             this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.copyrightLabel.Click += new System.EventHandler(this.CopyrightLabel_Click);
             // 
@@ -229,6 +229,7 @@
             this.autoDetect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.autoDetect.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.autoDetect.ForeColor = System.Drawing.Color.White;
+            this.autoDetect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.autoDetect.Location = new System.Drawing.Point(149, 25);
             this.autoDetect.Name = "autoDetect";
             this.autoDetect.Size = new System.Drawing.Size(414, 357);
@@ -245,7 +246,6 @@
             // 
             // decryptPanel
             // 
-            this.decryptPanel.BackColor = System.Drawing.SystemColors.ControlDark;
             this.decryptPanel.Location = new System.Drawing.Point(149, 25);
             this.decryptPanel.Name = "decryptPanel";
             this.decryptPanel.Size = new System.Drawing.Size(414, 357);
@@ -253,7 +253,6 @@
             // 
             // encryptPanel
             // 
-            this.encryptPanel.BackColor = System.Drawing.SystemColors.ControlDark;
             this.encryptPanel.Location = new System.Drawing.Point(149, 25);
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
@@ -261,7 +260,7 @@
             // 
             // aboutPanel
             // 
-            this.aboutPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.aboutPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.aboutPanel.Location = new System.Drawing.Point(149, 25);
             this.aboutPanel.Name = "aboutPanel";
             this.aboutPanel.Size = new System.Drawing.Size(414, 357);

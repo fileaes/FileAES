@@ -83,6 +83,7 @@
             this.BackColor = System.Drawing.Color.Transparent;
             this.Controls.Add(this.selectedIndicator);
             this.Controls.Add(this.mainButton);
+            this.ForeColor = System.Drawing.Color.Black;
             this.Name = "SubMenuButton";
             this.Size = new System.Drawing.Size(147, 66);
             this.mainButton.ResumeLayout(false);

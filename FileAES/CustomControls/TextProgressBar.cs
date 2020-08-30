@@ -175,5 +175,17 @@ namespace FAES_GUI.CustomControls
             _progressColourBrush.Dispose();
             base.Dispose();
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // TextProgressBar
+            // 
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.ResumeLayout(false);
+
+        }
     }
 }

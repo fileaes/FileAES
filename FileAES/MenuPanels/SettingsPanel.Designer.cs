@@ -48,7 +48,7 @@
             // 
             // settingsScrollPanel
             // 
-            this.settingsScrollPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.settingsScrollPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.settingsScrollPanel.Controls.Add(this.ignoreUpdatesSetting);
             this.settingsScrollPanel.Controls.Add(this.branchSelection);
             this.settingsScrollPanel.Controls.Add(this.developerSetting);
@@ -71,6 +71,7 @@
             this.ignoreUpdatesSetting.Name = "ignoreUpdatesSetting";
             this.ignoreUpdatesSetting.Size = new System.Drawing.Size(400, 100);
             this.ignoreUpdatesSetting.TabIndex = 6;
+            this.ignoreUpdatesSetting.Toggled = true;
             // 
             // branchSelection
             // 
@@ -144,7 +145,7 @@
             this.saveSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.saveSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.saveSettings.ForeColor = System.Drawing.Color.White;
-            this.saveSettings.Location = new System.Drawing.Point(252, 6);
+            this.saveSettings.Location = new System.Drawing.Point(240, 6);
             this.saveSettings.Name = "saveSettings";
             this.saveSettings.Size = new System.Drawing.Size(170, 32);
             this.saveSettings.TabIndex = 5;
@@ -158,7 +159,7 @@
             this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.resetButton.ForeColor = System.Drawing.Color.White;
-            this.resetButton.Location = new System.Drawing.Point(107, 6);
+            this.resetButton.Location = new System.Drawing.Point(95, 6);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(139, 32);
             this.resetButton.TabIndex = 6;
@@ -168,12 +169,13 @@
             // 
             // buttonPanel
             // 
+            this.buttonPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.buttonPanel.Controls.Add(this.cancelButton);
             this.buttonPanel.Controls.Add(this.resetButton);
             this.buttonPanel.Controls.Add(this.saveSettings);
-            this.buttonPanel.Location = new System.Drawing.Point(-11, 316);
+            this.buttonPanel.Location = new System.Drawing.Point(0, 316);
             this.buttonPanel.Name = "buttonPanel";
-            this.buttonPanel.Size = new System.Drawing.Size(438, 51);
+            this.buttonPanel.Size = new System.Drawing.Size(414, 41);
             this.buttonPanel.TabIndex = 7;
             this.buttonPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.buttonPanel_Paint);
             // 
@@ -183,7 +185,7 @@
             this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cancelButton.ForeColor = System.Drawing.Color.White;
-            this.cancelButton.Location = new System.Drawing.Point(16, 6);
+            this.cancelButton.Location = new System.Drawing.Point(4, 6);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(85, 32);
             this.cancelButton.TabIndex = 6;

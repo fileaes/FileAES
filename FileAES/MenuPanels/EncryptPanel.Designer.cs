@@ -93,6 +93,7 @@
             this.passTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passTextbox.Enabled = false;
             this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passTextbox.ForeColor = System.Drawing.Color.Black;
             this.passTextbox.Location = new System.Drawing.Point(137, 81);
             this.passTextbox.Name = "passTextbox";
             this.passTextbox.PasswordChar = '*';
@@ -130,6 +131,7 @@
             this.passConfTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passConfTextbox.Enabled = false;
             this.passConfTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passConfTextbox.ForeColor = System.Drawing.Color.Black;
             this.passConfTextbox.Location = new System.Drawing.Point(137, 111);
             this.passConfTextbox.Name = "passConfTextbox";
             this.passConfTextbox.PasswordChar = '*';
@@ -155,6 +157,7 @@
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
             this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintTextbox.ForeColor = System.Drawing.Color.Black;
             this.passHintTextbox.Location = new System.Drawing.Point(137, 141);
             this.passHintTextbox.MaxLength = 0;
             this.passHintTextbox.Multiline = true;
@@ -211,6 +214,7 @@
             // 
             this.compressMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.compressMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.compressMode.ForeColor = System.Drawing.Color.Black;
             this.compressMode.FormattingEnabled = true;
             this.compressMode.Location = new System.Drawing.Point(137, 196);
             this.compressMode.Name = "compressMode";
@@ -268,7 +272,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.Controls.Add(this.overwriteDuplicate);
             this.Controls.Add(this.deleteOriginal);
             this.Controls.Add(this.progressBar);
@@ -284,6 +288,7 @@
             this.Controls.Add(this.passTextbox);
             this.Controls.Add(this.selectEncryptButton);
             this.Controls.Add(this.fileInfoPanel);
+            this.ForeColor = System.Drawing.Color.Black;
             this.Name = "encryptPanel";
             this.Size = new System.Drawing.Size(414, 357);
             this.fileInfoPanel.ResumeLayout(false);

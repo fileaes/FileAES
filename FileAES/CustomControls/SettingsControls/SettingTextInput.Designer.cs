@@ -48,10 +48,10 @@
             // 
             // textBox
             // 
-            this.textBox.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.textBox.ForeColor = System.Drawing.Color.Black;
             this.textBox.Location = new System.Drawing.Point(3, 75);
             this.textBox.Name = "textBox";
             this.textBox.Size = new System.Drawing.Size(393, 22);

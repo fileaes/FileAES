@@ -80,10 +80,10 @@
             // 
             // numericTextbox
             // 
-            this.numericTextbox.BackColor = System.Drawing.SystemColors.Control;
+            this.numericTextbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.numericTextbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.numericTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numericTextbox.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.numericTextbox.ForeColor = System.Drawing.Color.Black;
             this.numericTextbox.Location = new System.Drawing.Point(3, 75);
             this.numericTextbox.Name = "numericTextbox";
             this.numericTextbox.Size = new System.Drawing.Size(342, 22);

@@ -48,9 +48,10 @@
             // 
             // dropDownBox
             // 
-            this.dropDownBox.BackColor = System.Drawing.SystemColors.Window;
+            this.dropDownBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.dropDownBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dropDownBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dropDownBox.ForeColor = System.Drawing.Color.Black;
             this.dropDownBox.FormattingEnabled = true;
             this.dropDownBox.Location = new System.Drawing.Point(3, 74);
             this.dropDownBox.Name = "dropDownBox";

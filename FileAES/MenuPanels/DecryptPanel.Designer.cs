@@ -90,6 +90,7 @@
             this.passTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passTextbox.Enabled = false;
             this.passTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passTextbox.ForeColor = System.Drawing.Color.Black;
             this.passTextbox.Location = new System.Drawing.Point(137, 81);
             this.passTextbox.Name = "passTextbox";
             this.passTextbox.PasswordChar = '*';
@@ -125,6 +126,7 @@
             this.passHintTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passHintTextbox.Enabled = false;
             this.passHintTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passHintTextbox.ForeColor = System.Drawing.Color.Black;
             this.passHintTextbox.Location = new System.Drawing.Point(137, 111);
             this.passHintTextbox.MaxLength = 64;
             this.passHintTextbox.Multiline = true;
@@ -227,7 +229,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.Controls.Add(this.overwriteDuplicate);
             this.Controls.Add(this.deleteOriginal);
             this.Controls.Add(this.progressBar);
