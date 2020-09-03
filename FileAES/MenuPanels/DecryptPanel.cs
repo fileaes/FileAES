@@ -91,22 +91,29 @@ namespace FAES_GUI.MenuPanels
         private void SetNote(string note, int severity)
         {
             Logging.Log(String.Format("FAES_GUI(SetNote({1})): '{0}'", note, severity), Severity.DEBUG);
+            string message;
 
             switch (severity)
             {
                 case 1:
-                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Warning: " + note; }));
+                    message = "Warning: " + note;
                     break;
                 case 2:
-                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Important: " + note; }));
+                    message = "Important: " + note;
                     break;
                 case 3:
-                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Error: " + note; }));
+                    message = "Error: " + note;
                     break;
                 default:
-                    statusInformation.Invoke(new MethodInvoker(delegate { this.statusInformation.Text = "Note: " + note; }));
+                    message = "Note: " + note;
                     break;
             }
+
+            statusInformation.Invoke(new MethodInvoker(delegate
+            {
+                this.statusInformation.Text = message;
+                this.toolTip.SetToolTip(statusInformation, message);
+            }));
         }
 
         private void SetMetaData()
@@ -157,6 +164,7 @@ namespace FAES_GUI.MenuPanels
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, passTextbox.Text);
                     decrypt.SetDeleteAfterDecrypt(deleteOriginal.Checked);
                     decrypt.SetOverwriteDuplicate(overwriteDuplicate.Checked);
+                    decrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
                     Thread dThread = new Thread(() =>
                     {

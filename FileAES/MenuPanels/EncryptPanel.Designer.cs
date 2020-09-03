@@ -47,6 +47,7 @@
             this.deleteOriginal = new System.Windows.Forms.CheckBox();
             this.overwriteDuplicate = new System.Windows.Forms.CheckBox();
             this.progressBar = new FAES_GUI.CustomControls.TextProgressBar();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.fileInfoPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -187,9 +188,9 @@
             // statusInformation
             // 
             this.statusInformation.ForeColor = System.Drawing.Color.White;
-            this.statusInformation.Location = new System.Drawing.Point(3, 260);
+            this.statusInformation.Location = new System.Drawing.Point(3, 255);
             this.statusInformation.Name = "statusInformation";
-            this.statusInformation.Size = new System.Drawing.Size(408, 25);
+            this.statusInformation.Size = new System.Drawing.Size(408, 33);
             this.statusInformation.TabIndex = 14;
             this.statusInformation.Text = "Error: PLACEHOLDER ERROR";
             this.statusInformation.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -232,7 +233,7 @@
             this.deleteOriginal.CheckState = System.Windows.Forms.CheckState.Checked;
             this.deleteOriginal.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
             this.deleteOriginal.ForeColor = System.Drawing.Color.White;
-            this.deleteOriginal.Location = new System.Drawing.Point(11, 229);
+            this.deleteOriginal.Location = new System.Drawing.Point(11, 226);
             this.deleteOriginal.Name = "deleteOriginal";
             this.deleteOriginal.Size = new System.Drawing.Size(140, 24);
             this.deleteOriginal.TabIndex = 18;
@@ -247,7 +248,7 @@
             this.overwriteDuplicate.CheckState = System.Windows.Forms.CheckState.Checked;
             this.overwriteDuplicate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F);
             this.overwriteDuplicate.ForeColor = System.Drawing.Color.White;
-            this.overwriteDuplicate.Location = new System.Drawing.Point(227, 229);
+            this.overwriteDuplicate.Location = new System.Drawing.Point(227, 226);
             this.overwriteDuplicate.Name = "overwriteDuplicate";
             this.overwriteDuplicate.Size = new System.Drawing.Size(176, 24);
             this.overwriteDuplicate.TabIndex = 19;
@@ -258,7 +259,7 @@
             // 
             this.progressBar.CustomText = "";
             this.progressBar.ForeColor = System.Drawing.Color.ForestGreen;
-            this.progressBar.Location = new System.Drawing.Point(3, 288);
+            this.progressBar.Location = new System.Drawing.Point(3, 289);
             this.progressBar.Name = "progressBar";
             this.progressBar.ProgressColor = System.Drawing.Color.Lime;
             this.progressBar.Size = new System.Drawing.Size(408, 20);
@@ -317,5 +318,6 @@
         private CustomControls.TextProgressBar progressBar;
         private System.Windows.Forms.CheckBox deleteOriginal;
         private System.Windows.Forms.CheckBox overwriteDuplicate;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

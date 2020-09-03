@@ -13,8 +13,8 @@ namespace FAES_GUI
 {
     static class Program
     {
-        private const string devAppendTag = "BETA 4";
-        private const string betaAppendTag = "";
+        private const string devAppendTag = "";
+        private const string betaAppendTag = "BETA 5";
 
         private static bool _verbose = false;
         private static bool _purgeTemp = false;
@@ -24,6 +24,8 @@ namespace FAES_GUI
         private static bool _showProgress = false;
         private static bool _overwriteDuplicates = false;
         private static bool _deleteOriginalFile = true;
+        private static bool _genFullInstallConfig = false;
+        private static string _installBranch;
         private static string _directory = null;
         private static string _password;
         private static string _passwordHint = null;
@@ -74,6 +76,8 @@ namespace FAES_GUI
                 else if ((strippedArg == "level" || strippedArg == "compressionlevel" || strippedArg == "l") && !string.IsNullOrEmpty(args[i + 1])) Int32.TryParse(args[i + 1], out _compressionLevel);
                 else if (strippedArg == "overwrite" || strippedArg == "overwriteduplicates" || strippedArg == "o") _overwriteDuplicates = true;
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
+                else if (strippedArg == "genFullInstallConfig") _genFullInstallConfig = true;
+                else if (strippedArg == "installBranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
 
                 _strippedArgs.Add(strippedArg);
             }
@@ -257,6 +261,11 @@ namespace FAES_GUI
                     HandleException(e);
                 }
             }
+            else if (_genFullInstallConfig)
+            {
+                programManager = new ProgramManager(ProgramManager.InstallType.FullInstall);
+                programManager.SetBranch(_installBranch);
+            }
             else
             {
                 programManager = new ProgramManager();
@@ -340,12 +349,12 @@ namespace FAES_GUI
 
         public static bool IsBetaBuild()
         {
-            return (!String.IsNullOrEmpty(devAppendTag) && String.IsNullOrEmpty(betaAppendTag));
+            return !String.IsNullOrWhiteSpace(betaAppendTag);
         }
 
         public static bool IsDevBuild()
         {
-            return !String.IsNullOrEmpty(devAppendTag);
+            return !String.IsNullOrWhiteSpace(devAppendTag);
         }
 
         public static string GetBuild()

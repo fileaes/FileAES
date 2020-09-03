@@ -7,7 +7,7 @@ namespace FAES_GUI
 {
     public class SettingsManager
     {
-        private const string _programSettingsFileName = "FileAES_ProgSettings.db";
+        public const string _programSettingsFileName = "FileAES_ProgSettings.db";
 
         protected SSM _ssm;
         protected SSM_File _ssmFile;
@@ -285,25 +285,26 @@ namespace FAES_GUI
 
     public class ProgramManager
     {
-        protected static string _appDataPath;
-        protected bool _fullInstall;
+        protected InstallType _installType = InstallType.AutoDetect;
+        protected static string _portablePath = AppDomain.CurrentDomain.BaseDirectory;
+        protected static string _fullInstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "mullak99", "FileAES");
+        protected static string _appDataPath = _portablePath;
 
         protected string[] _currentSubDirsAppData = new string[] { "config", "logs" };
         protected SettingsManager _settingsManager;
 
         private long _ssmLastModifiedTime;
-        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates;
+        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _fullInstall;
         private string _ssmCachedLogPath, _ssmCachedBranch;
         private UInt32 _ssmCachedCsBuffer;
 
-        public ProgramManager(bool fullInstall = false)
+        public ProgramManager(InstallType installType = InstallType.AutoDetect)
         {
-            _fullInstall = fullInstall;
+            _installType = installType;
 
-            CreateAppDataDirectory(_fullInstall);
-
+            CreateAppDataDirectory();
             _settingsManager = new SettingsManager();
-            _settingsManager.SetFullInstall(fullInstall);
+            _settingsManager.SetFullInstall(_fullInstall);
 
             CacheVariables();
         }
@@ -321,22 +322,49 @@ namespace FAES_GUI
             _ssmCachedSkipUpdates = _settingsManager.GetSkipUpdates();
         }
 
-        private void CreateAppDataDirectory(bool fullInstall)
+        private void CreateAppDataDirectory()
         {
-            if (fullInstall)
+            switch (_installType)
             {
-                _appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "mullak99", "FileAES");
+                case InstallType.AutoDetect:
+                    {
+                        if (File.Exists(Path.Combine(GetPotentialConfigPath(_portablePath), SettingsManager._programSettingsFileName)))
+                        {
+                            _installType = InstallType.PortableInstall;
+                            CreateAppDataDirectory();
+                            break;
+                        }
+                        else if (File.Exists(Path.Combine(GetPotentialConfigPath(_fullInstallPath), SettingsManager._programSettingsFileName)))
+                        {
+                            _installType = InstallType.FullInstall;
+                            CreateAppDataDirectory();
+                            break;
+                        }
+                        else
+                        {
+                            _installType = InstallType.PortableInstall;
+                            CreateAppDataDirectory();
+                            break;
+                        }
+                    }
+                case InstallType.PortableInstall:
+                    {
+                        _fullInstall = false;
+                        _appDataPath = _portablePath;
+                        CreateDirectory(GetConfigPath());
+                        break;
+                    }
+                case InstallType.FullInstall:
+                    {
+                        _fullInstall = true;
+                        _appDataPath = _fullInstallPath;
 
-                foreach (string subDir in _currentSubDirsAppData)
-                {
-                    CreateDirectory(Path.Combine(_appDataPath, subDir));
-                }
-            }
-            else
-            {
-                _appDataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);                
-
-                CreateDirectory(GetConfigPath());
+                        foreach (string subDir in _currentSubDirsAppData)
+                        {
+                            CreateDirectory(Path.Combine(_appDataPath, subDir));
+                        }
+                        break;
+                    }
             }
         }
 
@@ -509,7 +537,12 @@ namespace FAES_GUI
 
         public static string GetConfigPath()
         {
-            return Path.Combine(_appDataPath, "config");
+            return GetPotentialConfigPath(_appDataPath);
+        }
+
+        private static string GetPotentialConfigPath(string path)
+        {
+            return Path.Combine(path, "config");
         }
 
         private static bool CreateDirectory(string path)
@@ -521,5 +554,12 @@ namespace FAES_GUI
             }
             return false;
         }
+
+        public enum InstallType
+        {
+            AutoDetect,
+            FullInstall,
+            PortableInstall
+        };
     }
 }
