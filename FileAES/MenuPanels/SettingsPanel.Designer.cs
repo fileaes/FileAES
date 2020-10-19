@@ -77,8 +77,8 @@
             // 
             this.branchSelection.BackColor = System.Drawing.Color.Transparent;
             this.branchSelection.DescriptionText = "Determines the branch used to determine if an update is availible for FileAES. Un" +
-    "less you knowm what you are doing, it is recommended to keep on the Stable branc" +
-    "h.";
+    "less you know what you are doing, it is recommended to keep on the Stable branch" +
+    ".";
             this.branchSelection.ForeColor = System.Drawing.Color.White;
             this.branchSelection.HeaderText = "FileAES Branch";
             this.branchSelection.Location = new System.Drawing.Point(-1, 99);

@@ -17,6 +17,7 @@ namespace FAES_GUI.MenuPanels
         private string _latestVersion, _lastCheckedBranch;
         private bool _updateThreadRunning = false;
         private bool _updateUI = false;
+        private bool _isUpdate = false;
 
         private Action _onIsUpdateAction;
 
@@ -26,9 +27,7 @@ namespace FAES_GUI.MenuPanels
 
             miscVersionLabel.Text = String.Format("FAES Version: {0}\n\rSSM Version: {1}", ConvertVersionToFormatted(FAES.FileAES_Utilities.GetVersion()), ConvertVersionToFormatted(SimpleSettingsManager.SSM.GetVersion()));
             GetCurrentVersion();
-            CheckForUpdate();
         }
-
         public enum UpdateStatus
         {
             ServerError,
@@ -36,6 +35,11 @@ namespace FAES_GUI.MenuPanels
             AppLatest,
             AppNewer
         };
+
+        public bool IsUpdate()
+        {
+            return _isUpdate;
+        }
 
         private void GetCurrentVersion()
         {
@@ -69,6 +73,7 @@ namespace FAES_GUI.MenuPanels
                     reinstallCurrentButton.Enabled = true;
                     updateDescLabel.Text = "You are on the latest version!";
                     latestVerLabel.Text = latestVersion;
+                    _isUpdate = false;
 
                     Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppLatest."), Severity.DEBUG);
                 }
@@ -82,6 +87,7 @@ namespace FAES_GUI.MenuPanels
                     reinstallCurrentButton.Enabled = false;
                     updateDescLabel.Text = "You are on a private build.";
                     latestVerLabel.Text = latestVersion;
+                    _isUpdate = false;
 
                     Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppNewer."), Severity.DEBUG);
                 }
@@ -95,6 +101,7 @@ namespace FAES_GUI.MenuPanels
                     reinstallCurrentButton.Enabled = false;
                     updateDescLabel.Text = "Unable to connect to the update server.";
                     latestVerLabel.Text = "SERVER ERROR!";
+                    _isUpdate = false;
 
                     Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to ServerError."), Severity.DEBUG);
                 }
@@ -108,6 +115,7 @@ namespace FAES_GUI.MenuPanels
                     reinstallCurrentButton.Enabled = true;
                     updateDescLabel.Text = "An update is available!";
                     latestVerLabel.Text = latestVersion;
+                    _isUpdate = true;
 
                     Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppOutdated."), Severity.DEBUG);
                 }
@@ -161,32 +169,45 @@ namespace FAES_GUI.MenuPanels
 
         public void CheckForUpdate()
         {
-            if (!_updateThreadRunning)
+            try
             {
-                _updateThreadRunning = true;
-
-                Thread threaddedUpdateCheck = new Thread(() =>
+                if (!_updateThreadRunning)
                 {
-                    string updateVersion;
+                    _updateThreadRunning = true;
 
-                    Logging.Log(String.Format("Checking for update..."), Severity.DEBUG);
-                    UpdateStatus updateInfo = GetUpdateStatus(out updateVersion);
+                    Thread threaddedUpdateCheck = new Thread(() =>
+                    {
+                        try
+                        {
+                            string updateVersion;
 
-                    if (updateVersion != "v0.0.0")
-                        Logging.Log(String.Format("Latest FAES_GUI version: {0}", updateVersion), Severity.DEBUG);
-                    else
-                        Logging.Log(String.Format("Update check failed!"), Severity.WARN);
+                            Logging.Log(String.Format("Checking for update..."), Severity.DEBUG);
+                            UpdateStatus updateInfo = GetUpdateStatus(out updateVersion);
 
-                    _appUpdateStatus = updateInfo;
-                    _latestVersion = updateVersion;
-                    _lastCheckedBranch = Program.programManager.GetBranch();
-                    _updateUI = true;
-                    _updateThreadRunning = false;
+                            if (updateVersion != "v0.0.0")
+                                Logging.Log(String.Format("Latest FAES_GUI version: {0}", updateVersion), Severity.DEBUG);
+                            else
+                                Logging.Log(String.Format("Update check failed!"), Severity.WARN);
 
-                    if (_appUpdateStatus == UpdateStatus.AppOutdated && !Program.programManager.GetSkipUpdates()) DoIsUpdateAction();
-                });
-                threaddedUpdateCheck.Start();
+                            _appUpdateStatus = updateInfo;
+                            _latestVersion = updateVersion;
+                            _lastCheckedBranch = Program.programManager.GetBranch();
+                            _updateUI = true;
+                            _updateThreadRunning = false;
+
+                            if (_appUpdateStatus == UpdateStatus.AppOutdated && !Program.programManager.GetSkipUpdates()) DoIsUpdateAction();
+                        }
+                        catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
+                    });
+                    threaddedUpdateCheck.Start();
+                }
             }
+            catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
+        }
+
+        public bool IsUpdateCheckRunning()
+        {
+            return _updateThreadRunning;
         }
 
         public void SetIsUpdateAction(Action action)
@@ -427,8 +448,12 @@ namespace FAES_GUI.MenuPanels
 
         private void Runtime_Tick(object sender, EventArgs e)
         {
-            if (_updateThreadRunning || _updateUI) UpdateUI();
-            if (Program.programManager.GetBranch() != _lastCheckedBranch) CheckForUpdate();
+            try
+            {
+                if (_updateThreadRunning || _updateUI) UpdateUI();
+                if (Program.programManager.GetBranch() != _lastCheckedBranch) CheckForUpdate();
+            }
+            catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
         }
 
         private void UpdatePanel_Paint(object sender, PaintEventArgs e)

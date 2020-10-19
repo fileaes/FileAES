@@ -1,30 +1,19 @@
-﻿using FAES;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace FAES_GUI
 {
-    public partial class DecryptForm : Form
+    public partial class UpdateForm : Form
     {
-        private UpdateForm _updateForm;
-
-        public DecryptForm(FAES_File faesFile)
+        public UpdateForm()
         {
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
             this.Text = titleLabel.Text;
+            this.Hide();
 
-            decryptPanel.LockFileSelect(true);
-            decryptPanel.setCloseAfterOperationSuccessful(true);
-            decryptPanel.SetFileToDecrypt(faesFile);
-
-            if (!Program.programManager.GetSkipUpdates())
-            {
-                _updateForm = new UpdateForm();
-                _updateForm.CheckForUpdate();
-            }
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)
@@ -54,9 +43,24 @@ namespace FAES_GUI
             ControlPaint.DrawBorder(e.Graphics, ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
         }
 
+        public void CheckForUpdate()
+        {
+            aboutPanel.CheckForUpdate();
+            runtime.Start();
+        }
+
+        private void runtime_Tick(object sender, EventArgs e)
+        {
+            if (!aboutPanel.IsUpdateCheckRunning())
+            {
+                if (aboutPanel.IsUpdate()) this.Show();
+                runtime.Stop();
+            }
+        }
+
         private void quitButton_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            this.Close();
         }
 
         private void quitButton_MouseEnter(object sender, EventArgs e)

@@ -1,12 +1,15 @@
 ﻿using FAES;
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI
 {
     public partial class EncryptForm : Form
     {
+        private UpdateForm _updateForm;
+
         public EncryptForm(FAES_File faesFile)
         {
             InitializeComponent();
@@ -17,6 +20,12 @@ namespace FAES_GUI
             encryptPanel.LockFileSelect(true);
             encryptPanel.setCloseAfterOperationSuccessful(true);
             encryptPanel.SetFileToEncrypt(faesFile);
+
+            if (!Program.programManager.GetSkipUpdates())
+            {
+                _updateForm = new UpdateForm();
+                _updateForm.CheckForUpdate();
+            }
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)
