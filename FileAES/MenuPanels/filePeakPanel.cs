@@ -142,7 +142,10 @@ namespace FAES_GUI.MenuPanels
             string password = passTextbox.Text;
             string finalPath = Path.Combine(Path.ChangeExtension(pathOverride, Path.GetExtension(_fileToPeak.GetOriginalFileName())), _fileToPeak.GetOriginalFileName());
 
-            Directory.CreateDirectory(Path.GetDirectoryName(pathOverride));
+            string dirName = Path.GetDirectoryName(pathOverride);
+            DirectoryInfo di = Directory.CreateDirectory(dirName);
+            di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
+
 
             SetNote("Decrypting... Please wait.", 0);
 
