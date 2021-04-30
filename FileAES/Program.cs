@@ -14,8 +14,9 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "BETA 7";
+        private const string betaAppendTag = "BETA 8";
 
+        private static bool _doFilePeak = false;
         private static bool _verbose = false;
         private static bool _purgeTemp = false;
         private static bool _headless = false;
@@ -33,6 +34,8 @@ namespace FAES_GUI
         private static int _compressionLevel = 7;
         private static ushort _progressSleep = 5000;
         private static List<string> _strippedArgs = new List<string>();
+
+        private static List<string> _supportedPeakFiles = new List<string> {".TXT", ".MD", ".LOG", ""};
 
         private static string _spoofedVersion = "v2.0.0";
         private static bool _useSpoofedVersion = false;
@@ -78,6 +81,7 @@ namespace FAES_GUI
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
                 else if (strippedArg == "genFullInstallConfig") _genFullInstallConfig = true;
                 else if (strippedArg == "installBranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
+                else if (strippedArg == "peak" || strippedArg == "filepeak") _doFilePeak = true;
 
                 _strippedArgs.Add(strippedArg);
             }
@@ -280,8 +284,14 @@ namespace FAES_GUI
 
                     if (faesFile.isFileEncryptable())
                         Application.Run(new EncryptForm(faesFile));
-                    else if(faesFile.isFileDecryptable())
-                        Application.Run(new DecryptForm(faesFile));
+                    else if (faesFile.isFileDecryptable())
+                    {
+                        if (_doFilePeak && IsFileValidForPeek(faesFile))
+                            Application.Run(new PeakForm(faesFile));
+                        else
+                            Application.Run(new DecryptForm(faesFile));
+                    }
+                        
                 }
                 else  
                     Application.Run(new MainForm());
@@ -299,6 +309,14 @@ namespace FAES_GUI
                 Console.WriteLine("\n\nConsole held open. Press any key to exit.");
                 Console.ReadKey();
             }
+        }
+
+        public static bool IsFileValidForPeek(FAES_File faesFile)
+        {
+            if (faesFile.isFileDecryptable())
+                return _supportedPeakFiles.Contains(Path.GetExtension(faesFile.GetOriginalFileName()).ToUpper());
+
+            return false;
         }
 
         public static bool SetPath(string path)
@@ -372,6 +390,11 @@ namespace FAES_GUI
         public static DateTime GetBuildDate()
         {
             return new FileInfo(Assembly.GetExecutingAssembly().Location).LastWriteTime;
+        }
+
+        public static bool IsVerbose()
+        {
+            return _verbose;
         }
     }
 }

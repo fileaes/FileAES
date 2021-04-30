@@ -1,26 +1,27 @@
 ﻿using FAES;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace FAES_GUI.MenuPanels
 {
-    public partial class decryptPanel : UserControl
+    public partial class filePeakPanel : UserControl
     {
-        private FAES_File _fileToDecrypt;
+        private FAES_File _fileToPeak;
 
         private bool _inProgress = false;
         private bool _decryptSuccessful;
         private bool _closeAfterOp = false;
         private decimal _progress = 0;
 
-        public decryptPanel()
+        public filePeakPanel()
         {
             Initialise();
         }
 
-        public decryptPanel(FAES_File faesFile)
+        public filePeakPanel(FAES_File faesFile)
         {
             Initialise();
 
@@ -40,12 +41,12 @@ namespace FAES_GUI.MenuPanels
 
         private void Initialise()
         {
-            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initialising..."), Severity.DEBUG);
+            Logging.Log(String.Format("FAES_GUI(PeakPanel): Initialising..."), Severity.DEBUG);
             InitializeComponent();
 
             ResetFile();
             statusInformation.Text = "";
-            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initilisation Complete."), Severity.DEBUG);
+            Logging.Log(String.Format("FAES_GUI(PeakPanel): Initilisation Complete."), Severity.DEBUG);
         }
 
         public void ResetFile()
@@ -55,13 +56,13 @@ namespace FAES_GUI.MenuPanels
             progressBar.Value = progressBar.Minimum;
 
             Locked(true);
-            _fileToDecrypt = null;
+            _fileToPeak = null;
             fileInfoLabel.Text = "No File Selected!";
             progressBar.CustomText = "";
             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.Percentage;
             passTextbox.Text = "";
             passHintTextbox.Text = "";
-            encryptedFileMetaData.Text = "";
+            fileContentsTextbox.Text = "(Not currently peaking a file)";
 
             Logging.Log(String.Format("FAES_GUI(ResetFile): Cleared selected file."), Severity.DEBUG);
         }
@@ -75,13 +76,13 @@ namespace FAES_GUI.MenuPanels
         {
             if (faesFile.isFileDecryptable())
             {
-                _fileToDecrypt = faesFile;
-                fileInfoLabel.Text = _fileToDecrypt.getFileName();
+                _fileToPeak = faesFile;
+                fileInfoLabel.Text = _fileToPeak.getFileName();
                 SetMetaData();
                 Locked(false);
                 decryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToDecrypt.getPath()), Severity.DEBUG);
+                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToPeak.getPath()), Severity.DEBUG);
 
                 return true;
             }
@@ -116,27 +117,15 @@ namespace FAES_GUI.MenuPanels
             }));
         }
 
+        private void Delete(string pathToDelete)
+        {
+            if (Directory.Exists(Path.GetDirectoryName(pathToDelete)))
+                Directory.Delete(Path.GetDirectoryName(pathToDelete), true);
+        }
+
         private void SetMetaData()
         {
-            long timestamp = _fileToDecrypt.GetEncryptionTimeStamp();
-            string version = _fileToDecrypt.GetEncryptionVersion();
-            string compression = _fileToDecrypt.GetEncryptionCompressionMode();
-
-            encryptedFileMetaData.ResetText();
-
-            if (timestamp >= 0)
-                encryptedFileMetaData.Text += String.Format("Encrypted on {0} at {1}.", FileAES_Utilities.UnixTimeStampToDateTime((double)timestamp).ToString("dd/MM/yyyy"), FileAES_Utilities.UnixTimeStampToDateTime((double)timestamp).ToString("hh:mm:ss tt"));
-            else
-                encryptedFileMetaData.Text += String.Format("This file does not contain a encryption date. This is likely due to this file being encrypted using an older FAES version.");
-
-            encryptedFileMetaData.Text += (Environment.NewLine + String.Format("FAES {0} was used.", version));
-
-            if (compression == "LGYZIP")
-                encryptedFileMetaData.Text += (Environment.NewLine + "Compressed with LEGACYZIP.");
-            else
-                encryptedFileMetaData.Text += (Environment.NewLine + String.Format("Compressed with {0}.", compression));
-
-            passHintTextbox.Text = _fileToDecrypt.GetPasswordHint();
+            passHintTextbox.Text = _fileToPeak.GetPasswordHint();
         }
 
         private void Locked(bool lockChanges)
@@ -144,17 +133,16 @@ namespace FAES_GUI.MenuPanels
             passTextbox.Enabled = !lockChanges;
             passHintTextbox.Enabled = !lockChanges;
             decryptButton.Enabled = !lockChanges;
-            deleteOriginal.Enabled = !lockChanges;
-            overwriteDuplicate.Enabled = !lockChanges;
         }
 
         private void Decrypt()
         {
-            string password = passTextbox.Text;
-            bool delAfterEnc = deleteOriginal.Checked;
-            bool ovDup = overwriteDuplicate.Checked;
-
             Logging.Log(String.Format("FAES_GUI(Decrypt): Started!'"), Severity.DEBUG);
+            string pathOverride = Path.Combine(Path.GetDirectoryName(_fileToPeak.getPath()), ".faesPeakFilePath_" + new Random().Next(), "peakFile" + FileAES_Utilities.ExtentionUFAES);
+            string password = passTextbox.Text;
+            string finalPath = Path.Combine(Path.ChangeExtension(pathOverride, Path.GetExtension(_fileToPeak.GetOriginalFileName())), _fileToPeak.GetOriginalFileName());
+
+            Directory.CreateDirectory(Path.GetDirectoryName(pathOverride));
 
             SetNote("Decrypting... Please wait.", 0);
 
@@ -165,14 +153,14 @@ namespace FAES_GUI.MenuPanels
             {
                 try
                 {
-                    FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, password, delAfterEnc, ovDup);
+                    FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToPeak, password, false, true);
                     decrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
                     Thread dThread = new Thread(() =>
                     {
                         try
                         {
-                            _decryptSuccessful = decrypt.decryptFile();
+                            _decryptSuccessful = decrypt.decryptFile(pathOverride);
                         }
                         catch (Exception e)
                         {
@@ -188,7 +176,6 @@ namespace FAES_GUI.MenuPanels
 
                     {
                         _inProgress = false;
-                        
                         this.Invoke(new MethodInvoker(() => Locked(false)));
 
                         if (_decryptSuccessful)
@@ -197,8 +184,12 @@ namespace FAES_GUI.MenuPanels
                             SetNote("Decryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                            if (_closeAfterOp) Application.Exit();
-                            else ResetFile();
+
+                            this.Invoke(new MethodInvoker(() =>
+                            {
+                                fileContentsTextbox.Text = File.ReadAllText(finalPath);
+                            }));
+                            Delete(pathOverride);
                         }
                         else
                         {
@@ -220,6 +211,10 @@ namespace FAES_GUI.MenuPanels
                 catch (Exception e)
                 {
                     SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
+                }
+                finally
+                {
+                    Delete(pathOverride);
                 }
             });
             mainDecryptThread.Start();
@@ -244,7 +239,7 @@ namespace FAES_GUI.MenuPanels
 
         private void decryptButton_Click(object sender, EventArgs e)
         {
-            if (_fileToDecrypt.isFileDecryptable() && !_inProgress && passTextbox.Text.Length > 3)
+            if (_fileToPeak.isFileDecryptable() && !_inProgress && passTextbox.Text.Length > 3)
             {
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;

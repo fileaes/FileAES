@@ -146,6 +146,12 @@ namespace FAES_GUI.MenuPanels
 
         private void Encrypt()
         {
+            string password = passTextbox.Text;
+            string passHint = passHintTextbox.Text;
+            int compressIndex = compressMode.SelectedIndex;
+            bool delAfterEnc = deleteOriginal.Checked;
+            bool ovDup = overwriteDuplicate.Checked;
+
             Logging.Log(String.Format("FAES_GUI(Encrypt): Started!'"), Severity.DEBUG);
 
             SetNote("Encrypting... Please wait.", 0);
@@ -158,10 +164,9 @@ namespace FAES_GUI.MenuPanels
                 try
                 {
 
-                    FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, passTextbox.Text, passHintTextbox.Text);
-                    encrypt.SetCompressionMode(FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressMode.SelectedIndex]);
-                    encrypt.SetDeleteAfterEncrypt(deleteOriginal.Checked);
-                    encrypt.SetOverwriteDuplicate(overwriteDuplicate.Checked);
+                    FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, password, passHint, FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressIndex]);
+                    encrypt.SetDeleteAfterEncrypt(delAfterEnc);
+                    encrypt.SetOverwriteDuplicate(ovDup);
                     encrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
                     Thread eThread = new Thread(() =>
@@ -172,7 +177,7 @@ namespace FAES_GUI.MenuPanels
                         }
                         catch (Exception e)
                         {
-                            SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
+                            SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                         }
                     });
                     eThread.Start();
@@ -184,7 +189,8 @@ namespace FAES_GUI.MenuPanels
 
                     {
                         _inProgress = false;
-                        Locked(false);
+
+                        this.Invoke(new MethodInvoker(() => Locked(false)));
 
                         if (_encryptSuccessful)
                         {
@@ -204,7 +210,7 @@ namespace FAES_GUI.MenuPanels
                 }
                 catch (Exception e)
                 {
-                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, false).Replace("ERROR:", ""), 3);
+                    SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                 }
             });
             mainEncryptThread.Start();
