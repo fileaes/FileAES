@@ -1,6 +1,6 @@
 ﻿namespace FAES_GUI
 {
-    partial class PeakForm
+    partial class PeekForm
     {
         /// <summary>
         /// Required designer variable.
@@ -35,7 +35,7 @@
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.slowToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.peakPanel = new FAES_GUI.MenuPanels.filePeakPanel();
+            this.peekPanel = new FAES_GUI.MenuPanels.filePeekPanel();
             this.titleBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).BeginInit();
             this.SuspendLayout();
@@ -74,7 +74,7 @@
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(300, 25);
             this.titleLabel.TabIndex = 1;
-            this.titleLabel.Text = "Peak | FileAES ";
+            this.titleLabel.Text = "Peek | FileAES ";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.titleBar_MouseDown);
             // 
@@ -103,28 +103,28 @@
             this.slowToolTip.InitialDelay = 1000;
             this.slowToolTip.ReshowDelay = 100;
             // 
-            // peakPanel
+            // peekPanel
             // 
-            this.peakPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
-            this.peakPanel.Location = new System.Drawing.Point(1, -21);
-            this.peakPanel.Name = "peakPanel";
-            this.peakPanel.Size = new System.Drawing.Size(414, 357);
-            this.peakPanel.TabIndex = 2;
+            this.peekPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.peekPanel.Location = new System.Drawing.Point(1, -21);
+            this.peekPanel.Name = "peekPanel";
+            this.peekPanel.Size = new System.Drawing.Size(414, 357);
+            this.peekPanel.TabIndex = 2;
             // 
-            // PeakForm
+            // PeekForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
             this.ClientSize = new System.Drawing.Size(416, 337);
             this.Controls.Add(this.titleBar);
-            this.Controls.Add(this.peakPanel);
+            this.Controls.Add(this.peekPanel);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "DecryptForm";
+            this.Name = "PeekForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FileAES: Decrypt";
+            this.Text = "FileAES: Peek";
             this.TopMost = true;
             this.titleBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
@@ -138,7 +138,7 @@
         private System.Windows.Forms.PictureBox titleBarLogo;
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Button quitButton;
-        private MenuPanels.filePeakPanel peakPanel;
+        private MenuPanels.filePeekPanel peekPanel;
         private System.Windows.Forms.ToolTip slowToolTip;
     }
 }

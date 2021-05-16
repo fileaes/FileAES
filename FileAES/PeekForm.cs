@@ -5,20 +5,20 @@ using System.Windows.Forms;
 
 namespace FAES_GUI
 {
-    public partial class PeakForm : Form
+    public partial class PeekForm : Form
     {
         private UpdateForm _updateForm;
 
-        public PeakForm(FAES_File faesFile)
+        public PeekForm(FAES_File faesFile)
         {
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
             this.Text = titleLabel.Text;
 
-            peakPanel.LockFileSelect(true);
-            peakPanel.setCloseAfterOperationSuccessful(true);
-            peakPanel.SetFileToDecrypt(faesFile);
+            peekPanel.LockFileSelect(true);
+            peekPanel.setCloseAfterOperationSuccessful(true);
+            peekPanel.SetFileToDecrypt(faesFile);
 
             if (!Program.programManager.GetSkipUpdates())
             {

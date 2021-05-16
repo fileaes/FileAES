@@ -283,7 +283,7 @@ namespace FAES_GUI.MenuPanels
 
         public static void UpdateSelf(bool doCleanUpdate = false, string version = "latest")
         {
-            string installDir = Directory.GetCurrentDirectory();
+            string installDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Replace("file:", "").TrimStart(':', '/', '\\');
 
             if (CheckServerConnection())
                 try
@@ -313,18 +313,25 @@ namespace FAES_GUI.MenuPanels
 
                     Environment.Exit(0);
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    if (MessageBox.Show("You are not running FileAES as an admin, by doing this you cannot update the application in admin protected directories.\n\nDo you want to launch as admin?", "Notice", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        RunAsAdmin();
-                }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.ToString(), "Error");
-                    if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
-                        File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
-                    if (File.Exists(Path.Combine(installDir, "updater.pack")))
-                        File.Delete(Path.Combine(installDir, "updater.pack"));
+                    if (e is UnauthorizedAccessException || e is WebException)
+                    {
+                        if (!IsRunAsAdmin())
+                        {
+                            if (MessageBox.Show("You are not running FileAES as an admin, by doing this you cannot update the application in admin protected directories.\n\nDo you want to launch as admin?", "Notice", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                RunAsAdmin();
+                        }
+                        else MessageBox.Show(String.Format("An unexpected error occurred running the updater!\nInstall Directory:{0}\n\n{1}", installDir, e), "Error", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        MessageBox.Show(String.Format("An unexpected error occurred running the updater!\nInstall Directory:{0}\n\n{1}", installDir, e), "Error", MessageBoxButtons.OK);
+                        if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
+                            File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
+                        if (File.Exists(Path.Combine(installDir, "updater.pack")))
+                            File.Delete(Path.Combine(installDir, "updater.pack"));
+                    }
                 }
             else
             {
@@ -375,7 +382,6 @@ namespace FAES_GUI.MenuPanels
 
         private string ConvertVersionToNonFormatted(string formattedVersion)
         {
-
             string[] versionSplit = formattedVersion.Replace("(", "").Replace(")", "").Split(' ');
             string nonFormattedVersion;
 

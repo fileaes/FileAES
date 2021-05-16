@@ -14,9 +14,9 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "BETA 8";
+        private const string betaAppendTag = "BETA 10";
 
-        private static bool _doFilePeak = false;
+        private static bool _doFilePeek = false;
         private static bool _verbose = false;
         private static bool _purgeTemp = false;
         private static bool _headless = false;
@@ -35,7 +35,7 @@ namespace FAES_GUI
         private static ushort _progressSleep = 5000;
         private static List<string> _strippedArgs = new List<string>();
 
-        private static List<string> _supportedPeakFiles = new List<string> {".TXT", ".MD", ".LOG", ""};
+        private static readonly List<string> _supportedPeekFiles = new List<string> {".TXT", ".MD", ".LOG"};
 
         private static string _spoofedVersion = "v2.0.0";
         private static bool _useSpoofedVersion = false;
@@ -81,7 +81,7 @@ namespace FAES_GUI
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
                 else if (strippedArg == "genFullInstallConfig") _genFullInstallConfig = true;
                 else if (strippedArg == "installBranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
-                else if (strippedArg == "peak" || strippedArg == "filepeak") _doFilePeak = true;
+                else if (strippedArg == "peek" || strippedArg == "filepeek") _doFilePeek = true;
 
                 _strippedArgs.Add(strippedArg);
             }
@@ -286,8 +286,8 @@ namespace FAES_GUI
                         Application.Run(new EncryptForm(faesFile));
                     else if (faesFile.isFileDecryptable())
                     {
-                        if (_doFilePeak && IsFileValidForPeek(faesFile))
-                            Application.Run(new PeakForm(faesFile));
+                        if (_doFilePeek && IsFileValidForPeek(faesFile))
+                            Application.Run(new PeekForm(faesFile));
                         else
                             Application.Run(new DecryptForm(faesFile));
                     }
@@ -314,7 +314,7 @@ namespace FAES_GUI
         public static bool IsFileValidForPeek(FAES_File faesFile)
         {
             if (faesFile.isFileDecryptable())
-                return _supportedPeakFiles.Contains(Path.GetExtension(faesFile.GetOriginalFileName()).ToUpper());
+                return _supportedPeekFiles.Contains(Path.GetExtension(faesFile.GetOriginalFileName()).ToUpper());
 
             return false;
         }

@@ -91,17 +91,17 @@
     <Compile Include="CustomControls\TextProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PeakForm.cs">
+    <Compile Include="PeekForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PeakForm.Designer.cs">
-      <DependentUpon>PeakForm.cs</DependentUpon>
+    <Compile Include="PeekForm.Designer.cs">
+      <DependentUpon>PeekForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MenuPanels\filePeakPanel.cs">
+    <Compile Include="MenuPanels\filePeekPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MenuPanels\filePeakPanel.Designer.cs">
-      <DependentUpon>filePeakPanel.cs</DependentUpon>
+    <Compile Include="MenuPanels\filePeekPanel.Designer.cs">
+      <DependentUpon>filePeekPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UpdateForm.cs">
       <SubType>Form</SubType>
@@ -176,11 +176,11 @@
     <EmbeddedResource Include="CustomControls\SubMenuButton.resx">
       <DependentUpon>SubMenuButton.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PeakForm.resx">
-      <DependentUpon>PeakForm.cs</DependentUpon>
+    <EmbeddedResource Include="PeekForm.resx">
+      <DependentUpon>PeekForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MenuPanels\filePeakPanel.resx">
-      <DependentUpon>filePeakPanel.cs</DependentUpon>
+    <EmbeddedResource Include="MenuPanels\filePeekPanel.resx">
+      <DependentUpon>filePeekPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>

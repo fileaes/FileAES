@@ -1,6 +1,6 @@
 ﻿namespace FAES_GUI.MenuPanels
 {
-    partial class filePeakPanel
+    partial class filePeekPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -147,7 +147,7 @@
             this.decryptButton.Name = "decryptButton";
             this.decryptButton.Size = new System.Drawing.Size(408, 42);
             this.decryptButton.TabIndex = 4;
-            this.decryptButton.Text = "Peak";
+            this.decryptButton.Text = "Peek";
             this.decryptButton.UseVisualStyleBackColor = false;
             this.decryptButton.Click += new System.EventHandler(this.decryptButton_Click);
             // 
@@ -194,7 +194,7 @@
             this.fileContentsTextbox.TabIndex = 19;
             this.fileContentsTextbox.Text = "";
             // 
-            // filePeakPanel
+            // filePeekPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -209,7 +209,7 @@
             this.Controls.Add(this.passTextbox);
             this.Controls.Add(this.selectDecryptButton);
             this.Controls.Add(this.fileInfoPanel);
-            this.Name = "filePeakPanel";
+            this.Name = "filePeekPanel";
             this.Size = new System.Drawing.Size(414, 357);
             this.fileInfoPanel.ResumeLayout(false);
             this.ResumeLayout(false);
