@@ -106,6 +106,7 @@
             // encryptPanel
             // 
             this.encryptPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.encryptPanel.ForeColor = System.Drawing.Color.Black;
             this.encryptPanel.Location = new System.Drawing.Point(1, -21);
             this.encryptPanel.Name = "encryptPanel";
             this.encryptPanel.Size = new System.Drawing.Size(414, 357);
@@ -125,7 +126,6 @@
             this.Name = "EncryptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FileAES: Encrypt";
-            this.TopMost = true;
             this.titleBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
             this.ResumeLayout(false);

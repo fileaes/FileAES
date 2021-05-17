@@ -301,7 +301,12 @@ namespace FAES_GUI.MenuPanels
 
                     string args = "";
                     if (doCleanUpdate) args += "--pure ";
-                    if (Program.programManager.GetFullInstall()) args += "--full ";
+                    if (Program.programManager.GetFullInstall())
+                    {
+                        args += "--full ";
+                        args += string.Join(" ", Program.DumpInstallerOptions());
+                        args += " ";
+                    }
                     if (Program.programManager.GetDevMode()) args += "--verbose ";
                     else args += "--silent ";
                     args += "--branch " + Program.programManager.GetBranch() + " ";

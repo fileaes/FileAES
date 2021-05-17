@@ -125,7 +125,6 @@
             this.Name = "DecryptForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FileAES: Decrypt";
-            this.TopMost = true;
             this.titleBar.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.titleBarLogo)).EndInit();
             this.ResumeLayout(false);

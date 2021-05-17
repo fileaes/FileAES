@@ -14,7 +14,7 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "BETA 10";
+        private const string betaAppendTag = "BETA 11";
 
         private static bool _doFilePeek = false;
         private static bool _verbose = false;
@@ -26,6 +26,9 @@ namespace FAES_GUI
         private static bool _overwriteDuplicates = false;
         private static bool _deleteOriginalFile = true;
         private static bool _genFullInstallConfig = false;
+        private static bool _associateFileTypes = false;
+        private static bool _startMenuShortcuts = false;
+        private static bool _contextMenus = false;
         private static string _installBranch;
         private static string _directory = null;
         private static string _password;
@@ -80,6 +83,9 @@ namespace FAES_GUI
                 else if (strippedArg == "overwrite" || strippedArg == "overwriteduplicates" || strippedArg == "o") _overwriteDuplicates = true;
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
                 else if (strippedArg == "genFullInstallConfig") _genFullInstallConfig = true;
+                else if (strippedArg == "associatefiletypes" || strippedArg == "filetypes") _associateFileTypes = true;
+                else if (strippedArg == "startmenushortcuts" || strippedArg == "startmenu") _startMenuShortcuts = true;
+                else if (strippedArg == "contextmenus" || strippedArg == "context") _contextMenus = true;
                 else if (strippedArg == "installBranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
                 else if (strippedArg == "peek" || strippedArg == "filepeek") _doFilePeek = true;
 
@@ -269,6 +275,9 @@ namespace FAES_GUI
             {
                 programManager = new ProgramManager(ProgramManager.InstallType.FullInstall);
                 programManager.SetBranch(_installBranch);
+                programManager.SetAssociateFileTypes(_associateFileTypes);
+                programManager.SetStartMenuShortcuts(_startMenuShortcuts);
+                programManager.SetContextMenus(_contextMenus);
             }
             else
             {
@@ -395,6 +404,20 @@ namespace FAES_GUI
         public static bool IsVerbose()
         {
             return _verbose;
+        }
+
+        public static string[] DumpInstallerOptions()
+        {
+            List<string> options = new List<string>();
+
+            if (programManager.GetAssociateFileTypes())
+                options.Add("--associatefiletypes");
+            if (programManager.GetStartMenuShortcuts())
+                options.Add("--startmenushortcuts");
+            if (programManager.GetContextMenus())
+                options.Add("--contextmenus");
+
+            return options.ToArray();
         }
     }
 }

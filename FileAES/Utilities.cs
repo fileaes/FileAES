@@ -39,6 +39,9 @@ namespace FAES_GUI
             _ssm.AddString("LastAccessedVersion-FAES", FileAES_Utilities.GetVersion(), "The version of FAES used when the SSM file was created.", "FAES_MetaData");
 
             _ssm.AddBoolean("FullInstall", false, "If the current FAES_GUI install is a 'Full Install'", "FAES_Install");
+            _ssm.AddBoolean("AssociateFileTypes", false, "Associate file types with FileAES_GUI.", "FAES_Install");
+            _ssm.AddBoolean("StartMenuShortcuts", false, "Create Start Menu shortcut for FileAES_GUI.", "FAES_Install");
+            _ssm.AddBoolean("ContextMenus", false, "Add FileAES_GUI to context menus.", "FAES_Install");
 
             _ssm.AddString("LogPath", "log\\{default}", "The path of the log file. '{default}' will be replaced with the auto-generated log filename.", "FAES_GUI-Paths");
             _ssm.AddUInt32("CryptoStreamBufferSize", 1048576, "The size of the CryptoStream Buffer.", "FAES_Configs");
@@ -150,6 +153,96 @@ namespace FAES_GUI
             bool returnVal = _ssm.SetBoolean("FullInstall", fullInstall);
 
             Logging.Log(String.Format("SetFullInstall: {0}", fullInstall), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool GetAssociateFileTypes()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.GetBoolean("AssociateFileTypes");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool ResetAssociateFileTypes()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("AssociateFileTypes", false);
+
+            Logging.Log(String.Format("ResetAssociateFileTypes: {0}", false), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetAssociateFileTypes(bool associate)
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("AssociateFileTypes", associate);
+
+            Logging.Log(String.Format("SetAssociateFileTypes: {0}", associate), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool GetStartMenuShortcuts()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.GetBoolean("StartMenuShortcuts");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool ResetStartMenuShortcuts()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("StartMenuShortcuts", false);
+
+            Logging.Log(String.Format("ResetStartMenuShortcuts: {0}", false), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetStartMenuShortcuts(bool shortcuts)
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("StartMenuShortcuts", shortcuts);
+
+            Logging.Log(String.Format("SetStartMenuShortcuts: {0}", shortcuts), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool GetContextMenus()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.GetBoolean("ContextMenus");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool ResetContextMenus()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("ContextMenus", false);
+
+            Logging.Log(String.Format("ResetContextMenus: {0}", false), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetContextMenus(bool contextMenus)
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("ContextMenus", contextMenus);
+
+            Logging.Log(String.Format("SetContextMenus: {0}", contextMenus), Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -294,7 +387,7 @@ namespace FAES_GUI
         protected SettingsManager _settingsManager;
 
         private long _ssmLastModifiedTime;
-        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _fullInstall;
+        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _fullInstall, _associateFileTypes, _startMenuShortcuts, _contextMenus;
         private string _ssmCachedLogPath, _ssmCachedBranch;
         private UInt32 _ssmCachedCsBuffer;
 
@@ -314,6 +407,9 @@ namespace FAES_GUI
             _ssmLastModifiedTime = File.GetLastWriteTimeUtc(_settingsManager.GetPath()).ToFileTimeUtc();
 
             _fullInstall = _settingsManager.GetFullInstall();
+            _associateFileTypes = _settingsManager.GetAssociateFileTypes();
+            _startMenuShortcuts = _settingsManager.GetStartMenuShortcuts();
+            _contextMenus = _settingsManager.GetContextMenus();
             _ssmCachedDevMode = _settingsManager.GetDevMode();
             _ssmCachedLogToFile = _settingsManager.GetLogToFile();
             _ssmCachedLogPath = _settingsManager.GetLogPath();
@@ -391,6 +487,24 @@ namespace FAES_GUI
             return _fullInstall;
         }
 
+        public bool GetAssociateFileTypes()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _associateFileTypes;
+        }
+
+        public bool GetStartMenuShortcuts()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _startMenuShortcuts;
+        }
+
+        public bool GetContextMenus()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _contextMenus;
+        }
+
         public bool GetDevMode()
         {
             EnsureCachedVarsAreUpdated();
@@ -431,6 +545,27 @@ namespace FAES_GUI
         public bool SetFullInstall(bool fullInstall)
         {
             bool changed = _settingsManager.SetFullInstall(fullInstall);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
+        public bool SetAssociateFileTypes(bool associateFileTypes)
+        {
+            bool changed = _settingsManager.SetAssociateFileTypes(associateFileTypes);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
+        public bool SetStartMenuShortcuts(bool startMenuShortcuts)
+        {
+            bool changed = _settingsManager.SetStartMenuShortcuts(startMenuShortcuts);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
+        public bool SetContextMenus(bool contextMenus)
+        {
+            bool changed = _settingsManager.SetContextMenus(contextMenus);
             if (changed) EnsureCachedVarsAreUpdated();
             return changed;
         }
