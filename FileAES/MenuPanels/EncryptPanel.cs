@@ -163,7 +163,7 @@ namespace FAES_GUI.MenuPanels
             {
                 try
                 {
-
+                    FileAES_Utilities.TempEncrypt = Program.programManager.GetUseOSTemp();
                     FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, password, passHint, FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressIndex]);
                     encrypt.SetDeleteAfterEncrypt(delAfterEnc);
                     encrypt.SetOverwriteDuplicate(ovDup);

@@ -21,6 +21,7 @@ namespace FAES_GUI
 
             DateTime buildDate = Program.GetBuildDate();
 
+            copyrightLabel.Text = String.Format("© - {0} | mullak99", buildDate.ToString("yyyy"));
             longVersionLabel.Text = String.Format("FileAES {0} | Built on {1} at {2}", Program.GetVersion(), buildDate.ToString("dd/MM/yyyy"), buildDate.ToString("hh:mm:ss tt"));
 
             if (FileAES_Utilities.GetVerboseLogging())
@@ -38,8 +39,6 @@ namespace FAES_GUI
             decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton, aboutMenuButton });
             settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, aboutMenuButton });
             aboutMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, settingsMenuButton });
-
-            
 
             aboutPanel.SetIsUpdateAction(() => aboutMenuButton_Click(null, null));
             aboutPanel.CheckForUpdate();

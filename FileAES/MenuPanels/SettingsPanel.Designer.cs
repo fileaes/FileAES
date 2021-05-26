@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(settingsPanel));
             this.settingsScrollPanel = new System.Windows.Forms.Panel();
+            this.useOSTempSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.ignoreUpdatesSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.branchSelection = new FAES_GUI.CustomControls.SettingDropDown();
             this.developerSetting = new FAES_GUI.CustomControls.SettingToggle();
@@ -49,6 +50,7 @@
             // settingsScrollPanel
             // 
             this.settingsScrollPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.settingsScrollPanel.Controls.Add(this.useOSTempSetting);
             this.settingsScrollPanel.Controls.Add(this.ignoreUpdatesSetting);
             this.settingsScrollPanel.Controls.Add(this.branchSelection);
             this.settingsScrollPanel.Controls.Add(this.developerSetting);
@@ -60,6 +62,18 @@
             this.settingsScrollPanel.Size = new System.Drawing.Size(414, 316);
             this.settingsScrollPanel.TabIndex = 0;
             // 
+            // useOSTempSetting
+            // 
+            this.useOSTempSetting.BackColor = System.Drawing.Color.Transparent;
+            this.useOSTempSetting.DescriptionText = "Toggles whether the program should use the OS\' Temp folder for file encryption.";
+            this.useOSTempSetting.ForeColor = System.Drawing.Color.White;
+            this.useOSTempSetting.HeaderText = "Use OS Temp Path";
+            this.useOSTempSetting.Location = new System.Drawing.Point(-1, 198);
+            this.useOSTempSetting.Name = "useOSTempSetting";
+            this.useOSTempSetting.Size = new System.Drawing.Size(400, 100);
+            this.useOSTempSetting.TabIndex = 7;
+            this.useOSTempSetting.Toggled = true;
+            // 
             // ignoreUpdatesSetting
             // 
             this.ignoreUpdatesSetting.BackColor = System.Drawing.Color.Transparent;
@@ -67,7 +81,7 @@
     "s available for download.";
             this.ignoreUpdatesSetting.ForeColor = System.Drawing.Color.White;
             this.ignoreUpdatesSetting.HeaderText = "Ignore Updates";
-            this.ignoreUpdatesSetting.Location = new System.Drawing.Point(-1, 495);
+            this.ignoreUpdatesSetting.Location = new System.Drawing.Point(-1, 297);
             this.ignoreUpdatesSetting.Name = "ignoreUpdatesSetting";
             this.ignoreUpdatesSetting.Size = new System.Drawing.Size(400, 100);
             this.ignoreUpdatesSetting.TabIndex = 6;
@@ -104,7 +118,7 @@
             this.logPathRootSetting.DescriptionText = resources.GetString("logPathRootSetting.DescriptionText");
             this.logPathRootSetting.ForeColor = System.Drawing.Color.White;
             this.logPathRootSetting.HeaderText = "Log File Path";
-            this.logPathRootSetting.Location = new System.Drawing.Point(-1, 396);
+            this.logPathRootSetting.Location = new System.Drawing.Point(-1, 594);
             this.logPathRootSetting.Name = "logPathRootSetting";
             this.logPathRootSetting.Size = new System.Drawing.Size(400, 100);
             this.logPathRootSetting.TabIndex = 3;
@@ -118,7 +132,7 @@
             this.logToFileSetting.Enabled = false;
             this.logToFileSetting.ForeColor = System.Drawing.Color.White;
             this.logToFileSetting.HeaderText = "Log to file";
-            this.logToFileSetting.Location = new System.Drawing.Point(-1, 297);
+            this.logToFileSetting.Location = new System.Drawing.Point(-1, 495);
             this.logToFileSetting.Name = "logToFileSetting";
             this.logToFileSetting.Size = new System.Drawing.Size(400, 100);
             this.logToFileSetting.TabIndex = 2;
@@ -131,7 +145,7 @@
     "iles using FAES. (Size is in bytes)";
             this.cryptoStreamSetting.ForeColor = System.Drawing.Color.White;
             this.cryptoStreamSetting.HeaderText = "CryptoStream Buffer";
-            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 198);
+            this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 396);
             this.cryptoStreamSetting.MinValue = 1024;
             this.cryptoStreamSetting.Name = "cryptoStreamSetting";
             this.cryptoStreamSetting.Size = new System.Drawing.Size(400, 100);
@@ -227,5 +241,6 @@
         private CustomControls.SettingToggle developerSetting;
         private CustomControls.SettingDropDown branchSelection;
         private CustomControls.SettingToggle ignoreUpdatesSetting;
+        private CustomControls.SettingToggle useOSTempSetting;
     }
 }

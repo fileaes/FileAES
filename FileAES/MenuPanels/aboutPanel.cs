@@ -368,6 +368,15 @@ namespace FAES_GUI.MenuPanels
                         string devTag = versionSplit[1].ToUpper().Replace("DEV", "").Replace("D", "");
                         formattedVersion += String.Format(" (DEV{0}", devTag);
                     }
+                    else if (versionSplit[1].ToUpper()[0] == 'R')
+                    {
+                        string rcTag = versionSplit[1].ToUpper().Replace("RC", "").Replace("R", "");
+                        formattedVersion += String.Format(" (RC {0}", rcTag.Replace(" ", ""));
+                    }
+                    else
+                    {
+                        formattedVersion += String.Format(" ({0}", versionSplit[1].ToUpper());
+                    }
                     if (versionSplit.Length > 2)
                     {
                         for (int i = 2; i < versionSplit.Length; i++)

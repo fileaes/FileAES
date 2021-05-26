@@ -49,6 +49,7 @@ namespace FAES_GUI
             _ssm.AddBoolean("DeveloperMode", false, "Toggle verbose logging and ability to open the Developer Console.", "FAES_Configs");
             _ssm.AddString("Branch", Program.GetBuild(), "The branch used to determine updates.", "FAES_Configs");
             _ssm.AddBoolean("SkipUpdates", false, "Toggles whether a new update warning should be shown.", "FAES_Configs");
+            _ssm.AddBoolean("UseOSTempPath", false, "Toggles whether the OS' Temp path should be used for encryptions.", "FAES_Configs");
             _ssm.Close();
         }
 
@@ -278,6 +279,36 @@ namespace FAES_GUI
             return returnVal;
         }
 
+        public bool GetUseOSTemp()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.GetBoolean("UseOSTempPath");
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool ResetUseOSTemp()
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("UseOSTempPath", false);
+
+            Logging.Log(String.Format("ResetSkipUpdates: {0}", false), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
+        public bool SetUseOSTemp(bool useOSTemp)
+        {
+            _ssm.Open();
+            bool returnVal = _ssm.SetBoolean("UseOSTempPath", useOSTemp);
+
+            Logging.Log(String.Format("SetUseOSTemp: {0}", useOSTemp), Severity.DEBUG);
+
+            _ssm.Close();
+            return returnVal;
+        }
+
         public bool GetDevMode()
         {
             _ssm.Open();
@@ -387,7 +418,7 @@ namespace FAES_GUI
         protected SettingsManager _settingsManager;
 
         private long _ssmLastModifiedTime;
-        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _fullInstall, _associateFileTypes, _startMenuShortcuts, _contextMenus;
+        private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _ssmCachedFullInstall, _ssmCachedAssociateFileTypes, _ssmCachedStartMenuShortcuts, _ssmCachedContextMenus, _ssmCachedOSTemp;
         private string _ssmCachedLogPath, _ssmCachedBranch;
         private UInt32 _ssmCachedCsBuffer;
 
@@ -397,7 +428,7 @@ namespace FAES_GUI
 
             CreateAppDataDirectory();
             _settingsManager = new SettingsManager();
-            _settingsManager.SetFullInstall(_fullInstall);
+            _settingsManager.SetFullInstall(_ssmCachedFullInstall);
 
             CacheVariables();
         }
@@ -406,16 +437,17 @@ namespace FAES_GUI
         {
             _ssmLastModifiedTime = File.GetLastWriteTimeUtc(_settingsManager.GetPath()).ToFileTimeUtc();
 
-            _fullInstall = _settingsManager.GetFullInstall();
-            _associateFileTypes = _settingsManager.GetAssociateFileTypes();
-            _startMenuShortcuts = _settingsManager.GetStartMenuShortcuts();
-            _contextMenus = _settingsManager.GetContextMenus();
+            _ssmCachedFullInstall = _settingsManager.GetFullInstall();
+            _ssmCachedAssociateFileTypes = _settingsManager.GetAssociateFileTypes();
+            _ssmCachedStartMenuShortcuts = _settingsManager.GetStartMenuShortcuts();
+            _ssmCachedContextMenus = _settingsManager.GetContextMenus();
             _ssmCachedDevMode = _settingsManager.GetDevMode();
             _ssmCachedLogToFile = _settingsManager.GetLogToFile();
             _ssmCachedLogPath = _settingsManager.GetLogPath();
             _ssmCachedCsBuffer = _settingsManager.GetCryptoStreamBufferSize();
             _ssmCachedBranch = _settingsManager.GetBranch();
             _ssmCachedSkipUpdates = _settingsManager.GetSkipUpdates();
+            _ssmCachedOSTemp = _settingsManager.GetUseOSTemp();
         }
 
         private void CreateAppDataDirectory()
@@ -445,14 +477,14 @@ namespace FAES_GUI
                     }
                 case InstallType.PortableInstall:
                     {
-                        _fullInstall = false;
+                        _ssmCachedFullInstall = false;
                         _appDataPath = _portablePath;
                         CreateDirectory(GetConfigPath());
                         break;
                     }
                 case InstallType.FullInstall:
                     {
-                        _fullInstall = true;
+                        _ssmCachedFullInstall = true;
                         _appDataPath = _fullInstallPath;
 
                         foreach (string subDir in _currentSubDirsAppData)
@@ -484,25 +516,25 @@ namespace FAES_GUI
         public bool GetFullInstall()
         {
             EnsureCachedVarsAreUpdated();
-            return _fullInstall;
+            return _ssmCachedFullInstall;
         }
 
         public bool GetAssociateFileTypes()
         {
             EnsureCachedVarsAreUpdated();
-            return _associateFileTypes;
+            return _ssmCachedAssociateFileTypes;
         }
 
         public bool GetStartMenuShortcuts()
         {
             EnsureCachedVarsAreUpdated();
-            return _startMenuShortcuts;
+            return _ssmCachedStartMenuShortcuts;
         }
 
         public bool GetContextMenus()
         {
             EnsureCachedVarsAreUpdated();
-            return _contextMenus;
+            return _ssmCachedContextMenus;
         }
 
         public bool GetDevMode()
@@ -515,6 +547,12 @@ namespace FAES_GUI
         {
             EnsureCachedVarsAreUpdated();
             return _ssmCachedSkipUpdates;
+        }
+
+        public bool GetUseOSTemp()
+        {
+            EnsureCachedVarsAreUpdated();
+            return _ssmCachedOSTemp;
         }
 
         public string GetLogPath()
@@ -584,6 +622,13 @@ namespace FAES_GUI
             return changed;
         }
 
+        public bool SetUseOSTemp(bool useOSTemp)
+        {
+            bool changed = _settingsManager.SetUseOSTemp(useOSTemp);
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
         public bool SetLogPath(string logPath)
         {
             bool changed = _settingsManager.SetLogPath(logPath);
@@ -633,6 +678,13 @@ namespace FAES_GUI
             return changed;
         }
 
+        public bool ResetUseOSTemp()
+        {
+            bool changed = _settingsManager.ResetUseOSTemp();
+            if (changed) EnsureCachedVarsAreUpdated();
+            return changed;
+        }
+
         public bool ResetLogPath()
         {
             bool changed = _settingsManager.ResetLogPath();
@@ -662,6 +714,7 @@ namespace FAES_GUI
             ResetBranch();
             ResetCryptoStreamBufferSize();
             ResetSkipUpdates();
+            ResetUseOSTemp();
         }
         #endregion
 

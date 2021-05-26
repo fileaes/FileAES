@@ -14,7 +14,7 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "BETA 11";
+        private const string betaAppendTag = "RC 1";
 
         private static bool _doFilePeek = false;
         private static bool _verbose = false;

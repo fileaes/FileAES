@@ -9,7 +9,7 @@ namespace FAES_GUI.MenuPanels
     {
         private int _cryptoBuffer, _branchIndex;
         private string _logPath, _branch;
-        private bool _logToFile, _devMode, _ignoreUpdates;
+        private bool _logToFile, _devMode, _ignoreUpdates, _osTemp;
 
         public settingsPanel()
         {
@@ -35,6 +35,7 @@ namespace FAES_GUI.MenuPanels
             logToFileSetting.Toggled = _logToFile;
             developerSetting.Toggled = _devMode;
             ignoreUpdatesSetting.Toggled = _ignoreUpdates;
+            useOSTempSetting.Toggled = _osTemp;
 
             if (_branch == "dev") branchSelection.SetSelectedIndex(2);
             else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
@@ -53,12 +54,14 @@ namespace FAES_GUI.MenuPanels
                 _devMode = Program.programManager.GetDevMode();
                 _branch = Program.programManager.GetBranch();
                 _ignoreUpdates = Program.programManager.GetSkipUpdates();
+                _osTemp = Program.programManager.GetUseOSTemp();
 
                 cryptoStreamSetting.Value = _cryptoBuffer;
                 logPathRootSetting.Value = _logPath;
                 logToFileSetting.Toggled = _logToFile;
                 developerSetting.Toggled = _devMode;
                 ignoreUpdatesSetting.Toggled = _ignoreUpdates;
+                useOSTempSetting.Toggled = _osTemp;
 
                 if (_branch == "dev") branchSelection.SetSelectedIndex(2);
                 else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
@@ -76,6 +79,7 @@ namespace FAES_GUI.MenuPanels
             Program.programManager.SetLogToFile(logToFileSetting.Toggled);
             Program.programManager.SetLogPath(Path.Combine((logPathRootSetting.Value).Replace("{default}", "").Replace("{d}", ""), "{default}"));
             Program.programManager.SetSkipUpdates(ignoreUpdatesSetting.Toggled);
+            Program.programManager.SetUseOSTemp(useOSTempSetting.Toggled);
 
             if (branchSelection.GetSelectedIndex() == 2) Program.programManager.SetBranch("dev");
             else if (branchSelection.GetSelectedIndex() == 1) Program.programManager.SetBranch("beta");
@@ -85,7 +89,7 @@ namespace FAES_GUI.MenuPanels
         private void Runtime_Tick(object sender, EventArgs e)
         {
             if (cryptoStreamSetting.Value != _cryptoBuffer || logPathRootSetting.Value != _logPath || logToFileSetting.Toggled != _logToFile ||
-                developerSetting.Toggled != _devMode || ignoreUpdatesSetting.Toggled != _ignoreUpdates || branchSelection.GetSelectedIndex() != _branchIndex)
+                developerSetting.Toggled != _devMode || ignoreUpdatesSetting.Toggled != _ignoreUpdates || useOSTempSetting.Toggled != _osTemp || branchSelection.GetSelectedIndex() != _branchIndex)
             {
                 saveSettings.Enabled = true;
                 cancelButton.Enabled = true;
