@@ -80,11 +80,11 @@ namespace FAES_GUI
                 else if ((strippedArg == "level" || strippedArg == "compressionlevel" || strippedArg == "l") && !string.IsNullOrEmpty(args[i + 1])) Int32.TryParse(args[i + 1], out _compressionLevel);
                 else if (strippedArg == "overwrite" || strippedArg == "overwriteduplicates" || strippedArg == "o") _overwriteDuplicates = true;
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
-                else if (strippedArg == "genFullInstallConfig") _genFullInstallConfig = true;
+                else if (strippedArg == "genfullinstallconfig") _genFullInstallConfig = true;
                 else if (strippedArg == "associatefiletypes" || strippedArg == "filetypes") _associateFileTypes = true;
                 else if (strippedArg == "startmenushortcuts" || strippedArg == "startmenu") _startMenuShortcuts = true;
                 else if (strippedArg == "contextmenus" || strippedArg == "context") _contextMenus = true;
-                else if (strippedArg == "installBranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
+                else if (strippedArg == "installbranch" && !string.IsNullOrEmpty(args[i + 1])) _installBranch = args[i + 1];
                 else if (strippedArg == "peek" || strippedArg == "filepeek") _doFilePeek = true;
 
                 _strippedArgs.Add(strippedArg);
