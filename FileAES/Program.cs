@@ -278,6 +278,8 @@ namespace FAES_GUI
                 programManager.SetAssociateFileTypes(_associateFileTypes);
                 programManager.SetStartMenuShortcuts(_startMenuShortcuts);
                 programManager.SetContextMenus(_contextMenus);
+
+                Application.Exit();
             }
             else
             {
