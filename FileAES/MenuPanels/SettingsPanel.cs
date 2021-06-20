@@ -69,7 +69,10 @@ namespace FAES_GUI.MenuPanels
 
                 _branchIndex = branchSelection.GetSelectedIndex();
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         private void SaveSettings()

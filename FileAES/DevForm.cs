@@ -2,6 +2,7 @@
 using FAES_GUI.CustomControls;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -20,7 +21,7 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
-            this.Text = titleLabel.Text;
+            base.Text = titleLabel.Text;
 
             Console.SetOut(new RichTextBoxWriter(consoleTextBox));
         }
@@ -125,22 +126,7 @@ namespace FAES_GUI
 
         private void ExportLog_Click(object sender, EventArgs e)
         {
-            string logPath = "FileAES-" + DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString() + ".log";
-
-            _overrideLogPath = Program.programManager.GetLogPath();
-
-            _overrideLogPath = _overrideLogPath.Replace('/', '\\').TrimStart('/', '\\');
-
-            if (!string.IsNullOrWhiteSpace(_overrideLogPath))
-            {
-                if (_overrideLogPath.Contains("{default}") || _overrideLogPath.Contains("{d}"))
-                    logPath = _overrideLogPath.Replace("{default}", logPath).Replace("{d}", logPath);
-                else
-                    logPath = _overrideLogPath;
-
-                string dir = Directory.GetParent(logPath).FullName;
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            }
+            string logPath = Utilities.CreateLogFile(true);
 
             try
             {
@@ -175,8 +161,7 @@ namespace FAES_GUI
 
             if (input[0] == "cryptostreambuffer" || input[0] == "csbuffer" || input[0] == "buffer")
             {
-                uint csBufferTmp = 0;
-                if (input.Length > 1 && !string.IsNullOrEmpty(input[1]) && uint.TryParse(input[1], out csBufferTmp))
+                if (input.Length > 1 && !string.IsNullOrEmpty(input[1]) && uint.TryParse(input[1], out uint csBufferTmp))
                 {
                     Logging.Log(String.Format("CryptoStream Buffer set to {0} bytes", csBufferTmp));
                     FileAES_Utilities.SetCryptoStreamBuffer(csBufferTmp);
@@ -222,7 +207,7 @@ namespace FAES_GUI
                         string verCheck = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&ver=latest&branch={0}&showver=true", branch);
 
                         Logging.Log(String.Format("Getting the latest FAES_GUI version number on branch '{0}'.", branch));
-                        Logging.Log(String.Format("This process may take a few seconds..."));
+                        Logging.Log("This process may take a few seconds...");
 
                         WebClient webClient = new WebClient();
                         string latestVer = webClient.DownloadString(new Uri(verCheck));
@@ -234,7 +219,7 @@ namespace FAES_GUI
                     }
                     catch
                     {
-                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                        Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                     }
                 });
                 updateCheckThread.Start();
@@ -246,7 +231,7 @@ namespace FAES_GUI
                     string latestVer = GetLatestVersion();
                     string currentVer = ConvertVersionToNonFormatted(Program.GetVersion());
 
-                    string branch = Program.programManager.GetBranch();
+                    Program.programManager.GetBranch();
                     string compareVersions = String.Format("https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={0}&version1={1}&version2={2}", "dev", currentVer, latestVer);
 
                     WebClient client = new WebClient();
@@ -255,7 +240,7 @@ namespace FAES_GUI
                     string result = utf.GetString(html).ToLower();
 
                     if (String.IsNullOrEmpty(result) || result == "null")
-                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                        Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                     else if (result.Contains("not exist in the database!") || result == "version1 is newer than version2")
                         Logging.Log(String.Format("You are on a private build. ({0} is newer than {1}).", currentVer, latestVer));
                     else if (result == "version1 is older than version2")
@@ -263,11 +248,11 @@ namespace FAES_GUI
                     else if (result == "version1 is equal to version2")
                         Logging.Log(String.Format("You are on the latest build. ({0} is equal to {1}).", currentVer, latestVer));
                     else
-                        Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                        Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                 }
                 catch
                 {
-                    Logging.Log(String.Format("Unable to connect to the update server! Please check your internet connection."), Severity.WARN);
+                    Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                 }
 
                 DoCheckUpdate();
@@ -285,13 +270,13 @@ namespace FAES_GUI
                             verToSpoof += input[i].Replace("\"", "").Replace("\'", "");
                             verToSpoof += " ";
                         }
-                        verToSpoof.TrimEnd(' ');
+                        verToSpoof = verToSpoof.TrimEnd(' ');
                     }
                     else verToSpoof = input[1];
 
                     if (verToSpoof.ToLower() == "reset" || verToSpoof.ToLower() == "off" || verToSpoof.ToLower() == "false")
                     {
-                        Logging.Log(String.Format("Disabled Version Spoofing."));
+                        Logging.Log("Disabled Version Spoofing.");
                         Program.SetSpoofedVersion(false);
                     }
                     else
@@ -302,7 +287,7 @@ namespace FAES_GUI
                 }
                 else
                 {
-                    Logging.Log(String.Format("Disabled Version Spoofing."));
+                    Logging.Log("Disabled Version Spoofing.");
                     Program.SetSpoofedVersion(false);
                 }
             }
@@ -390,8 +375,7 @@ namespace FAES_GUI
 
         private void ConsoleInputTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(consoleInputTextBox.Text)) sendInputButton.Enabled = false;
-            else sendInputButton.Enabled = true;
+            sendInputButton.Enabled = !string.IsNullOrWhiteSpace(consoleInputTextBox.Text);
         }
 
         private string GetLatestVersion()

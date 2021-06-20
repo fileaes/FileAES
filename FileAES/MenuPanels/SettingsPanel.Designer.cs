@@ -31,6 +31,11 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(settingsPanel));
             this.settingsScrollPanel = new System.Windows.Forms.Panel();
+            this.saveSettings = new System.Windows.Forms.Button();
+            this.resetButton = new System.Windows.Forms.Button();
+            this.buttonPanel = new System.Windows.Forms.Panel();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.runtime = new System.Windows.Forms.Timer(this.components);
             this.useOSTempSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.ignoreUpdatesSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.branchSelection = new FAES_GUI.CustomControls.SettingDropDown();
@@ -38,11 +43,6 @@
             this.logPathRootSetting = new FAES_GUI.CustomControls.SettingTextInput();
             this.logToFileSetting = new FAES_GUI.CustomControls.SettingToggle();
             this.cryptoStreamSetting = new FAES_GUI.CustomControls.SettingIncrementBox();
-            this.saveSettings = new System.Windows.Forms.Button();
-            this.resetButton = new System.Windows.Forms.Button();
-            this.buttonPanel = new System.Windows.Forms.Panel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.runtime = new System.Windows.Forms.Timer(this.components);
             this.settingsScrollPanel.SuspendLayout();
             this.buttonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -61,6 +61,65 @@
             this.settingsScrollPanel.Name = "settingsScrollPanel";
             this.settingsScrollPanel.Size = new System.Drawing.Size(414, 316);
             this.settingsScrollPanel.TabIndex = 0;
+            // 
+            // saveSettings
+            // 
+            this.saveSettings.BackColor = System.Drawing.Color.ForestGreen;
+            this.saveSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.saveSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveSettings.ForeColor = System.Drawing.Color.White;
+            this.saveSettings.Location = new System.Drawing.Point(240, 6);
+            this.saveSettings.Name = "saveSettings";
+            this.saveSettings.Size = new System.Drawing.Size(170, 32);
+            this.saveSettings.TabIndex = 5;
+            this.saveSettings.Text = "Save and Apply";
+            this.saveSettings.UseVisualStyleBackColor = false;
+            this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
+            // 
+            // resetButton
+            // 
+            this.resetButton.BackColor = System.Drawing.Color.Red;
+            this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.resetButton.ForeColor = System.Drawing.Color.White;
+            this.resetButton.Location = new System.Drawing.Point(95, 6);
+            this.resetButton.Name = "resetButton";
+            this.resetButton.Size = new System.Drawing.Size(139, 32);
+            this.resetButton.TabIndex = 6;
+            this.resetButton.Text = "Reset to Default";
+            this.resetButton.UseVisualStyleBackColor = false;
+            this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
+            // 
+            // buttonPanel
+            // 
+            this.buttonPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
+            this.buttonPanel.Controls.Add(this.cancelButton);
+            this.buttonPanel.Controls.Add(this.resetButton);
+            this.buttonPanel.Controls.Add(this.saveSettings);
+            this.buttonPanel.Location = new System.Drawing.Point(0, 316);
+            this.buttonPanel.Name = "buttonPanel";
+            this.buttonPanel.Size = new System.Drawing.Size(414, 41);
+            this.buttonPanel.TabIndex = 7;
+            this.buttonPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.buttonPanel_Paint);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.BackColor = System.Drawing.Color.DarkOrange;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelButton.ForeColor = System.Drawing.Color.White;
+            this.cancelButton.Location = new System.Drawing.Point(4, 6);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(85, 32);
+            this.cancelButton.TabIndex = 6;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = false;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // runtime
+            // 
+            this.runtime.Enabled = true;
+            this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
             // useOSTempSetting
             // 
@@ -129,7 +188,6 @@
             this.logToFileSetting.BackColor = System.Drawing.Color.Transparent;
             this.logToFileSetting.DescriptionText = "Toggles whether the program will automatically log directly to a file. This setti" +
     "ng works best with Developer Mode toggled.";
-            this.logToFileSetting.Enabled = false;
             this.logToFileSetting.ForeColor = System.Drawing.Color.White;
             this.logToFileSetting.HeaderText = "Log to file";
             this.logToFileSetting.Location = new System.Drawing.Point(-1, 495);
@@ -152,65 +210,6 @@
             this.cryptoStreamSetting.TabIndex = 1;
             this.cryptoStreamSetting.Tag = "";
             this.cryptoStreamSetting.Value = 1048576;
-            // 
-            // saveSettings
-            // 
-            this.saveSettings.BackColor = System.Drawing.Color.ForestGreen;
-            this.saveSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.saveSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveSettings.ForeColor = System.Drawing.Color.White;
-            this.saveSettings.Location = new System.Drawing.Point(240, 6);
-            this.saveSettings.Name = "saveSettings";
-            this.saveSettings.Size = new System.Drawing.Size(170, 32);
-            this.saveSettings.TabIndex = 5;
-            this.saveSettings.Text = "Save and Apply";
-            this.saveSettings.UseVisualStyleBackColor = false;
-            this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
-            // 
-            // resetButton
-            // 
-            this.resetButton.BackColor = System.Drawing.Color.Red;
-            this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.resetButton.ForeColor = System.Drawing.Color.White;
-            this.resetButton.Location = new System.Drawing.Point(95, 6);
-            this.resetButton.Name = "resetButton";
-            this.resetButton.Size = new System.Drawing.Size(139, 32);
-            this.resetButton.TabIndex = 6;
-            this.resetButton.Text = "Reset to Default";
-            this.resetButton.UseVisualStyleBackColor = false;
-            this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
-            // 
-            // buttonPanel
-            // 
-            this.buttonPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(160)))), ((int)(((byte)(160)))));
-            this.buttonPanel.Controls.Add(this.cancelButton);
-            this.buttonPanel.Controls.Add(this.resetButton);
-            this.buttonPanel.Controls.Add(this.saveSettings);
-            this.buttonPanel.Location = new System.Drawing.Point(0, 316);
-            this.buttonPanel.Name = "buttonPanel";
-            this.buttonPanel.Size = new System.Drawing.Size(414, 41);
-            this.buttonPanel.TabIndex = 7;
-            this.buttonPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.buttonPanel_Paint);
-            // 
-            // cancelButton
-            // 
-            this.cancelButton.BackColor = System.Drawing.Color.DarkOrange;
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.cancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancelButton.ForeColor = System.Drawing.Color.White;
-            this.cancelButton.Location = new System.Drawing.Point(4, 6);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(85, 32);
-            this.cancelButton.TabIndex = 6;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = false;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-            // 
-            // runtime
-            // 
-            this.runtime.Enabled = true;
-            this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
             // settingsPanel
             // 

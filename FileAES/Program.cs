@@ -14,34 +14,34 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "RC 1";
+        private const string betaAppendTag = "RC 2";
 
-        private static bool _doFilePeek = false;
-        private static bool _verbose = false;
-        private static bool _purgeTemp = false;
-        private static bool _headless = false;
-        private static bool _getFaesVersion = false;
-        private static bool _getVersion = false;
-        private static bool _showProgress = false;
-        private static bool _overwriteDuplicates = false;
+        private static bool _doFilePeek;
+        private static bool _verbose;
+        private static bool _purgeTemp;
+        private static bool _headless;
+        private static bool _getFaesVersion;
+        private static bool _getVersion;
+        private static bool _showProgress;
+        private static bool _overwriteDuplicates;
         private static bool _deleteOriginalFile = true;
-        private static bool _genFullInstallConfig = false;
-        private static bool _associateFileTypes = false;
-        private static bool _startMenuShortcuts = false;
-        private static bool _contextMenus = false;
+        private static bool _genFullInstallConfig;
+        private static bool _associateFileTypes;
+        private static bool _startMenuShortcuts;
+        private static bool _contextMenus;
         private static string _installBranch;
-        private static string _directory = null;
+        private static string _directory;
         private static string _password;
-        private static string _passwordHint = null;
-        private static string _compressionMethod = null;
+        private static string _passwordHint;
+        private static string _compressionMethod;
         private static int _compressionLevel = 7;
         private static ushort _progressSleep = 5000;
-        private static List<string> _strippedArgs = new List<string>();
+        internal static List<string> _strippedArgs = new List<string>();
 
         private static readonly List<string> _supportedPeekFiles = new List<string> {".TXT", ".MD", ".LOG"};
 
         private static string _spoofedVersion = "v2.0.0";
-        private static bool _useSpoofedVersion = false;
+        private static bool _useSpoofedVersion;
 
         public static FAES_File faesFile;
         public static ProgramManager programManager;
@@ -53,9 +53,7 @@ namespace FAES_GUI
 
             for (int i = 0; i < args.Length; i++)
             {
-                args[i].ToLower();
-
-                string strippedArg = args[i];
+                string strippedArg = args[i].ToLower();
 
                 if (Directory.Exists(args[i])) _directory = args[i];
                 else if (File.Exists(args[i])) _directory = args[i];
@@ -98,7 +96,10 @@ namespace FAES_GUI
             {
                 if (File.Exists("FAES-Updater.exe")) File.Delete("FAES-Updater.exe");
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             if (_purgeTemp)
             {
@@ -127,11 +128,10 @@ namespace FAES_GUI
                     if (_compressionLevel < 0 || _compressionLevel > 9)
                     {
                         Console.WriteLine("You have not specified a valid compression level! Please choose a value between 0 and 9.");
-                        return;
                     }
                     else
                     {
-                        if (faesFile.isFileEncryptable())
+                        if (faesFile.IsFileEncryptable())
                         {
                             FileAES_Encrypt encrypt = new FileAES_Encrypt(faesFile, _password, _passwordHint, Optimise.Balanced, null, _deleteOriginalFile, _overwriteDuplicates);
 
@@ -182,7 +182,7 @@ namespace FAES_GUI
                             {
                                 try
                                 {
-                                    if (encrypt.encryptFile())
+                                    if (encrypt.EncryptFile())
                                     {
                                         if (_showProgress)
                                         {
@@ -232,7 +232,7 @@ namespace FAES_GUI
                             {
                                 try
                                 {
-                                    if (decrypt.decryptFile())
+                                    if (decrypt.DecryptFile())
                                     {
                                         if (_showProgress)
                                         {
@@ -291,9 +291,9 @@ namespace FAES_GUI
                 {
                     faesFile = new FAES_File(_directory);
 
-                    if (faesFile.isFileEncryptable())
+                    if (faesFile.IsFileEncryptable())
                         Application.Run(new EncryptForm(faesFile));
-                    else if (faesFile.isFileDecryptable())
+                    else if (faesFile.IsFileDecryptable())
                     {
                         if (_doFilePeek && IsFileValidForPeek(faesFile))
                             Application.Run(new PeekForm(faesFile));
@@ -320,10 +320,10 @@ namespace FAES_GUI
             }
         }
 
-        public static bool IsFileValidForPeek(FAES_File faesFile)
+        public static bool IsFileValidForPeek(FAES_File file)
         {
-            if (faesFile.isFileDecryptable())
-                return _supportedPeekFiles.Contains(Path.GetExtension(faesFile.GetOriginalFileName()).ToUpper());
+            if (file.IsFileDecryptable())
+                return _supportedPeekFiles.Contains(Path.GetExtension(file.GetOriginalFileName()).ToUpper());
 
             return false;
         }
@@ -352,15 +352,14 @@ namespace FAES_GUI
         {
             if (!_useSpoofedVersion)
             {
-                string[] ver = (typeof(FAES_GUI.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
+                string[] ver = (typeof(Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
                 if (IsDevBuild())
                     return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + devAppendTag + ")";
-                else if (IsBetaBuild())
+                if (IsBetaBuild())
                     return "v" + ver[0] + "." + ver[1] + "." + ver[2] + " (" + betaAppendTag + ")";
-                else
-                    return "v" + ver[0] + "." + ver[1] + "." + ver[2];
+                return "v" + ver[0] + "." + ver[1] + "." + ver[2];
             }
-            else return _spoofedVersion;
+            return _spoofedVersion;
         }
 
         public static void SetSpoofedVersion(bool useSpoofed, string formattedVersion = "v2.0.0")

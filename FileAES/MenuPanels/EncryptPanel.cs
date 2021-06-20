@@ -11,10 +11,10 @@ namespace FAES_GUI.MenuPanels
     {
         private FAES_File _fileToEncrypt;
 
-        private bool _inProgress = false;
+        private bool _inProgress;
         private bool _encryptSuccessful;
-        private bool _closeAfterOp = false;
-        private decimal _progress = 0;
+        private bool _closeAfterOp;
+        private decimal _progress;
 
         public encryptPanel()
         {
@@ -41,7 +41,7 @@ namespace FAES_GUI.MenuPanels
 
         private void Initialise()
         {
-            Logging.Log(String.Format("FAES_GUI(EncryptPanel): Initialising..."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(EncryptPanel): Initialising...", Severity.DEBUG);
             InitializeComponent();
 
             ResetFile();
@@ -49,7 +49,7 @@ namespace FAES_GUI.MenuPanels
             statusInformation.Text = "";
 
             this.Focus();
-            Logging.Log(String.Format("FAES_GUI(EncryptPanel): Initilisation Complete."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(EncryptPanel): Initilisation Complete.", Severity.DEBUG);
         }
 
         public void ResetFile()
@@ -67,7 +67,7 @@ namespace FAES_GUI.MenuPanels
             progressBar.CustomText = "";
             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.Percentage;
 
-            Logging.Log(String.Format("FAES_GUI(ResetFile): Cleared selected file."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(ResetFile): Cleared selected file.", Severity.DEBUG);
         }
 
         public void LockFileSelect(bool lockFile)
@@ -77,14 +77,14 @@ namespace FAES_GUI.MenuPanels
 
         public bool SetFileToEncrypt(FAES_File faesFile)
         {
-            if (faesFile.isFileEncryptable())
+            if (faesFile.IsFileEncryptable())
             {
                 _fileToEncrypt = faesFile;
-                fileInfoLabel.Text = _fileToEncrypt.getFileName();
+                fileInfoLabel.Text = _fileToEncrypt.GetFileName();
                 Locked(false);
                 encryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToEncrypt): '{0}'", _fileToEncrypt.getPath()), Severity.DEBUG);
+                Logging.Log(String.Format("FAES_GUI(SetFileToEncrypt): '{0}'", _fileToEncrypt.GetPath()), Severity.DEBUG);
 
                 return true;
             }
@@ -152,7 +152,7 @@ namespace FAES_GUI.MenuPanels
             bool delAfterEnc = deleteOriginal.Checked;
             bool ovDup = overwriteDuplicate.Checked;
 
-            Logging.Log(String.Format("FAES_GUI(Encrypt): Started!'"), Severity.DEBUG);
+            Logging.Log("FAES_GUI(Encrypt): Started!'", Severity.DEBUG);
 
             SetNote("Encrypting... Please wait.", 0);
 
@@ -173,7 +173,7 @@ namespace FAES_GUI.MenuPanels
                     {
                         try
                         {
-                            _encryptSuccessful = encrypt.encryptFile();
+                            _encryptSuccessful = encrypt.EncryptFile();
                         }
                         catch (Exception e)
                         {
@@ -194,7 +194,7 @@ namespace FAES_GUI.MenuPanels
 
                         if (_encryptSuccessful)
                         {
-                            Logging.Log(String.Format("FAES_GUI(Encrypt): Finished successfully!'"), Severity.DEBUG);
+                            Logging.Log("FAES_GUI(Encrypt): Finished successfully!'", Severity.DEBUG);
                             SetNote("Encryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
@@ -203,7 +203,7 @@ namespace FAES_GUI.MenuPanels
                         }
                         else
                         {
-                            Logging.Log(String.Format("FAES_GUI(Encrypt): Finished unsuccessfully!'"), Severity.DEBUG);
+                            Logging.Log("FAES_GUI(Encrypt): Finished unsuccessfully!'", Severity.DEBUG);
                             if (!statusInformation.Text.ToLower().Contains("error")) SetNote("Encryption Failed. Try again later.", 1);
                         }
                     }
@@ -235,7 +235,7 @@ namespace FAES_GUI.MenuPanels
 
         private void encryptButton_Click(object sender, EventArgs e)
         {
-            if (_fileToEncrypt.isFileEncryptable() && !_inProgress && passConfTextbox.Text == passTextbox.Text)
+            if (_fileToEncrypt.IsFileEncryptable() && !_inProgress && passConfTextbox.Text == passTextbox.Text)
             {
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;
@@ -282,7 +282,7 @@ namespace FAES_GUI.MenuPanels
                 e.Effect = DragDropEffects.All;
             else
             {
-                String[] strGetFormats = e.Data.GetFormats();
+                e.Data.GetFormats();
                 e.Effect = DragDropEffects.None;
             }
         }

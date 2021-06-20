@@ -11,9 +11,8 @@ namespace FAES_GUI
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
-            this.Text = titleLabel.Text;
+            base.Text = titleLabel.Text;
             this.Hide();
-
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)

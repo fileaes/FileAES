@@ -7,24 +7,20 @@ namespace FAES_GUI
 {
     public partial class DecryptForm : Form
     {
-        private UpdateForm _updateForm;
-
         public DecryptForm(FAES_File faesFile)
         {
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
-            this.Text = titleLabel.Text;
+            base.Text = titleLabel.Text;
 
             decryptPanel.LockFileSelect(true);
             decryptPanel.setCloseAfterOperationSuccessful(true);
             decryptPanel.SetFileToDecrypt(faesFile);
 
-            if (!Program.programManager.GetSkipUpdates())
-            {
-                _updateForm = new UpdateForm();
-                _updateForm.CheckForUpdate();
-            }
+            if (Program.programManager.GetSkipUpdates()) return;
+            UpdateForm updateForm = new UpdateForm();
+            updateForm.CheckForUpdate();
         }
 
         private void titleBar_Paint(object sender, PaintEventArgs e)

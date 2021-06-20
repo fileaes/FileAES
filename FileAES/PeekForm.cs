@@ -7,23 +7,20 @@ namespace FAES_GUI
 {
     public partial class PeekForm : Form
     {
-        private UpdateForm _updateForm;
-
         public PeekForm(FAES_File faesFile)
         {
             InitializeComponent();
 
             titleLabel.Text += Program.GetVersion();
-            this.Text = titleLabel.Text;
+            base.Text = titleLabel.Text;
 
             peekPanel.LockFileSelect(true);
-            peekPanel.setCloseAfterOperationSuccessful(true);
             peekPanel.SetFileToDecrypt(faesFile);
 
             if (!Program.programManager.GetSkipUpdates())
             {
-                _updateForm = new UpdateForm();
-                _updateForm.CheckForUpdate();
+                UpdateForm updateForm = new UpdateForm();
+                updateForm.CheckForUpdate();
             }
         }
 

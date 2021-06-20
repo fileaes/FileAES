@@ -10,10 +10,10 @@ namespace FAES_GUI.MenuPanels
     {
         private FAES_File _fileToDecrypt;
 
-        private bool _inProgress = false;
+        private bool _inProgress;
         private bool _decryptSuccessful;
-        private bool _closeAfterOp = false;
-        private decimal _progress = 0;
+        private bool _closeAfterOp;
+        private decimal _progress;
 
         public decryptPanel()
         {
@@ -40,12 +40,12 @@ namespace FAES_GUI.MenuPanels
 
         private void Initialise()
         {
-            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initialising..."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(DecryptPanel): Initialising...", Severity.DEBUG);
             InitializeComponent();
 
             ResetFile();
             statusInformation.Text = "";
-            Logging.Log(String.Format("FAES_GUI(DecryptPanel): Initilisation Complete."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(DecryptPanel): Initilisation Complete.", Severity.DEBUG);
         }
 
         public void ResetFile()
@@ -63,7 +63,7 @@ namespace FAES_GUI.MenuPanels
             passHintTextbox.Text = "";
             encryptedFileMetaData.Text = "";
 
-            Logging.Log(String.Format("FAES_GUI(ResetFile): Cleared selected file."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(ResetFile): Cleared selected file.", Severity.DEBUG);
         }
 
         public void LockFileSelect(bool lockFile)
@@ -73,15 +73,15 @@ namespace FAES_GUI.MenuPanels
 
         public bool SetFileToDecrypt(FAES_File faesFile)
         {
-            if (faesFile.isFileDecryptable())
+            if (faesFile.IsFileDecryptable())
             {
                 _fileToDecrypt = faesFile;
-                fileInfoLabel.Text = _fileToDecrypt.getFileName();
+                fileInfoLabel.Text = _fileToDecrypt.GetFileName();
                 SetMetaData();
                 Locked(false);
                 decryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToDecrypt.getPath()), Severity.DEBUG);
+                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToDecrypt.GetPath()), Severity.DEBUG);
 
                 return true;
             }
@@ -125,9 +125,9 @@ namespace FAES_GUI.MenuPanels
             encryptedFileMetaData.ResetText();
 
             if (timestamp >= 0)
-                encryptedFileMetaData.Text += String.Format("Encrypted on {0} at {1}.", FileAES_Utilities.UnixTimeStampToDateTime((double)timestamp).ToString("dd/MM/yyyy"), FileAES_Utilities.UnixTimeStampToDateTime((double)timestamp).ToString("hh:mm:ss tt"));
+                encryptedFileMetaData.Text += String.Format("Encrypted on {0:dd/MM/yyyy} at {1:hh:mm:ss tt}.", FileAES_Utilities.UnixTimeStampToDateTime(timestamp), FileAES_Utilities.UnixTimeStampToDateTime(timestamp));
             else
-                encryptedFileMetaData.Text += String.Format("This file does not contain a encryption date. This is likely due to this file being encrypted using an older FAES version.");
+                encryptedFileMetaData.Text += "This file does not contain a encryption date. This is likely due to this file being encrypted using an older FAES version.";
 
             encryptedFileMetaData.Text += (Environment.NewLine + String.Format("FAES {0} was used.", version));
 
@@ -154,7 +154,7 @@ namespace FAES_GUI.MenuPanels
             bool delAfterEnc = deleteOriginal.Checked;
             bool ovDup = overwriteDuplicate.Checked;
 
-            Logging.Log(String.Format("FAES_GUI(Decrypt): Started!'"), Severity.DEBUG);
+            Logging.Log("FAES_GUI(Decrypt): Started!'", Severity.DEBUG);
 
             SetNote("Decrypting... Please wait.", 0);
 
@@ -172,7 +172,7 @@ namespace FAES_GUI.MenuPanels
                     {
                         try
                         {
-                            _decryptSuccessful = decrypt.decryptFile();
+                            _decryptSuccessful = decrypt.DecryptFile();
                         }
                         catch (Exception e)
                         {
@@ -193,7 +193,7 @@ namespace FAES_GUI.MenuPanels
 
                         if (_decryptSuccessful)
                         {
-                            Logging.Log(String.Format("FAES_GUI(Decrypt): Finished successfully!'"), Severity.DEBUG);
+                            Logging.Log("FAES_GUI(Decrypt): Finished successfully!'", Severity.DEBUG);
                             SetNote("Decryption Complete", 0);
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
@@ -206,7 +206,7 @@ namespace FAES_GUI.MenuPanels
                             progressBar.ProgressColor = Color.Red;
                             progressBar.Value = progressBar.Maximum;
 
-                            Logging.Log(String.Format("FAES_GUI(Decrypt): Finished unsuccessfully!'"), Severity.DEBUG);
+                            Logging.Log("FAES_GUI(Decrypt): Finished unsuccessfully!'", Severity.DEBUG);
                             if (!statusInformation.Text.ToLower().Contains("error"))
                             {
                                 SetNote("Password Incorrect!", 3);
@@ -244,7 +244,7 @@ namespace FAES_GUI.MenuPanels
 
         private void decryptButton_Click(object sender, EventArgs e)
         {
-            if (_fileToDecrypt.isFileDecryptable() && !_inProgress && passTextbox.Text.Length > 3)
+            if (_fileToDecrypt.IsFileDecryptable() && !_inProgress && passTextbox.Text.Length > 3)
             {
                 progressBar.ProgressColor = Color.Lime;
                 progressBar.Value = progressBar.Minimum;
@@ -282,7 +282,7 @@ namespace FAES_GUI.MenuPanels
                 e.Effect = DragDropEffects.All;
             else
             {
-                String[] strGetFormats = e.Data.GetFormats();
+                e.Data.GetFormats();
                 e.Effect = DragDropEffects.None;
             }
         }

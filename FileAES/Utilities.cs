@@ -86,7 +86,7 @@ namespace FAES_GUI
 
         public bool SetBranch(string branch)
         {
-            string b = "stable";
+            string b;
             if (branch.ToLower() == "dev") b = "dev";
             else if (branch.ToLower() == "beta") b = "beta";
             else b = "stable";
@@ -409,7 +409,7 @@ namespace FAES_GUI
 
     public class ProgramManager
     {
-        protected InstallType _installType = InstallType.AutoDetect;
+        protected InstallType _installType;
         protected static string _portablePath = AppDomain.CurrentDomain.BaseDirectory;
         protected static string _fullInstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "mullak99", "FileAES");
         protected static string _appDataPath = _portablePath;
@@ -733,14 +733,12 @@ namespace FAES_GUI
             return Path.Combine(path, "config");
         }
 
-        private static bool CreateDirectory(string path)
+        private static void CreateDirectory(string path)
         {
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-                return true;
             }
-            return false;
         }
 
         public enum InstallType
@@ -749,5 +747,33 @@ namespace FAES_GUI
             FullInstall,
             PortableInstall
         };
+    }
+
+    public class Utilities
+    {
+        public static string CreateLogFile(bool export)
+        {
+            string logPath;
+            DateTime dateTime = DateTime.UtcNow;
+
+            if (export) 
+                logPath = "FileAES_" + dateTime.ToString("yyyy-MM-dd_HH-mm-ss") + "_Export.log";
+            else
+                logPath = "FileAES_" + dateTime.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";
+
+            string dirPath = Program.programManager.GetLogPath().Replace('/', '\\').TrimStart('/', '\\');
+
+            if (!string.IsNullOrWhiteSpace(dirPath))
+            {
+                if (dirPath.Contains("{default}") || dirPath.Contains("{d}"))
+                    logPath = dirPath.Replace("{default}", logPath).Replace("{d}", logPath);
+                else
+                    logPath = dirPath;
+
+                string dir = Directory.GetParent(logPath)?.FullName;
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir ?? string.Empty);
+            }
+            return logPath;
+        }
     }
 }

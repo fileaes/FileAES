@@ -1,15 +1,14 @@
-﻿using FAES;
-using System;
+﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using FAES;
 
 namespace FAES_GUI
 {
     public partial class MainForm : Form
     {
-        private bool _closeAfterOperation = false;
-
-        private DevForm _devForm;
+        private readonly DevForm _devForm;
 
         public MainForm(FAES_File faesFile = null)
         {
@@ -17,39 +16,36 @@ namespace FAES_GUI
             autoDetect.BringToFront();
 
             titleLabel.Text += Program.GetVersion();
-            this.Text = titleLabel.Text;
+            base.Text = titleLabel.Text;
 
             DateTime buildDate = Program.GetBuildDate();
 
-            copyrightLabel.Text = String.Format("© - {0} | mullak99", buildDate.ToString("yyyy"));
-            longVersionLabel.Text = String.Format("FileAES {0} | Built on {1} at {2}", Program.GetVersion(), buildDate.ToString("dd/MM/yyyy"), buildDate.ToString("hh:mm:ss tt"));
+            copyrightLabel.Text = String.Format("© - {0:yyyy} | mullak99", buildDate);
+            longVersionLabel.Text = String.Format("FileAES {0} | Built on {1:dd/MM/yyyy} at {2:hh:mm:ss tt}", Program.GetVersion(), buildDate, buildDate);
 
             if (FileAES_Utilities.GetVerboseLogging())
             {
                 _devForm = new DevForm();
-                _devForm.SetCheckUpdateAction(() => InvokeCheckUpdate());
+                _devForm.SetCheckUpdateAction(InvokeCheckUpdate);
 
                 // Hacky solution to the RichTextBox Console.SetOut causing issues if the DevForm is not opened at least once before encryption/decryption (otherwise it hangs)
                 _devForm.Show();
                 _devForm.Hide();
             }
 
-            autoSelectMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { encryptMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
-            encryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
-            decryptMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton, aboutMenuButton });
-            settingsMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, aboutMenuButton });
-            aboutMenuButton.registerDetoggles(new CustomControls.SubMenuButton[4] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, settingsMenuButton });
+            autoSelectMenuButton.registerDetoggles(new[] { encryptMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            encryptMenuButton.registerDetoggles(new[] { autoSelectMenuButton, decryptMenuButton, settingsMenuButton, aboutMenuButton });
+            decryptMenuButton.registerDetoggles(new[] { autoSelectMenuButton, encryptMenuButton, settingsMenuButton, aboutMenuButton });
+            settingsMenuButton.registerDetoggles(new[] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, aboutMenuButton });
+            aboutMenuButton.registerDetoggles(new[] { autoSelectMenuButton, encryptMenuButton, decryptMenuButton, settingsMenuButton });
 
             aboutPanel.SetIsUpdateAction(() => aboutMenuButton_Click(null, null));
             aboutPanel.CheckForUpdate();
 
             if (faesFile != null)
             {
-                _closeAfterOperation = true;
-
-                encryptPanel.setCloseAfterOperationSuccessful(_closeAfterOperation);
-                decryptPanel.setCloseAfterOperationSuccessful(_closeAfterOperation);
-
+                encryptPanel.setCloseAfterOperationSuccessful(true);
+                decryptPanel.setCloseAfterOperationSuccessful(true);
                 FAESMenuHandler(faesFile);
             }
         }
@@ -70,21 +66,21 @@ namespace FAES_GUI
 
         private void quitButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(MainGUI): Quit Button pressed. Exiting..."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): Quit Button pressed. Exiting...", Severity.DEBUG);
             Environment.Exit(0);
         }
 
         private void minButton_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+            WindowState = FormWindowState.Minimized;
         }
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
         protected override void OnPaint(PaintEventArgs e)
@@ -157,65 +153,65 @@ namespace FAES_GUI
                 e.Effect = DragDropEffects.All;
             else
             {
-                String[] strGetFormats = e.Data.GetFormats();
+                e.Data.GetFormats();
                 e.Effect = DragDropEffects.None;
             }
         }
 
         private void FAESMenuHandler(FAES_File faesFile)
         {
-            if (faesFile.isFileEncryptable())
+            if (faesFile.IsFileEncryptable())
             {
-                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, encryptable file! ({0})", faesFile.getPath()), Severity.DEBUG);
+                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, encryptable file! ({0})", faesFile.GetPath()), Severity.DEBUG);
 
                 encryptMenuButton_Click(null, null);
                 encryptMenuButton.Selected = true;
                 autoSelectMenuButton.Selected = false;
                 encryptPanel.SetFileToEncrypt(faesFile);
             }
-            else if (faesFile.isFileDecryptable())
+            else if (faesFile.IsFileDecryptable())
             {
-                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, decryptable file! ({0})", faesFile.getPath()), Severity.DEBUG);
+                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, decryptable file! ({0})", faesFile.GetPath()), Severity.DEBUG);
 
                 decryptMenuButton_Click(null, null);
                 decryptMenuButton.Selected = true;
                 autoSelectMenuButton.Selected = false;
                 decryptPanel.SetFileToDecrypt(faesFile);
             }
-            else Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected an invalid file! ({0})", faesFile.getPath()), Severity.DEBUG);
+            else Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected an invalid file! ({0})", faesFile.GetPath()), Severity.DEBUG);
         }
 
         private void autoSelectMenuButton_Click(object sender, EventArgs e)
         {
             autoDetect.BringToFront();
-            Logging.Log(String.Format("FAES_GUI(MainGUI): AutoSelectPanel Active."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): AutoSelectPanel Active.", Severity.DEBUG);
         }
 
         private void encryptMenuButton_Click(object sender, EventArgs e)
         {
-            if (Control.ModifierKeys == Keys.Shift) encryptPanel.ResetFile();
+            if (ModifierKeys == Keys.Shift) encryptPanel.ResetFile();
             encryptPanel.BringToFront();
-            Logging.Log(String.Format("FAES_GUI(MainGUI): EncryptPanel Active."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): EncryptPanel Active.", Severity.DEBUG);
         }
 
         private void decryptMenuButton_Click(object sender, EventArgs e)
         {
-            if (Control.ModifierKeys == Keys.Shift) decryptPanel.ResetFile();
+            if (ModifierKeys == Keys.Shift) decryptPanel.ResetFile();
             decryptPanel.BringToFront();
-            Logging.Log(String.Format("FAES_GUI(MainGUI): DecryptPanel Active."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): DecryptPanel Active.", Severity.DEBUG);
         }
 
         private void settingsMenuButton_Click(object sender, EventArgs e)
         {
             settingsPanel.BringToFront();
             settingsPanel.LoadSettings();
-            Logging.Log(String.Format("FAES_GUI(MainGUI): SettingsPanel Active."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): SettingsPanel Active.", Severity.DEBUG);
         }
 
         private void aboutMenuButton_Click(object sender, EventArgs e)
         {
             aboutPanel.BringToFront();
-            Logging.Log(String.Format("FAES_GUI(MainGUI): AboutPanel Active."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(MainGUI): AboutPanel Active.", Severity.DEBUG);
         }
 
         private void CopyrightLabel_Click(object sender, EventArgs e)
@@ -224,7 +220,7 @@ namespace FAES_GUI
             {
                 if (_devForm.WindowState == FormWindowState.Minimized && _devForm.Visible)
                 {
-                    Logging.Log(String.Format("FAES_GUI(MainGUI): DevForm detected in a minimised state. Setting its WindowState to Normal."), Severity.DEBUG);
+                    Logging.Log("FAES_GUI(MainGUI): DevForm detected in a minimised state. Setting its WindowState to Normal.", Severity.DEBUG);
                     _devForm.WindowState = FormWindowState.Normal;
                 }
                 else

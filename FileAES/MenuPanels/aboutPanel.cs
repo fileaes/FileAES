@@ -15,9 +15,9 @@ namespace FAES_GUI.MenuPanels
     {
         private UpdateStatus _appUpdateStatus;
         private string _latestVersion, _lastCheckedBranch;
-        private bool _updateThreadRunning = false;
-        private bool _updateUI = false;
-        private bool _isUpdate = false;
+        private bool _updateThreadRunning;
+        private bool _updateUI;
+        private bool _isUpdate;
 
         private Action _onIsUpdateAction;
 
@@ -75,7 +75,7 @@ namespace FAES_GUI.MenuPanels
                     latestVerLabel.Text = latestVersion;
                     _isUpdate = false;
 
-                    Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppLatest."), Severity.DEBUG);
+                    Logging.Log("FAES_GUI(AboutPanel): UpdateUI set to AppLatest.", Severity.DEBUG);
                 }
                 else if (_appUpdateStatus == UpdateStatus.AppNewer)
                 {
@@ -89,7 +89,7 @@ namespace FAES_GUI.MenuPanels
                     latestVerLabel.Text = latestVersion;
                     _isUpdate = false;
 
-                    Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppNewer."), Severity.DEBUG);
+                    Logging.Log("FAES_GUI(AboutPanel): UpdateUI set to AppNewer.", Severity.DEBUG);
                 }
                 else if (_appUpdateStatus == UpdateStatus.ServerError)
                 {
@@ -103,7 +103,7 @@ namespace FAES_GUI.MenuPanels
                     latestVerLabel.Text = "SERVER ERROR!";
                     _isUpdate = false;
 
-                    Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to ServerError."), Severity.DEBUG);
+                    Logging.Log("FAES_GUI(AboutPanel): UpdateUI set to ServerError.", Severity.DEBUG);
                 }
                 else if (_appUpdateStatus == UpdateStatus.AppOutdated)
                 {
@@ -117,7 +117,7 @@ namespace FAES_GUI.MenuPanels
                     latestVerLabel.Text = latestVersion;
                     _isUpdate = true;
 
-                    Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateUI set to AppOutdated."), Severity.DEBUG);
+                    Logging.Log("FAES_GUI(AboutPanel): UpdateUI set to AppOutdated.", Severity.DEBUG);
                 }
                 GetCurrentVersion();
                 _updateUI = false;
@@ -181,13 +181,14 @@ namespace FAES_GUI.MenuPanels
                         {
                             string updateVersion;
 
-                            Logging.Log(String.Format("Checking for update..."), Severity.DEBUG);
+                            Logging.Log("Checking for update...", Severity.DEBUG);
                             UpdateStatus updateInfo = GetUpdateStatus(out updateVersion);
 
                             if (updateVersion != "v0.0.0")
-                                Logging.Log(String.Format("Latest FAES_GUI version: {0}", updateVersion), Severity.DEBUG);
+                                Logging.Log(String.Format("Latest FAES_GUI version: {0}", updateVersion),
+                                    Severity.DEBUG);
                             else
-                                Logging.Log(String.Format("Update check failed!"), Severity.WARN);
+                                Logging.Log("Update check failed!", Severity.WARN);
 
                             _appUpdateStatus = updateInfo;
                             _latestVersion = updateVersion;
@@ -195,14 +196,23 @@ namespace FAES_GUI.MenuPanels
                             _updateUI = true;
                             _updateThreadRunning = false;
 
-                            if (_appUpdateStatus == UpdateStatus.AppOutdated && !Program.programManager.GetSkipUpdates()) DoIsUpdateAction();
+                            if (_appUpdateStatus == UpdateStatus.AppOutdated &&
+                                !Program.programManager.GetSkipUpdates()) DoIsUpdateAction();
                         }
-                        catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
+                        catch
+                        {
+                            // Hacky solution to stop VS2019 crashing when viewing some forms...
+                            // ignored
+                        }
                     });
                     threaddedUpdateCheck.Start();
                 }
             }
-            catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
+            catch
+            {
+                // Hacky solution to stop VS2019 crashing when viewing some forms...
+                // ignored
+            }
         }
 
         public bool IsUpdateCheckRunning()
@@ -272,8 +282,7 @@ namespace FAES_GUI.MenuPanels
             try
             {
                 using (var client = new WebClient())
-                using (var stream = client.OpenRead("https://api.mullak99.co.uk/"))
-                    return true;
+                using (client.OpenRead("https://api.mullak99.co.uk/")) return true;
             }
             catch
             {
@@ -283,22 +292,29 @@ namespace FAES_GUI.MenuPanels
 
         public static void UpdateSelf(bool doCleanUpdate = false, string version = "latest")
         {
-            string installDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Replace("file:", "").TrimStart(':', '/', '\\');
+            string installDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)?.Replace("file:", "").TrimStart(':', '/', '\\');
 
             if (CheckServerConnection())
                 try
                 {
-                    if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
-                        File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
-                    if (File.Exists(Path.Combine(installDir, "updater.pack")))
+                    if (!String.IsNullOrWhiteSpace(installDir))
+                    {
+                        if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
+                            File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
+                        if (File.Exists(Path.Combine(installDir, "updater.pack")))
+                            File.Delete(Path.Combine(installDir, "updater.pack"));
+
+                        WebClient webClient = new WebClient();
+                        webClient.DownloadFile(
+                            new Uri(String.Format(
+                                "https://api.mullak99.co.uk/FAES/GetDownload.php?app=faes_updater&ver=latest&branch={0}&redirect=true",
+                                Program.programManager.GetBranch())), Path.Combine(installDir, "updater.pack"));
+                        ZipFile.ExtractToDirectory(Path.Combine(installDir, "updater.pack"), installDir);
                         File.Delete(Path.Combine(installDir, "updater.pack"));
-
-                    WebClient webClient = new WebClient();
-                    webClient.DownloadFile(new Uri(String.Format("https://api.mullak99.co.uk/FAES/GetDownload.php?app=faes_updater&ver=latest&branch={0}&redirect=true", Program.programManager.GetBranch())), Path.Combine(installDir, "updater.pack"));
-                    ZipFile.ExtractToDirectory(Path.Combine(installDir, "updater.pack"), installDir);
-                    File.Delete(Path.Combine(installDir, "updater.pack"));
-                    Thread.Sleep(100);
-
+                        Thread.Sleep(100);
+                    }
+                    else throw new InvalidOperationException("Install directory could not be found!");
+                    
                     string args = "";
                     if (doCleanUpdate) args += "--pure ";
                     if (Program.programManager.GetFullInstall())
@@ -332,18 +348,24 @@ namespace FAES_GUI.MenuPanels
                     else
                     {
                         MessageBox.Show(String.Format("An unexpected error occurred running the updater!\nInstall Directory:{0}\n\n{1}", installDir, e), "Error", MessageBoxButtons.OK);
-                        if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
-                            File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
-                        if (File.Exists(Path.Combine(installDir, "updater.pack")))
-                            File.Delete(Path.Combine(installDir, "updater.pack"));
+                        if (!String.IsNullOrWhiteSpace(installDir))
+                        {
+                            if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
+                                File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
+                            if (File.Exists(Path.Combine(installDir, "updater.pack")))
+                                File.Delete(Path.Combine(installDir, "updater.pack"));
+                        }
                     }
                 }
             else
             {
-                if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
-                    File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
-                if (File.Exists(Path.Combine(installDir, "updater.pack")))
-                    File.Delete(Path.Combine(installDir, "updater.pack"));
+                if (!String.IsNullOrWhiteSpace(installDir))
+                {
+                    if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
+                        File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
+                    if (File.Exists(Path.Combine(installDir, "updater.pack")))
+                        File.Delete(Path.Combine(installDir, "updater.pack"));
+                }
             }
         }
 
@@ -413,7 +435,11 @@ namespace FAES_GUI.MenuPanels
                     {
                         nonFormattedVersion += "-DEV";
                     }
-                    nonFormattedVersion += versionSplit[1].ToUpper().Replace("BETA", "").Replace("B", "").Replace("DEV", "").Replace("D", "");
+                    else if (versionSplit[1].ToUpper()[0] == 'R')
+                    {
+                        nonFormattedVersion += "-RC";
+                    }
+                    nonFormattedVersion += versionSplit[1].ToUpper().Replace("BETA", "").Replace("B", "").Replace("DEV", "").Replace("D", "").Replace("RC", "").Replace("R", "");
 
                     if (versionSplit.Length > 2)
                     {
@@ -429,6 +455,8 @@ namespace FAES_GUI.MenuPanels
 
             if (nonFormattedVersion.Contains("-B-"))
                 nonFormattedVersion = nonFormattedVersion.Replace("-B-", "-B");
+            else if (nonFormattedVersion.Contains("-RC-"))
+                nonFormattedVersion = nonFormattedVersion.Replace("-RC-", "-RC");
             else if (nonFormattedVersion.Contains("-DEV-"))
                 nonFormattedVersion = nonFormattedVersion.Replace("-DEV-", "-DEV");
             nonFormattedVersion = nonFormattedVersion.TrimEnd('-');
@@ -473,7 +501,11 @@ namespace FAES_GUI.MenuPanels
                 if (_updateThreadRunning || _updateUI) UpdateUI();
                 if (Program.programManager.GetBranch() != _lastCheckedBranch) CheckForUpdate();
             }
-            catch { } // Hacky solution to stop VS2019 crashing when viewing some forms...
+            catch
+            {
+                // Hacky solution to stop VS2019 crashing when viewing some forms...
+                // ignored
+            }
         }
 
         private void UpdatePanel_Paint(object sender, PaintEventArgs e)
@@ -483,27 +515,27 @@ namespace FAES_GUI.MenuPanels
 
         private void CheckForUpdateButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(AboutPanel): CheckForUpdateButton clicked."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(AboutPanel): CheckForUpdateButton clicked.", Severity.DEBUG);
             CheckForUpdate();
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(AboutPanel): UpdateButton clicked."), Severity.DEBUG);
-            Logging.Log(String.Format("Updating to the latest FAES_GUI version..."), Severity.DEBUG);
-            UpdateSelf(!Program.programManager.GetFullInstall(), "latest");
+            Logging.Log("FAES_GUI(AboutPanel): UpdateButton clicked.", Severity.DEBUG);
+            Logging.Log("Updating to the latest FAES_GUI version...", Severity.DEBUG);
+            UpdateSelf(!Program.programManager.GetFullInstall());
         }
 
         private void ForceUpdateButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(AboutPanel): ForceUpdateButton clicked."), Severity.DEBUG);
-            Logging.Log(String.Format("Forcing the download and installation of the latest FAES_GUI version..."), Severity.DEBUG);
-            UpdateSelf(!Program.programManager.GetFullInstall(), "latest");
+            Logging.Log("FAES_GUI(AboutPanel): ForceUpdateButton clicked.", Severity.DEBUG);
+            Logging.Log("Forcing the download and installation of the latest FAES_GUI version...", Severity.DEBUG);
+            UpdateSelf(!Program.programManager.GetFullInstall());
         }
 
         private void ReinstallCurrentButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(AboutPanel): ReinstallCurrentButton clicked."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(AboutPanel): ReinstallCurrentButton clicked.", Severity.DEBUG);
             string version = ConvertVersionToNonFormatted(Program.GetVersion());
             string branch = Program.programManager.GetBranch();
 
@@ -521,7 +553,7 @@ namespace FAES_GUI.MenuPanels
 
         private void IgnoreUpdatesButton_Click(object sender, EventArgs e)
         {
-            Logging.Log(String.Format("FAES_GUI(AboutPanel): IgnoreUpdatesButton clicked."), Severity.DEBUG);
+            Logging.Log("FAES_GUI(AboutPanel): IgnoreUpdatesButton clicked.", Severity.DEBUG);
             Program.programManager.SetSkipUpdates(true);
         }
     }
