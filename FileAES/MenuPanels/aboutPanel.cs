@@ -25,7 +25,7 @@ namespace FAES_GUI.MenuPanels
         {
             InitializeComponent();
 
-            miscVersionLabel.Text = String.Format("FAES Version: {0}\n\rSSM Version: {1}", ConvertVersionToFormatted(FAES.FileAES_Utilities.GetVersion()), ConvertVersionToFormatted(SimpleSettingsManager.SSM.GetVersion()));
+            miscVersionLabel.Text = $"FAES Version: {ConvertVersionToFormatted(FAES.FileAES_Utilities.GetVersion())}\n\rSSM Version: {ConvertVersionToFormatted(SimpleSettingsManager.SSM.GetVersion())}";
             GetCurrentVersion();
         }
         public enum UpdateStatus
@@ -128,12 +128,12 @@ namespace FAES_GUI.MenuPanels
         {
             try
             {
-                string latestUrl = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&branch={0}&showver=true&version={1}", Program.programManager.GetBranch(), ConvertVersionToNonFormatted(Program.GetVersion()));
+                string latestUrl = $"https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&branch={Program.programManager.GetBranch()}&showver=true&version={ConvertVersionToNonFormatted(Program.GetVersion())}";
 
                 WebClient client = new WebClient();
                 byte[] html = client.DownloadData(latestUrl);
                 UTF8Encoding utf = new UTF8Encoding();
-                if (String.IsNullOrEmpty(utf.GetString(html)) || utf.GetString(html) == "null")
+                if (string.IsNullOrEmpty(utf.GetString(html)) || utf.GetString(html) == "null")
                     return "v0.0.0";
                 else
                     return utf.GetString(html);
@@ -148,13 +148,13 @@ namespace FAES_GUI.MenuPanels
         {
             try
             {
-                string latestUrl = String.Format("https://api.mullak99.co.uk/FAES/DoesVersionExist.php?app=faes_gui&branch={0}&version={1}", branch, version);
+                string latestUrl = $"https://api.mullak99.co.uk/FAES/DoesVersionExist.php?app=faes_gui&branch={branch}&version={version}";
 
                 WebClient client = new WebClient();
                 byte[] html = client.DownloadData(latestUrl);
                 UTF8Encoding utf = new UTF8Encoding();
                 string result = utf.GetString(html);
-                if (String.IsNullOrEmpty(result) || result == "null")
+                if (string.IsNullOrEmpty(result) || result == "null")
                     return false;
                 else if (result == "VersionExists")
                     return true;
@@ -185,7 +185,7 @@ namespace FAES_GUI.MenuPanels
                             UpdateStatus updateInfo = GetUpdateStatus(out updateVersion);
 
                             if (updateVersion != "v0.0.0")
-                                Logging.Log(String.Format("Latest FAES_GUI version: {0}", updateVersion),
+                                Logging.Log($"Latest FAES_GUI version: {updateVersion}",
                                     Severity.DEBUG);
                             else
                                 Logging.Log("Update check failed!", Severity.WARN);
@@ -245,16 +245,16 @@ namespace FAES_GUI.MenuPanels
                 {
                     return UpdateStatus.AppLatest;
                 }
-                else if (latestVer != "v0.0.0" && CheckServerConnection())
+                if (latestVer != "v0.0.0" && CheckServerConnection())
                 {
-                    string compareVersions = String.Format("https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={0}&version1={1}&version2={2}", "dev", currentVer, latestVer);
+                    string compareVersions = $"https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={"dev"}&version1={currentVer}&version2={latestVer}";
 
                     WebClient client = new WebClient();
                     byte[] html = client.DownloadData(compareVersions);
                     UTF8Encoding utf = new UTF8Encoding();
                     string result = utf.GetString(html).ToLower();
 
-                    if (String.IsNullOrEmpty(result) || result == "null")
+                    if (string.IsNullOrEmpty(result) || result == "null")
                         return UpdateStatus.ServerError;
                     else if (result.Contains("not exist in the database!") || result == "version1 is newer than version2")
                         return UpdateStatus.AppNewer;
@@ -265,10 +265,7 @@ namespace FAES_GUI.MenuPanels
                     else
                         return UpdateStatus.ServerError;
                 }
-                else
-                {
-                    return UpdateStatus.ServerError;
-                }
+                return UpdateStatus.ServerError;
             }
             catch
             {
@@ -297,7 +294,7 @@ namespace FAES_GUI.MenuPanels
             if (CheckServerConnection())
                 try
                 {
-                    if (!String.IsNullOrWhiteSpace(installDir))
+                    if (!string.IsNullOrWhiteSpace(installDir))
                     {
                         if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
                             File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
@@ -306,15 +303,13 @@ namespace FAES_GUI.MenuPanels
 
                         WebClient webClient = new WebClient();
                         webClient.DownloadFile(
-                            new Uri(String.Format(
-                                "https://api.mullak99.co.uk/FAES/GetDownload.php?app=faes_updater&ver=latest&branch={0}&redirect=true",
-                                Program.programManager.GetBranch())), Path.Combine(installDir, "updater.pack"));
+                            new Uri($"https://api.mullak99.co.uk/FAES/GetDownload.php?app=faes_updater&ver=latest&branch={Program.programManager.GetBranch()}&redirect=true"), Path.Combine(installDir, "updater.pack"));
                         ZipFile.ExtractToDirectory(Path.Combine(installDir, "updater.pack"), installDir);
                         File.Delete(Path.Combine(installDir, "updater.pack"));
                         Thread.Sleep(100);
                     }
                     else throw new InvalidOperationException("Install directory could not be found!");
-                    
+
                     string args = "";
                     if (doCleanUpdate) args += "--pure ";
                     if (Program.programManager.GetFullInstall())
@@ -343,12 +338,12 @@ namespace FAES_GUI.MenuPanels
                             if (MessageBox.Show("You are not running FileAES as an admin, by doing this you cannot update the application in admin protected directories.\n\nDo you want to launch as admin?", "Notice", MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 RunAsAdmin();
                         }
-                        else MessageBox.Show(String.Format("An unexpected error occurred running the updater!\nInstall Directory:{0}\n\n{1}", installDir, e), "Error", MessageBoxButtons.OK);
+                        else MessageBox.Show($"An unexpected error occurred running the updater!\nInstall Directory:{installDir}\n\n{e}", "Error", MessageBoxButtons.OK);
                     }
                     else
                     {
-                        MessageBox.Show(String.Format("An unexpected error occurred running the updater!\nInstall Directory:{0}\n\n{1}", installDir, e), "Error", MessageBoxButtons.OK);
-                        if (!String.IsNullOrWhiteSpace(installDir))
+                        MessageBox.Show($"An unexpected error occurred running the updater!\nInstall Directory:{installDir}\n\n{e}", "Error", MessageBoxButtons.OK);
+                        if (!string.IsNullOrWhiteSpace(installDir))
                         {
                             if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
                                 File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
@@ -359,7 +354,7 @@ namespace FAES_GUI.MenuPanels
                 }
             else
             {
-                if (!String.IsNullOrWhiteSpace(installDir))
+                if (!string.IsNullOrWhiteSpace(installDir))
                 {
                     if (File.Exists(Path.Combine(installDir, "FAES-Updater.exe")))
                         File.Delete(Path.Combine(installDir, "FAES-Updater.exe"));
@@ -383,21 +378,21 @@ namespace FAES_GUI.MenuPanels
                     if (versionSplit[1].ToUpper()[0] == 'B')
                     {
                         string betaTag = versionSplit[1].ToUpper().Replace("BETA", "").Replace("B", "");
-                        formattedVersion += String.Format(" (BETA {0}", betaTag.Replace(" ", ""));
+                        formattedVersion += $" (BETA {betaTag.Replace(" ", "")}";
                     }
                     else if (versionSplit[1].ToUpper()[0] == 'D')
                     {
                         string devTag = versionSplit[1].ToUpper().Replace("DEV", "").Replace("D", "");
-                        formattedVersion += String.Format(" (DEV{0}", devTag);
+                        formattedVersion += $" (DEV{devTag}";
                     }
                     else if (versionSplit[1].ToUpper()[0] == 'R')
                     {
                         string rcTag = versionSplit[1].ToUpper().Replace("RC", "").Replace("R", "");
-                        formattedVersion += String.Format(" (RC {0}", rcTag.Replace(" ", ""));
+                        formattedVersion += $" (RC {rcTag.Replace(" ", "")}";
                     }
                     else
                     {
-                        formattedVersion += String.Format(" ({0}", versionSplit[1].ToUpper());
+                        formattedVersion += $" ({versionSplit[1].ToUpper()}";
                     }
                     if (versionSplit.Length > 2)
                     {
@@ -412,7 +407,7 @@ namespace FAES_GUI.MenuPanels
             }
             else formattedVersion = nonFormattedVersion;
 
-            Logging.Log(String.Format("ToFormatted: Converted '{0}' to '{1}'.", nonFormattedVersion, formattedVersion), Severity.DEBUG);
+            Logging.Log($"ToFormatted: Converted '{nonFormattedVersion}' to '{formattedVersion}'.", Severity.DEBUG);
             return formattedVersion;
         }
 
@@ -461,7 +456,7 @@ namespace FAES_GUI.MenuPanels
                 nonFormattedVersion = nonFormattedVersion.Replace("-DEV-", "-DEV");
             nonFormattedVersion = nonFormattedVersion.TrimEnd('-');
 
-            Logging.Log(String.Format("ToNonFormatted: Converted '{0}' to '{1}'.", formattedVersion, nonFormattedVersion), Severity.DEBUG);
+            Logging.Log($"ToNonFormatted: Converted '{formattedVersion}' to '{nonFormattedVersion}'.", Severity.DEBUG);
             return nonFormattedVersion;
         }
 
@@ -541,12 +536,12 @@ namespace FAES_GUI.MenuPanels
 
             if (DoesVersionExist(version, branch))
             {
-                Logging.Log(String.Format("Reinstall of version '{0}' on branch '{1}' started...", version, branch), Severity.DEBUG);
+                Logging.Log($"Reinstall of version '{version}' on branch '{branch}' started...", Severity.DEBUG);
                 UpdateSelf(!Program.programManager.GetFullInstall(), version);
             }
             else
             {
-                Logging.Log(String.Format("Version '{0}' could not be found for branch '{1}'.", version, branch), Severity.WARN);
+                Logging.Log($"Version '{version}' could not be found for branch '{branch}'.", Severity.WARN);
                 warnLabel.Text = "Unable to find the current version on the server! Aborting reinstall.";
             }
         }

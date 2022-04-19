@@ -18,26 +18,26 @@ namespace FAES_GUI
                 case Severity.DEBUG:
                     if (FileAES_Utilities.GetVerboseLogging())
                     {
-                        rawLog = String.Format("[DEBUG] {0}", log);
+                        rawLog = $"[DEBUG] {log}";
                         Console.WriteLine(rawLog);
                         WriteToLogFile(rawLog);
                     }
                     break;
 
                 case Severity.WARN:
-                    rawLog = String.Format("[WARN] {0}", log);
+                    rawLog = $"[WARN] {log}";
                     Console.WriteLine(rawLog);
                     WriteToLogFile(rawLog);
                     break;
 
                 case Severity.ERROR:
-                    rawLog = String.Format("[ERROR] {0}", log);
+                    rawLog = $"[ERROR] {log}";
                     Console.WriteLine(rawLog);
                     WriteToLogFile(rawLog);
                     break;
 
                 default:
-                    rawLog = String.Format("[INFO] {0}", log);
+                    rawLog = $"[INFO] {log}";
                     Console.WriteLine(rawLog);
                     WriteToLogFile(rawLog);
                     break;
@@ -46,7 +46,7 @@ namespace FAES_GUI
 
         private static void LogPathInit()
         {
-            if (String.IsNullOrWhiteSpace(_logPath) || _lastLogPath != _logPath)
+            if (string.IsNullOrWhiteSpace(_logPath) || _lastLogPath != _logPath)
                 _logPath = Utilities.CreateLogFile(false);
         }
 
@@ -67,12 +67,12 @@ namespace FAES_GUI
                     catch (UnauthorizedAccessException)
                     {
                         _wasLogPathSuccess = false;
-                        Log(String.Format("You do not have permission to write a log file to this location ({0})!", _lastLogPath), Severity.ERROR);
+                        Log($"You do not have permission to write a log file to this location ({_lastLogPath})!", Severity.ERROR);
                     }
                     catch (Exception e)
                     {
                         _wasLogPathSuccess = false;
-                        Log(String.Format("An unknown error occurred when writing to the log file ({0})! Exception: {1}", _lastLogPath, e), Severity.ERROR);
+                        Log($"An unknown error occurred when writing to the log file ({_lastLogPath})! Exception: {e}", Severity.ERROR);
                     }
                 }
             }

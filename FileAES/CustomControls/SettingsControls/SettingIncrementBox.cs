@@ -25,8 +25,32 @@ namespace FAES_GUI.CustomControls
         {
             get
             {
-                if (numericTextbox.Text == null) numericTextbox.Text = "0";
-                return Convert.ToInt32(numericTextbox.Text);
+                try
+                {
+                    int value = 0;
+                    string text = numericTextbox.Text;
+                    if (string.IsNullOrWhiteSpace(text)) numericTextbox.Text = "0";
+                    int.TryParse(text, out value);
+
+                    if (value < MinValue)
+                        value = MinValue;
+                    else if (value > MaxValue)
+                        value = MaxValue;
+                    numericTextbox.Text = value.ToString();
+                    return value;
+                }
+                catch (Exception)
+                {
+                    int value = 0;
+
+                    if (value < MinValue)
+                        value = MinValue;
+                    else if (value > MaxValue)
+                        value = MaxValue;
+
+                    numericTextbox.Text = value.ToString();
+                    return value;
+                }
             }
             set
             {

@@ -14,7 +14,7 @@ namespace FAES_GUI
     static class Program
     {
         private const string devAppendTag = "";
-        private const string betaAppendTag = "RC 2";
+        private const string betaAppendTag = "RC 3";
 
         private static bool _doFilePeek;
         private static bool _verbose;
@@ -62,7 +62,7 @@ namespace FAES_GUI
 
                 if (strippedArg == "verbose" || strippedArg == "v" || strippedArg == "developer" || strippedArg == "dev" || strippedArg == "debug") _verbose = true;
                 else if (strippedArg == "password" || strippedArg == "p" && !string.IsNullOrEmpty(args[i + 1])) _password = args[i + 1];
-                else if (String.IsNullOrEmpty(_passwordHint) && (strippedArg == "hint" || strippedArg == "passwordhint" || strippedArg == "h") && !string.IsNullOrEmpty(args[i + 1])) _passwordHint = args[i + 1];
+                else if (string.IsNullOrEmpty(_passwordHint) && (strippedArg == "hint" || strippedArg == "passwordhint" || strippedArg == "h") && !string.IsNullOrEmpty(args[i + 1])) _passwordHint = args[i + 1];
                 else if (strippedArg == "purgetemp" || strippedArg == "deletetemp") _purgeTemp = true;
                 else if (strippedArg == "headless" || strippedArg == "cli" || strippedArg == "commandline") _headless = true;
                 else if (strippedArg == "showprogress" || strippedArg == "progress" || strippedArg == "prog")
@@ -76,7 +76,7 @@ namespace FAES_GUI
                     _getVersion = true;
                     _getFaesVersion = true;
                 }
-                else if (String.IsNullOrEmpty(_compressionMethod) && (strippedArg == "compression" || strippedArg == "compressionmethod" || strippedArg == "c") && !string.IsNullOrEmpty(args[i + 1])) _compressionMethod = args[i + 1].ToUpper();
+                else if (string.IsNullOrEmpty(_compressionMethod) && (strippedArg == "compression" || strippedArg == "compressionmethod" || strippedArg == "c") && !string.IsNullOrEmpty(args[i + 1])) _compressionMethod = args[i + 1].ToUpper();
                 else if ((strippedArg == "level" || strippedArg == "compressionlevel" || strippedArg == "l") && !string.IsNullOrEmpty(args[i + 1])) Int32.TryParse(args[i + 1], out _compressionLevel);
                 else if (strippedArg == "overwrite" || strippedArg == "overwriteduplicates" || strippedArg == "o") _overwriteDuplicates = true;
                 else if (strippedArg == "preserveoriginal" || strippedArg == "original" || strippedArg == "po") _deleteOriginalFile = false;
@@ -117,7 +117,7 @@ namespace FAES_GUI
                 Console.WriteLine("Current FAES Version: {0}", FileAES_Utilities.GetVersion());
             }
 
-            if (!String.IsNullOrEmpty(_directory) && !String.IsNullOrEmpty(_password) && _headless)
+            if (!string.IsNullOrEmpty(_directory) && !string.IsNullOrEmpty(_password) && _headless)
             {
                 faesFile = new FAES_File(_directory);
 
@@ -135,32 +135,27 @@ namespace FAES_GUI
                         {
                             FileAES_Encrypt encrypt = new FileAES_Encrypt(faesFile, _password, _passwordHint, Optimise.Balanced, null, _deleteOriginalFile, _overwriteDuplicates);
 
-                            if (!String.IsNullOrEmpty(_compressionMethod))
+                            if (!string.IsNullOrEmpty(_compressionMethod))
                             {
                                 switch (_compressionMethod)
                                 {
                                     case "ZIP":
-                                        {
-                                            encrypt.SetCompressionMode(CompressionMode.ZIP, _compressionLevel);
-                                            break;
-                                        }
+                                        encrypt.SetCompressionMode(CompressionMode.ZIP, _compressionLevel);
+                                        break;
                                     case "TAR":
-                                        {
-                                            encrypt.SetCompressionMode(CompressionMode.TAR, _compressionLevel);
-                                            break;
-                                        }
+                                        encrypt.SetCompressionMode(CompressionMode.TAR, _compressionLevel);
+                                        break;
                                     case "LZMA":
-                                        {
-                                            encrypt.SetCompressionMode(CompressionMode.LZMA, _compressionLevel);
-                                            break;
-                                        }
+                                        encrypt.SetCompressionMode(CompressionMode.LZMA, _compressionLevel);
+                                        break;
+                                    case "GZIP":
+                                        encrypt.SetCompressionMode(CompressionMode.GZIP, _compressionLevel);
+                                        break;
                                     case "LGYZIP":
                                     case "LEGACYZIP":
                                     case "LEGACY":
-                                        {
-                                            encrypt.SetCompressionMode(CompressionMode.LGYZIP, _compressionLevel);
-                                            break;
-                                        }
+                                        encrypt.SetCompressionMode(CompressionMode.LGYZIP, _compressionLevel);
+                                        break;
                                     default:
                                         Console.WriteLine("Unknown Compression Method: {0}", _compressionMethod);
                                         return;
@@ -172,8 +167,7 @@ namespace FAES_GUI
                                 while (_showProgress)
                                 {
                                     ushort percentComplete = Convert.ToUInt16(encrypt.GetEncryptionPercentComplete());
-                                    if (_verbose) Console.WriteLine("[INFO] Progress: {0}%", percentComplete);
-                                    else Console.WriteLine("Progress: {0}%", percentComplete);
+                                    Console.WriteLine(_verbose ? "[INFO] Progress: {0}%" : "Progress: {0}%", percentComplete);
                                     Thread.Sleep(_progressSleep);
                                 }
                             });
@@ -186,8 +180,7 @@ namespace FAES_GUI
                                     {
                                         if (_showProgress)
                                         {
-                                            if (_verbose) Console.WriteLine("[INFO] Progress: 100%");
-                                            else Console.WriteLine("Progress: 100%");
+                                            Console.WriteLine(_verbose ? "[INFO] Progress: 100%" : "Progress: 100%");
                                         }
 
                                         Console.WriteLine("Encryption on {0} succeeded!", faesFile.getFaesType().ToLower());
@@ -222,8 +215,7 @@ namespace FAES_GUI
                                 {
                                     ushort percentComplete = Convert.ToUInt16(decrypt.GetDecryptionPercentComplete());
 
-                                    if (_verbose) Console.WriteLine("[INFO] Progress: {0}%", percentComplete);
-                                    else Console.WriteLine("Progress: {0}%", percentComplete);
+                                    Console.WriteLine(_verbose ? "[INFO] Progress: {0}%" : "Progress: {0}%", percentComplete);
                                     Thread.Sleep(_progressSleep);
                                 }
                             });
@@ -236,8 +228,7 @@ namespace FAES_GUI
                                     {
                                         if (_showProgress)
                                         {
-                                            if (_verbose) Console.WriteLine("[INFO] Progress: 100%");
-                                            else Console.WriteLine("Progress: 100%");
+                                            Console.WriteLine(_verbose ? "[INFO] Progress: 100%" : "Progress: 100%");
                                         }
 
                                         Console.WriteLine("Decryption on {0} succeeded!", faesFile.getFaesType().ToLower());
@@ -289,7 +280,7 @@ namespace FAES_GUI
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                if (!String.IsNullOrEmpty(_directory))
+                if (!string.IsNullOrEmpty(_directory))
                 {
                     faesFile = new FAES_File(_directory);
 
@@ -302,9 +293,9 @@ namespace FAES_GUI
                         else
                             Application.Run(new DecryptForm(faesFile));
                     }
-                        
+
                 }
-                else  
+                else
                     Application.Run(new MainForm());
             }
         }
@@ -377,19 +368,19 @@ namespace FAES_GUI
 
         public static bool IsBetaBuild()
         {
-            return !String.IsNullOrWhiteSpace(betaAppendTag);
+            return !string.IsNullOrWhiteSpace(betaAppendTag);
         }
 
         public static bool IsDevBuild()
         {
-            return !String.IsNullOrWhiteSpace(devAppendTag);
+            return !string.IsNullOrWhiteSpace(devAppendTag);
         }
 
         public static string GetBuild()
         {
             if (IsDevBuild()) return "dev";
-            else if (IsBetaBuild()) return "beta";
-            else return "stable";
+            if (IsBetaBuild()) return "beta";
+            return "stable";
         }
 
         public static string GetBuildDateFormatted()

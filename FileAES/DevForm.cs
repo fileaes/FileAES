@@ -2,7 +2,6 @@
 using FAES_GUI.CustomControls;
 using System;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -131,11 +130,11 @@ namespace FAES_GUI
             try
             {
                 File.WriteAllText(logPath, consoleTextBox.Text);
-                Logging.Log(String.Format("Log Exported! ({0})", logPath));
+                Logging.Log($"Log Exported! ({logPath})");
             }
             catch
             {
-                Logging.Log(String.Format("Log file could not be written to '{0}'!", logPath), Severity.WARN);
+                Logging.Log($"Log file could not be written to '{logPath}'!", Severity.WARN);
             }
         }
 
@@ -163,30 +162,30 @@ namespace FAES_GUI
             {
                 if (input.Length > 1 && !string.IsNullOrEmpty(input[1]) && uint.TryParse(input[1], out uint csBufferTmp))
                 {
-                    Logging.Log(String.Format("CryptoStream Buffer set to {0} bytes", csBufferTmp));
+                    Logging.Log($"CryptoStream Buffer set to {csBufferTmp} bytes");
                     FileAES_Utilities.SetCryptoStreamBuffer(csBufferTmp);
                 }
                 else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "getcryptostreambuffer" || input[0] == "getcsbuffer" || input[0] == "getbuffer")
             {
-                Logging.Log(String.Format("CryptoStream Buffer is {0} bytes", FileAES_Utilities.GetCryptoStreamBuffer()));
+                Logging.Log($"CryptoStream Buffer is {FileAES_Utilities.GetCryptoStreamBuffer()} bytes");
             }
             else if (input[0] == "getfaestempfolder" || input[0] == "gettemp" || input[0] == "gettempfolder")
             {
-                Logging.Log(String.Format("FAES Temp Folder is: {0}", FileAES_Utilities.GetFaesTempFolder()));
+                Logging.Log($"FAES Temp Folder is: {FileAES_Utilities.GetFaesTempFolder()}");
             }
             else if (input[0] == "getfaesversion" || input[0] == "getfaesver" || input[0] == "faesver")
             {
-                Logging.Log(String.Format("FAES Version: {0}", FileAES_Utilities.GetVersion()));
+                Logging.Log($"FAES Version: {FileAES_Utilities.GetVersion()}");
             }
             else if (input[0] == "getfaesuiversion" || input[0] == "getfaesguiversion" || input[0] == "getfaesuiver" || input[0] == "getfaesguiver" || input[0] == "ver" || input[0] == "guiver" || input[0] == "faesguiver")
             {
-                Logging.Log(String.Format("FAES_GUI Version: {0}", Program.GetVersion()));
+                Logging.Log($"FAES_GUI Version: {Program.GetVersion()}");
             }
             else if (input[0] == "getssmversion" || input[0] == "getssmver" || input[0] == "ssmver")
             {
-                Logging.Log(String.Format("SSM Version: {0}", SimpleSettingsManager.SSM.GetVersion()));
+                Logging.Log($"SSM Version: {SimpleSettingsManager.SSM.GetVersion()}");
             }
             else if (input[0] == "getlatestversiononbranch" || input[0] == "latestver" || input[0] == "latestversion" || input[0] == "latestvercheck")
             {
@@ -204,18 +203,19 @@ namespace FAES_GUI
                                 branch = rawBranchRequest.ToLower();
                         }
 
-                        string verCheck = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&ver=latest&branch={0}&showver=true", branch);
+                        string verCheck =
+                            $"https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&ver=latest&branch={branch}&showver=true";
 
-                        Logging.Log(String.Format("Getting the latest FAES_GUI version number on branch '{0}'.", branch));
+                        Logging.Log($"Getting the latest FAES_GUI version number on branch '{branch}'.");
                         Logging.Log("This process may take a few seconds...");
 
                         WebClient webClient = new WebClient();
                         string latestVer = webClient.DownloadString(new Uri(verCheck));
 
-                        if (!String.IsNullOrWhiteSpace(latestVer))
-                            Logging.Log(String.Format("Latest FAES_GUI Version on branch '{0}' is '{1}'.", branch, latestVer));
+                        if (!string.IsNullOrWhiteSpace(latestVer))
+                            Logging.Log($"Latest FAES_GUI Version on branch '{branch}' is '{latestVer}'.");
                         else
-                            Logging.Log(String.Format("The branch '{0}' does not contain any versions!", branch), Severity.WARN);
+                            Logging.Log($"The branch '{branch}' does not contain any versions!", Severity.WARN);
                     }
                     catch
                     {
@@ -232,21 +232,22 @@ namespace FAES_GUI
                     string currentVer = ConvertVersionToNonFormatted(Program.GetVersion());
 
                     Program.programManager.GetBranch();
-                    string compareVersions = String.Format("https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={0}&version1={1}&version2={2}", "dev", currentVer, latestVer);
+                    string compareVersions =
+                        $"https://api.mullak99.co.uk/FAES/CompareVersions.php?app=faes_gui&branch={"dev"}&version1={currentVer}&version2={latestVer}";
 
                     WebClient client = new WebClient();
                     byte[] html = client.DownloadData(compareVersions);
                     UTF8Encoding utf = new UTF8Encoding();
                     string result = utf.GetString(html).ToLower();
 
-                    if (String.IsNullOrEmpty(result) || result == "null")
+                    if (string.IsNullOrEmpty(result) || result == "null")
                         Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                     else if (result.Contains("not exist in the database!") || result == "version1 is newer than version2")
-                        Logging.Log(String.Format("You are on a private build. ({0} is newer than {1}).", currentVer, latestVer));
+                        Logging.Log($"You are on a private build. ({currentVer} is newer than {latestVer}).");
                     else if (result == "version1 is older than version2")
-                        Logging.Log(String.Format("You are on an outdated build. ({0} is older than {1}).", currentVer, latestVer));
+                        Logging.Log($"You are on an outdated build. ({currentVer} is older than {latestVer}).");
                     else if (result == "version1 is equal to version2")
-                        Logging.Log(String.Format("You are on the latest build. ({0} is equal to {1}).", currentVer, latestVer));
+                        Logging.Log($"You are on the latest build. ({currentVer} is equal to {latestVer}).");
                     else
                         Logging.Log("Unable to connect to the update server! Please check your internet connection.", Severity.WARN);
                 }
@@ -281,7 +282,7 @@ namespace FAES_GUI
                     }
                     else
                     {
-                        Logging.Log(String.Format("Enabled Version Spoofing. Spoofing Version: {0}", verToSpoof));
+                        Logging.Log($"Enabled Version Spoofing. Spoofing Version: {verToSpoof}");
                         Program.SetSpoofedVersion(true, verToSpoof);
                     }
                 }
@@ -293,7 +294,7 @@ namespace FAES_GUI
             }
             else if (input[0] == "getselectedbranch" || input[0] == "branch" || input[0] == "getbranch")
             {
-                Logging.Log(String.Format("FAES_GUI Branch: {0}", Program.programManager.GetBranch()));
+                Logging.Log($"FAES_GUI Branch: {Program.programManager.GetBranch()}");
             }
             else if (input[0] == "setselectedbranch" || input[0] == "setbranch")
             {
@@ -306,9 +307,9 @@ namespace FAES_GUI
                     {
                         validBranch = rawBranchRequest.ToLower();
                         Program.programManager.SetBranch(validBranch);
-                        Logging.Log(String.Format("FAES_GUI Branch changed to: {0}", validBranch));
+                        Logging.Log($"FAES_GUI Branch changed to: {validBranch}");
                     }
-                    else Logging.Log(String.Format("'{0}' is not a valid branch!", rawBranchRequest), Severity.WARN);
+                    else Logging.Log($"'{rawBranchRequest}' is not a valid branch!", Severity.WARN);
                 }
                 else TooFewArgsError(textbox.Text);
             }
@@ -323,14 +324,14 @@ namespace FAES_GUI
                     _overrideLogPath = input[1].Replace("\"", string.Empty).Replace("\'", string.Empty);
                     Program.programManager.SetLogPath(_overrideLogPath);
 
-                    Logging.Log(String.Format("Log path changed to: {0}", _overrideLogPath));
+                    Logging.Log($"Log path changed to: {_overrideLogPath}");
                 }
                 else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "getlogpath" || input[0] == "logpath")
             {
                 _overrideLogPath = Program.programManager.GetLogPath();
-                Logging.Log(String.Format("Log path set to: {0}", _overrideLogPath));
+                Logging.Log($"Log path set to: {_overrideLogPath}");
             }
             else if (input[0] == "resetlogpath")
             {
@@ -346,13 +347,14 @@ namespace FAES_GUI
 
                     Program.programManager.SetDevMode(dev);
 
-                    Logging.Log(String.Format("Developer Mode {0}! (Setting will be applied next launch)", dev ? "Enabled" : "Disabled"));
+                    Logging.Log(
+                        $"Developer Mode {(dev ? "Enabled" : "Disabled")}! (Setting will be applied next launch)");
                 }
                 else TooFewArgsError(textbox.Text);
             }
             else if (input[0] == "getdevmode" || input[0] == "getdevelopermode" || input[0] == "getdebugmode" || input[0] == "getdebug" || input[0] == "getdev" || input[0] == "getdeveloper" || input[0] == "developer" || input[0] == "dev" || input[0] == "debug")
             {
-                Logging.Log(String.Format("Developer Mode is {0}!", Program.programManager.GetDevMode() ? "Enabled" : "Disabled"));
+                Logging.Log($"Developer Mode is {(Program.programManager.GetDevMode() ? "Enabled" : "Disabled")}!");
             }
             else if (input[0] == "resetdevmode" || input[0] == "resetdevelopermode" || input[0] == "resetdebugmode" || input[0] == "resetdebug" || input[0] == "resetdev" || input[0] == "resetdeveloper")
             {
@@ -363,14 +365,14 @@ namespace FAES_GUI
             {
                 clearConsole.PerformClick();
             }
-            else Logging.Log(String.Format("Unknown command: {0}", textbox.Text), Severity.WARN);
+            else Logging.Log($"Unknown command: {textbox.Text}", Severity.WARN);
 
             textbox.Clear();
         }
 
         private void TooFewArgsError(string command)
         {
-            Logging.Log(String.Format("Too few arguments provided for the '{0}' command!", command), Severity.WARN);
+            Logging.Log($"Too few arguments provided for the '{command}' command!", Severity.WARN);
         }
 
         private void ConsoleInputTextBox_TextChanged(object sender, EventArgs e)
@@ -382,12 +384,13 @@ namespace FAES_GUI
         {
             try
             {
-                string latestUrl = String.Format("https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&branch={0}&showver=true&version={1}", Program.programManager.GetBranch(), ConvertVersionToNonFormatted(Program.GetVersion()));
+                string latestUrl =
+                    $"https://api.mullak99.co.uk/FAES/IsUpdate.php?app=faes_gui&branch={Program.programManager.GetBranch()}&showver=true&version={ConvertVersionToNonFormatted(Program.GetVersion())}";
 
                 WebClient client = new WebClient();
                 byte[] html = client.DownloadData(latestUrl);
                 UTF8Encoding utf = new UTF8Encoding();
-                if (String.IsNullOrEmpty(utf.GetString(html)) || utf.GetString(html) == "null")
+                if (string.IsNullOrEmpty(utf.GetString(html)) || utf.GetString(html) == "null")
                     return "v0.0.0";
                 else
                     return utf.GetString(html);

@@ -204,7 +204,7 @@
             this.cryptoStreamSetting.ForeColor = System.Drawing.Color.White;
             this.cryptoStreamSetting.HeaderText = "CryptoStream Buffer";
             this.cryptoStreamSetting.Location = new System.Drawing.Point(-1, 396);
-            this.cryptoStreamSetting.MinValue = 1024;
+            this.cryptoStreamSetting.MinValue = 32;
             this.cryptoStreamSetting.Name = "cryptoStreamSetting";
             this.cryptoStreamSetting.Size = new System.Drawing.Size(400, 100);
             this.cryptoStreamSetting.TabIndex = 1;

@@ -14,6 +14,7 @@ namespace FAES_GUI.MenuPanels
         private bool _decryptSuccessful;
         private bool _closeAfterOp;
         private decimal _progress;
+        private Thread _mainDecryptThread, _faesThread;
 
         public decryptPanel()
         {
@@ -81,7 +82,7 @@ namespace FAES_GUI.MenuPanels
                 Locked(false);
                 decryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToDecrypt.GetPath()), Severity.DEBUG);
+                Logging.Log($"FAES_GUI(SetFileToDecrypt): '{_fileToDecrypt.GetPath()}'", Severity.DEBUG);
 
                 return true;
             }
@@ -125,16 +126,16 @@ namespace FAES_GUI.MenuPanels
             encryptedFileMetaData.ResetText();
 
             if (timestamp >= 0)
-                encryptedFileMetaData.Text += String.Format("Encrypted on {0:dd/MM/yyyy} at {1:hh:mm:ss tt}.", FileAES_Utilities.UnixTimeStampToDateTime(timestamp), FileAES_Utilities.UnixTimeStampToDateTime(timestamp));
+                encryptedFileMetaData.Text += $"Encrypted on {FileAES_Utilities.UnixTimeStampToDateTime(timestamp):dd/MM/yyyy} at {FileAES_Utilities.UnixTimeStampToDateTime(timestamp):hh:mm:ss tt}.";
             else
                 encryptedFileMetaData.Text += "This file does not contain a encryption date. This is likely due to this file being encrypted using an older FAES version.";
 
-            encryptedFileMetaData.Text += (Environment.NewLine + String.Format("FAES {0} was used.", version));
+            encryptedFileMetaData.Text += (Environment.NewLine + $"FAES {version} was used.");
 
             if (compression == "LGYZIP")
                 encryptedFileMetaData.Text += (Environment.NewLine + "Compressed with LEGACYZIP.");
             else
-                encryptedFileMetaData.Text += (Environment.NewLine + String.Format("Compressed with {0}.", compression));
+                encryptedFileMetaData.Text += (Environment.NewLine + $"Compressed with {compression}.");
 
             passHintTextbox.Text = _fileToDecrypt.GetPasswordHint();
         }
@@ -161,14 +162,15 @@ namespace FAES_GUI.MenuPanels
             _inProgress = true;
             _decryptSuccessful = false;
 
-            Thread mainDecryptThread = new Thread(() =>
+            _mainDecryptThread = new Thread(() =>
             {
                 try
                 {
+                    FileAES_Utilities.SetCryptoStreamBuffer(Program.programManager.GetCryptoStreamBufferSize());
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToDecrypt, password, delAfterEnc, ovDup);
                     decrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
-                    Thread dThread = new Thread(() =>
+                    _faesThread = new Thread(() =>
                     {
                         try
                         {
@@ -179,17 +181,17 @@ namespace FAES_GUI.MenuPanels
                             SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                         }
                     });
-                    dThread.Start();
+                    _faesThread.Start();
 
-                    while (dThread.ThreadState == ThreadState.Running)
+                    while (_faesThread.ThreadState == ThreadState.Running)
                     {
-                        _progress = decrypt.GetDecryptionPercentComplete();
+                        _progress = decrypt.GetPercentComplete();
                     }
 
                     {
                         _inProgress = false;
-                        
-                        this.Invoke(new MethodInvoker(() => Locked(false)));
+
+                        Invoke(new MethodInvoker(() => Locked(false)));
 
                         if (_decryptSuccessful)
                         {
@@ -212,7 +214,7 @@ namespace FAES_GUI.MenuPanels
                                 SetNote("Password Incorrect!", 3);
                                 progressBar.CustomText = "Password Incorrect!";
                                 progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                                this.Invoke(new Action(() => passTextbox.Focus()));
+                                Invoke(new Action(() => passTextbox.Focus()));
                             }
                         }
                     }
@@ -222,24 +224,32 @@ namespace FAES_GUI.MenuPanels
                     SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                 }
             });
-            mainDecryptThread.Start();
+            _mainDecryptThread.Start();
         }
 
         private void decryptionTimer_Tick(object sender, EventArgs e)
         {
-            if (_progress < 100)
+            if (_progress == 0)
             {
-                if (_progress < 99) progressBar.CustomText = "Decrypting";
-                else progressBar.CustomText = "Uncompressing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                progressBar.CustomText = "Starting";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress <= 50)
+            {
+                progressBar.CustomText = "Decrypting";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress < 100)
+            {
+                progressBar.CustomText = "Decompressing";
                 progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
             }
             else
             {
                 progressBar.CustomText = "Finishing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                progressBar.Value = 100;
+                progressBar.Value = 99;
             }
+            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
         }
 
         private void decryptButton_Click(object sender, EventArgs e)

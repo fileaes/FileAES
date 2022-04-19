@@ -20,8 +20,8 @@ namespace FAES_GUI
 
             DateTime buildDate = Program.GetBuildDate();
 
-            copyrightLabel.Text = String.Format("© - {0:yyyy} | mullak99", buildDate);
-            longVersionLabel.Text = String.Format("FileAES {0} | Built on {1:dd/MM/yyyy} at {2:hh:mm:ss tt}", Program.GetVersion(), buildDate, buildDate);
+            copyrightLabel.Text = $"© - {buildDate:yyyy} | mullak99";
+            longVersionLabel.Text = $"FileAES {Program.GetVersion()} | Built on {buildDate:dd/MM/yyyy} at {buildDate:hh:mm:ss tt}";
 
             if (FileAES_Utilities.GetVerboseLogging())
             {
@@ -67,7 +67,7 @@ namespace FAES_GUI
         private void quitButton_Click(object sender, EventArgs e)
         {
             Logging.Log("FAES_GUI(MainGUI): Quit Button pressed. Exiting...", Severity.DEBUG);
-            Environment.Exit(0);
+            Close();
         }
 
         private void minButton_Click(object sender, EventArgs e)
@@ -162,7 +162,8 @@ namespace FAES_GUI
         {
             if (faesFile.IsFileEncryptable())
             {
-                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, encryptable file! ({0})", faesFile.GetPath()), Severity.DEBUG);
+                Logging.Log(
+                    $"FAES_GUI(MainGUI): FAESMenuHandler detected a valid, encryptable file! ({faesFile.GetPath()})", Severity.DEBUG);
 
                 encryptMenuButton_Click(null, null);
                 encryptMenuButton.Selected = true;
@@ -171,14 +172,15 @@ namespace FAES_GUI
             }
             else if (faesFile.IsFileDecryptable())
             {
-                Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected a valid, decryptable file! ({0})", faesFile.GetPath()), Severity.DEBUG);
+                Logging.Log(
+                    $"FAES_GUI(MainGUI): FAESMenuHandler detected a valid, decryptable file! ({faesFile.GetPath()})", Severity.DEBUG);
 
                 decryptMenuButton_Click(null, null);
                 decryptMenuButton.Selected = true;
                 autoSelectMenuButton.Selected = false;
                 decryptPanel.SetFileToDecrypt(faesFile);
             }
-            else Logging.Log(String.Format("FAES_GUI(MainGUI): FAESMenuHandler detected an invalid file! ({0})", faesFile.GetPath()), Severity.DEBUG);
+            else Logging.Log($"FAES_GUI(MainGUI): FAESMenuHandler detected an invalid file! ({faesFile.GetPath()})", Severity.DEBUG);
         }
 
         private void autoSelectMenuButton_Click(object sender, EventArgs e)
@@ -227,7 +229,7 @@ namespace FAES_GUI
                 {
                     _devForm.Visible = !_devForm.Visible;
                     if (_devForm.Visible) _devForm.WindowState = FormWindowState.Normal;
-                    Logging.Log(String.Format("FAES_GUI(MainGUI): DevForm visibility changed to: {0}.", _devForm.Visible ? "Shown" : "Hidden"), Severity.DEBUG);
+                    Logging.Log($"FAES_GUI(MainGUI): DevForm visibility changed to: {(_devForm.Visible ? "Shown" : "Hidden")}.", Severity.DEBUG);
                 }
             }
         }

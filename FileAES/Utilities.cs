@@ -68,9 +68,15 @@ namespace FAES_GUI
             string returnVal = _ssm.GetString("Branch");
             _ssm.Close();
 
-            if (returnVal.ToLower() == "dev") return "dev";
-            else if (returnVal.ToLower() == "beta") return "beta";
-            else return "stable";
+            switch (returnVal.ToLower())
+            {
+                case "dev":
+                    return "dev";
+                case "beta":
+                    return "beta";
+                default:
+                    return "stable";
+            }
         }
 
         public bool ResetBranch()
@@ -78,7 +84,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetString("Branch", Program.GetBuild());
 
-            Logging.Log(String.Format("ResetBranch: {0}", Program.GetBuild()), Severity.DEBUG);
+            Logging.Log($"ResetBranch: {Program.GetBuild()}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -87,11 +93,20 @@ namespace FAES_GUI
         public bool SetBranch(string branch)
         {
             string b;
-            if (branch.ToLower() == "dev") b = "dev";
-            else if (branch.ToLower() == "beta") b = "beta";
-            else b = "stable";
+            switch (branch.ToLower())
+            {
+                case "dev":
+                    b = "dev";
+                    break;
+                case "beta":
+                    b = "beta";
+                    break;
+                default:
+                    b = "stable";
+                    break;
+            }
 
-            Logging.Log(String.Format("SetBranch: {0}", b), Severity.DEBUG);
+            Logging.Log($"SetBranch: {b}", Severity.DEBUG);
 
             _ssm.Open();
             bool returnVal = _ssm.SetString("Branch", b);
@@ -112,7 +127,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetString("LogPath", "log\\{default}");
 
-            Logging.Log(String.Format("ResetLogPath: {0}", "log\\{default}"), Severity.DEBUG);
+            Logging.Log($"ResetLogPath: {"log\\{default}"}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -123,7 +138,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetString("LogPath", path.Replace('/', '\\').TrimEnd('/', '\\'));
 
-            Logging.Log(String.Format("SetLogPath: {0}", path), Severity.DEBUG);
+            Logging.Log($"SetLogPath: {path}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -142,7 +157,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("FullInstall", false);
 
-            Logging.Log(String.Format("ResetFullInstall: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetFullInstall: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -153,7 +168,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("FullInstall", fullInstall);
 
-            Logging.Log(String.Format("SetFullInstall: {0}", fullInstall), Severity.DEBUG);
+            Logging.Log($"SetFullInstall: {fullInstall}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -172,7 +187,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("AssociateFileTypes", false);
 
-            Logging.Log(String.Format("ResetAssociateFileTypes: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetAssociateFileTypes: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -183,7 +198,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("AssociateFileTypes", associate);
 
-            Logging.Log(String.Format("SetAssociateFileTypes: {0}", associate), Severity.DEBUG);
+            Logging.Log($"SetAssociateFileTypes: {associate}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -202,7 +217,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("StartMenuShortcuts", false);
 
-            Logging.Log(String.Format("ResetStartMenuShortcuts: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetStartMenuShortcuts: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -213,7 +228,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("StartMenuShortcuts", shortcuts);
 
-            Logging.Log(String.Format("SetStartMenuShortcuts: {0}", shortcuts), Severity.DEBUG);
+            Logging.Log($"SetStartMenuShortcuts: {shortcuts}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -232,7 +247,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("ContextMenus", false);
 
-            Logging.Log(String.Format("ResetContextMenus: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetContextMenus: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -243,7 +258,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("ContextMenus", contextMenus);
 
-            Logging.Log(String.Format("SetContextMenus: {0}", contextMenus), Severity.DEBUG);
+            Logging.Log($"SetContextMenus: {contextMenus}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -262,7 +277,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("SkipUpdates", false);
 
-            Logging.Log(String.Format("ResetSkipUpdates: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetSkipUpdates: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -273,7 +288,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("SkipUpdates", skipUpdates);
 
-            Logging.Log(String.Format("SetSkipUpdates: {0}", skipUpdates), Severity.DEBUG);
+            Logging.Log($"SetSkipUpdates: {skipUpdates}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -292,7 +307,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("UseOSTempPath", false);
 
-            Logging.Log(String.Format("ResetSkipUpdates: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetSkipUpdates: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -303,7 +318,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("UseOSTempPath", useOSTemp);
 
-            Logging.Log(String.Format("SetUseOSTemp: {0}", useOSTemp), Severity.DEBUG);
+            Logging.Log($"SetUseOSTemp: {useOSTemp}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -322,7 +337,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("DeveloperMode", false);
 
-            Logging.Log(String.Format("ResetDeveloperMode: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetDeveloperMode: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -333,7 +348,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("DeveloperMode", devMode);
 
-            Logging.Log(String.Format("SetDeveloperMode: {0}", devMode), Severity.DEBUG);
+            Logging.Log($"SetDeveloperMode: {devMode}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -352,7 +367,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetUInt32("CryptoStreamBufferSize", 1048576);
 
-            Logging.Log(String.Format("ResetCryptoStreamBufferSize: {0}", 1048576), Severity.DEBUG);
+            Logging.Log($"ResetCryptoStreamBufferSize: {1048576}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -364,7 +379,7 @@ namespace FAES_GUI
             bool returnVal = _ssm.SetUInt32("CryptoStreamBufferSize", size);
             FileAES_Utilities.SetCryptoStreamBuffer(size);
 
-            Logging.Log(String.Format("SetCryptoStreamBufferSize: {0}", size), Severity.DEBUG);
+            Logging.Log($"SetCryptoStreamBufferSize: {size}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -383,7 +398,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("LogToFile", false);
 
-            Logging.Log(String.Format("ResetLogToFile: {0}", false), Severity.DEBUG);
+            Logging.Log($"ResetLogToFile: {false}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -394,7 +409,7 @@ namespace FAES_GUI
             _ssm.Open();
             bool returnVal = _ssm.SetBoolean("LogToFile", state);
 
-            Logging.Log(String.Format("SetLogToFile: {0}", state), Severity.DEBUG);
+            Logging.Log($"SetLogToFile: {state}", Severity.DEBUG);
 
             _ssm.Close();
             return returnVal;
@@ -414,13 +429,13 @@ namespace FAES_GUI
         protected static string _fullInstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "mullak99", "FileAES");
         protected static string _appDataPath = _portablePath;
 
-        protected string[] _currentSubDirsAppData = new string[] { "config", "logs" };
+        protected string[] _currentSubDirsAppData = new[] { "config", "logs" };
         protected SettingsManager _settingsManager;
 
         private long _ssmLastModifiedTime;
         private bool _ssmCachedLogToFile, _ssmCachedDevMode, _ssmCachedSkipUpdates, _ssmCachedFullInstall, _ssmCachedAssociateFileTypes, _ssmCachedStartMenuShortcuts, _ssmCachedContextMenus, _ssmCachedOSTemp;
         private string _ssmCachedLogPath, _ssmCachedBranch;
-        private UInt32 _ssmCachedCsBuffer;
+        private uint _ssmCachedCsBuffer;
 
         public ProgramManager(InstallType installType = InstallType.AutoDetect)
         {
@@ -756,7 +771,7 @@ namespace FAES_GUI
             string logPath;
             DateTime dateTime = DateTime.UtcNow;
 
-            if (export) 
+            if (export)
                 logPath = "FileAES_" + dateTime.ToString("yyyy-MM-dd_HH-mm-ss") + "_Export.log";
             else
                 logPath = "FileAES_" + dateTime.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";

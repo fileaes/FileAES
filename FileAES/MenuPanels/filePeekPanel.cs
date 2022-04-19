@@ -14,6 +14,7 @@ namespace FAES_GUI.MenuPanels
         private bool _inProgress;
         private bool _decryptSuccessful;
         private decimal _progress;
+        private Thread _mainDecryptThread, _faesThread;
 
         public filePeekPanel()
         {
@@ -76,7 +77,7 @@ namespace FAES_GUI.MenuPanels
                 Locked(false);
                 decryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToDecrypt): '{0}'", _fileToPeek.GetPath()), Severity.DEBUG);
+                Logging.Log($"FAES_GUI(SetFileToDecrypt): '{_fileToPeek.GetPath()}'", Severity.DEBUG);
 
                 return true;
             }
@@ -145,14 +146,15 @@ namespace FAES_GUI.MenuPanels
             _inProgress = true;
             _decryptSuccessful = false;
 
-            Thread mainDecryptThread = new Thread(() =>
+            _mainDecryptThread = new Thread(() =>
             {
                 try
                 {
+                    FileAES_Utilities.SetCryptoStreamBuffer(Program.programManager.GetCryptoStreamBufferSize());
                     FileAES_Decrypt decrypt = new FileAES_Decrypt(_fileToPeek, password, false);
                     decrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
-                    Thread dThread = new Thread(() =>
+                    _faesThread = new Thread(() =>
                     {
                         try
                         {
@@ -163,16 +165,16 @@ namespace FAES_GUI.MenuPanels
                             SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                         }
                     });
-                    dThread.Start();
+                    _faesThread.Start();
 
-                    while (dThread.ThreadState == ThreadState.Running)
+                    while (_faesThread.ThreadState == ThreadState.Running)
                     {
-                        _progress = decrypt.GetDecryptionPercentComplete();
+                        _progress = decrypt.GetPercentComplete();
                     }
 
                     {
                         _inProgress = false;
-                        this.Invoke(new MethodInvoker(() => Locked(false)));
+                        Invoke(new MethodInvoker(() => Locked(false)));
 
                         if (_decryptSuccessful)
                         {
@@ -181,7 +183,7 @@ namespace FAES_GUI.MenuPanels
                             progressBar.CustomText = "Done";
                             progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
 
-                            this.Invoke(new MethodInvoker(() =>
+                            Invoke(new MethodInvoker(() =>
                             {
                                 fileContentsTextbox.Text = File.ReadAllText(finalPath);
                             }));
@@ -199,7 +201,7 @@ namespace FAES_GUI.MenuPanels
                                 SetNote("Password Incorrect!", 3);
                                 progressBar.CustomText = "Password Incorrect!";
                                 progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                                this.Invoke(new Action(() => passTextbox.Focus()));
+                                Invoke(new Action(() => passTextbox.Focus()));
                             }
                         }
                     }
@@ -213,24 +215,32 @@ namespace FAES_GUI.MenuPanels
                     Delete(pathOverride);
                 }
             });
-            mainDecryptThread.Start();
+            _mainDecryptThread.Start();
         }
 
         private void decryptionTimer_Tick(object sender, EventArgs e)
         {
-            if (_progress < 100)
+            if (_progress == 0)
             {
-                if (_progress < 99) progressBar.CustomText = "Decrypting";
-                else progressBar.CustomText = "Uncompressing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                progressBar.CustomText = "Starting";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress <= 50)
+            {
+                progressBar.CustomText = "Decrypting";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress < 100)
+            {
+                progressBar.CustomText = "Decompressing";
                 progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
             }
             else
             {
                 progressBar.CustomText = "Finishing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                progressBar.Value = 100;
+                progressBar.Value = 99;
             }
+            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
         }
 
         private void decryptButton_Click(object sender, EventArgs e)

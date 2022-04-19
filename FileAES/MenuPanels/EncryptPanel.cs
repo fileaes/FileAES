@@ -15,6 +15,7 @@ namespace FAES_GUI.MenuPanels
         private bool _encryptSuccessful;
         private bool _closeAfterOp;
         private decimal _progress;
+        private Thread _mainEncryptThread, _faesThread;
 
         public encryptPanel()
         {
@@ -84,7 +85,7 @@ namespace FAES_GUI.MenuPanels
                 Locked(false);
                 encryptButton.Enabled = false;
                 this.ActiveControl = passTextbox;
-                Logging.Log(String.Format("FAES_GUI(SetFileToEncrypt): '{0}'", _fileToEncrypt.GetPath()), Severity.DEBUG);
+                Logging.Log($"FAES_GUI(SetFileToEncrypt): '{_fileToEncrypt.GetPath()}'", Severity.DEBUG);
 
                 return true;
             }
@@ -159,17 +160,18 @@ namespace FAES_GUI.MenuPanels
             _inProgress = true;
             _encryptSuccessful = false;
 
-            Thread mainEncryptThread = new Thread(() =>
+            _mainEncryptThread = new Thread(() =>
             {
                 try
                 {
+                    FileAES_Utilities.SetCryptoStreamBuffer(Program.programManager.GetCryptoStreamBufferSize());
                     FileAES_Utilities.TempEncrypt = Program.programManager.GetUseOSTemp();
                     FileAES_Encrypt encrypt = new FileAES_Encrypt(_fileToEncrypt, password, passHint, FAES.Packaging.CompressionUtils.GetAllOptimiseModes()[compressIndex]);
                     encrypt.SetDeleteAfterEncrypt(delAfterEnc);
                     encrypt.SetOverwriteDuplicate(ovDup);
                     encrypt.DebugMode = FileAES_Utilities.GetVerboseLogging();
 
-                    Thread eThread = new Thread(() =>
+                    _faesThread = new Thread(() =>
                     {
                         try
                         {
@@ -180,17 +182,17 @@ namespace FAES_GUI.MenuPanels
                             SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                         }
                     });
-                    eThread.Start();
+                    _faesThread.Start();
 
-                    while (eThread.ThreadState == ThreadState.Running)
+                    while (_faesThread.ThreadState == ThreadState.Running)
                     {
-                        _progress = encrypt.GetEncryptionPercentComplete();
+                        _progress = encrypt.GetPercentComplete();
                     }
 
                     {
                         _inProgress = false;
 
-                        this.Invoke(new MethodInvoker(() => Locked(false)));
+                        Invoke(new MethodInvoker(() => Locked(false)));
 
                         if (_encryptSuccessful)
                         {
@@ -213,24 +215,32 @@ namespace FAES_GUI.MenuPanels
                     SetNote(FileAES_Utilities.FAES_ExceptionHandling(e, Program.IsVerbose()).Replace("ERROR:", ""), 3);
                 }
             });
-            mainEncryptThread.Start();
+            _mainEncryptThread.Start();
         }
 
         private void encryptionTimer_Tick(object sender, EventArgs e)
         {
-            if (_progress < 100)
+            if (_progress == 0)
             {
-                if (_progress > 0) progressBar.CustomText = "Encrypting";
-                else progressBar.CustomText = "Compressing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
+                progressBar.CustomText = "Starting";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress <= 50)
+            {
+                progressBar.CustomText = "Compressing";
+                progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
+            }
+            else if (_progress < 100)
+            {
+                progressBar.CustomText = "Encrypting";
                 progressBar.Value = Convert.ToInt32(Math.Ceiling(_progress));
             }
             else
             {
                 progressBar.CustomText = "Finishing";
-                progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
-                progressBar.Value = 100;
+                progressBar.Value = 99;
             }
+            progressBar.VisualMode = CustomControls.ProgressBarDisplayMode.TextAndPercentage;
         }
 
         private void encryptButton_Click(object sender, EventArgs e)

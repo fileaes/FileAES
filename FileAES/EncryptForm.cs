@@ -52,7 +52,7 @@ namespace FAES_GUI
 
         private void quitButton_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            Close();
         }
 
         private void quitButton_MouseEnter(object sender, EventArgs e)

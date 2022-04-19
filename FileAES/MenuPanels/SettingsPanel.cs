@@ -37,9 +37,18 @@ namespace FAES_GUI.MenuPanels
             ignoreUpdatesSetting.Toggled = _ignoreUpdates;
             useOSTempSetting.Toggled = _osTemp;
 
-            if (_branch == "dev") branchSelection.SetSelectedIndex(2);
-            else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
-            else branchSelection.SetSelectedIndex(0);
+            switch (_branch)
+            {
+                case "dev":
+                    branchSelection.SetSelectedIndex(2);
+                    break;
+                case "beta":
+                    branchSelection.SetSelectedIndex(1);
+                    break;
+                default:
+                    branchSelection.SetSelectedIndex(0);
+                    break;
+            }
 
             _branchIndex = branchSelection.GetSelectedIndex();
         }
@@ -63,9 +72,18 @@ namespace FAES_GUI.MenuPanels
                 ignoreUpdatesSetting.Toggled = _ignoreUpdates;
                 useOSTempSetting.Toggled = _osTemp;
 
-                if (_branch == "dev") branchSelection.SetSelectedIndex(2);
-                else if (_branch == "beta") branchSelection.SetSelectedIndex(1);
-                else branchSelection.SetSelectedIndex(0);
+                switch (_branch)
+                {
+                    case "dev":
+                        branchSelection.SetSelectedIndex(2);
+                        break;
+                    case "beta":
+                        branchSelection.SetSelectedIndex(1);
+                        break;
+                    default:
+                        branchSelection.SetSelectedIndex(0);
+                        break;
+                }
 
                 _branchIndex = branchSelection.GetSelectedIndex();
             }
